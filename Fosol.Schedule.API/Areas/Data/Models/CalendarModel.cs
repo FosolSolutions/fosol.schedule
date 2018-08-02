@@ -12,7 +12,7 @@ namespace Fosol.Schedule.API.Areas.Data.Models
         public Guid Key { get; set; }
         public string Name { get; set; }
         public string Description { get; set; }
-        public IList<CalendarDayModel> Days { get; set; }
+        public IList<CalendarEventModel> Events { get; set; }
         #endregion
     }
 }

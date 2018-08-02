@@ -52,7 +52,7 @@ A calendar provides a way to manage events.
 | Description   | NVARCHAR  | 2000  | No        |           |
 | State         | INT       |       | Yes       | Yes       |
 
-# Event
+# CalendarEvent
 An event provides a way to manage a specific occasion on a calendar.
 
 | Property      | Type      | Size  | Required  | Index     |
@@ -67,7 +67,7 @@ An event provides a way to manage a specific occasion on a calendar.
 | State         | INT       |       | Yes       | Yes       |
 | Type          | INT       |       | Yes       | Yes       |
 
-# Activity
+# EventActivity
 | Property      | Type      | Size  | Required  | Index     |
 |---------------|-----------|-------|-----------|-----------|
 | Id            | INT       |       | Yes       | PRIMARY   |
