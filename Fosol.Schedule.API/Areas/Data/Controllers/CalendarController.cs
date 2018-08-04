@@ -1,11 +1,11 @@
-﻿using Fosol.Schedule.API.Areas.Data.Models;
+﻿using Fosol.Schedule.API.Helpers;
+using Fosol.Schedule.Entities;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace Fosol.Schedule.API.Areas.Data.Controllers
 {
@@ -15,19 +15,23 @@ namespace Fosol.Schedule.API.Areas.Data.Controllers
     public class CalendarController : Controller
     {
         #region Variables
-        private readonly List<CalendarModel> _calendars;
+        private readonly List<Calendar> _calendars;
         private readonly ILogger _logger;
         #endregion
 
         #region Constructors
         public CalendarController()
         {
-            _calendars = CreateCalendars();
+            _calendars = ScheduleHelper.CreateCalendars();
         }
         #endregion
 
         #region Methods
-        [HttpGet("/[area]/calendars"), AllowAnonymous]
+        /// <summary>
+        /// Returns an array of all the calendars for the current user.
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet("/[area]/calendars")]
         public IActionResult Calendars()
         {
             var calendars = _calendars.Select(c => new
@@ -36,59 +40,45 @@ namespace Fosol.Schedule.API.Areas.Data.Controllers
                 c.Key,
                 c.Name,
                 c.Description,
-                Url = $"/data/calendar/{c.Id}"
+                Self = $"/data/calendar/{c.Id}"
             }).ToArray();
             return Ok(calendars);
         }
 
-        [HttpGet("/[area]/calendar/{id}")]
-        public IActionResult Calendar(int id)
+        /// <summary>
+        /// Returns the specified calendar and its events for the current week (or timespan).
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="startDate"></param>
+        /// <param name="endDate"></param>
+        /// <returns></returns>
+        [HttpGet("{id}")]
+        public IActionResult Calendar(int id, DateTime? startDate = null, DateTime? endDate = null)
         {
-            var calendar = _calendars.FirstOrDefault(c => c.Id == id);
+            var start = startDate ?? DateTime.UtcNow;
+            // Start at the beginning of the week.
+            start = start.DayOfWeek == DayOfWeek.Sunday ? start : start.AddDays(-1 * (int)start.DayOfWeek);
+            var end = endDate ?? start.AddDays(7);
+            var calendar = _calendars.Where(c => c.Id == id).Select(c => new
+            {
+                c.Id,
+                c.Key,
+                c.Name,
+                c.Description,
+                Self = $"/data/calendar/{c.Id}",
+                Events = c.Events.Where(e => e.StartDate >= start && e.EndDate <= end).Select(e => new
+                {
+                    e.Id,
+                    e.Name,
+                    e.Description,
+                    e.StartDate,
+                    e.EndDate,
+                    Self = $"/data/calendar/event/{e.Id}"
+                })
+            }).FirstOrDefault();
             return calendar != null ? Ok(calendar) : (IActionResult)NoContent();
         }
         #endregion
 
-        #region temporary
-        private List<CalendarModel> CreateCalendars()
-        {
-            return new List<CalendarModel>()
-            {
-                CreateCalendar(1),
-                CreateCalendar(2)
-            };
-        }
-
-        private CalendarModel CreateCalendar(int id)
-        {
-            var calendar = new CalendarModel()
-            {
-                Id = id,
-                Key = Guid.NewGuid(),
-                Name = $"calendar {id}",
-                Description = $"calendar {id}",
-                Events = new List<CalendarEventModel>(365)
-            };
-
-            // Sunday Memorial
-            var jan1st = new DateTime(DateTime.Now.Year, 1, 1);
-            var sunday = jan1st.DayOfWeek == DayOfWeek.Sunday ? jan1st : jan1st.AddDays(7 - (int)jan1st.DayOfWeek);
-            var i = 1;
-            while (sunday.Year == DateTime.Now.Year)
-            {
-                calendar.Events.Add(new CalendarEventModel()
-                {
-                    Id = i++,
-                    Name = "Memorial Meeting",
-                    Description = "Sunday memorial meeting.",
-                    StartDate = sunday.AddHours(11),
-                    EndDate = sunday.AddHours(13)
-                });
-                sunday = sunday.AddDays(7);
-            }
-
-            return calendar;
-        }
-        #endregion
     }
 }

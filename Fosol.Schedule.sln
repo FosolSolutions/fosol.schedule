@@ -13,6 +13,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Documents", "Documents", "{
 		README.md = README.md
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Fosol.Schedule.Entities", "Fosol.Schedule.Entities\Fosol.Schedule.Entities.csproj", "{A25DB1E3-9F84-4E6B-A4E9-D64E89489C44}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -23,6 +25,10 @@ Global
 		{531C5A0F-F660-48DB-A236-BB282A9DF264}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{531C5A0F-F660-48DB-A236-BB282A9DF264}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{531C5A0F-F660-48DB-A236-BB282A9DF264}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A25DB1E3-9F84-4E6B-A4E9-D64E89489C44}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A25DB1E3-9F84-4E6B-A4E9-D64E89489C44}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A25DB1E3-9F84-4E6B-A4E9-D64E89489C44}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A25DB1E3-9F84-4E6B-A4E9-D64E89489C44}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

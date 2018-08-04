@@ -11,34 +11,50 @@
 - Events have Attributes to define who can Participate
 - Not all Openings require Participants
 - Make a Calendar visible to Users, Accounts, etc
+- Provide a way for participants to apply for an opening
+- Provide a way to invite non-users to participate
+- Allow a user to participate
 
 # Structure
-- Calendar
+- Calendar "an endless calendar to contain all of your events"
   - belongs to Account
-  - has Users
-  - has Attributes (key|value)
+  - has Participants
+  - has Criteria
     - belongs to Calendar
     - has Rules
   - has Tags
   - has Events
     - belongs to Calendar
-    - has Attributes
+    - has Criterias
     - has Tags
     - has Activities
       - belongs to Event
+      - has Criterias
       - has Openings
-        - has Attributes
+        - has Criterias
         - has Participants
-          - is User
-- User
+          - may be a User
+          - has Qualities
+- Criteria "a way to identify and filter qualifying criteria"
+  - has Qualities
+  - has Rules
+- Quality "an attribute which identifies a qualification of a user"
+  - has key|value pair
+- User "a user who has access to the application"
   - has Roles
   - has Accounts
   - has Calendars
-  - has Attributes (key|value)
-- Account
+  - has Qualities
+  - is many Participants
+    - each Calendar will have it's own participants
+- Participant "a person particating in an opening"
+  - may be a User
+  - has Qualities
+    - are Calendar specific
+- Account "an account which is owned by a user"
   - has Users
   - has Calendars
-- Schedule
+- Schedule "a way to filter events from calendars"
   - has Calendar with date range
 
 # Calendar
