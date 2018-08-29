@@ -8,12 +8,11 @@ EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Documents", "Documents", "{F309D9EB-2ED2-402C-B396-AD4B14905E8C}"
 	ProjectSection(SolutionItems) = preProject
 		Datamodel.md = Datamodel.md
-		Endpoints.md = Endpoints.md
 		LICENSE = LICENSE
 		README.md = README.md
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Fosol.Schedule.Entities", "Fosol.Schedule.Entities\Fosol.Schedule.Entities.csproj", "{A25DB1E3-9F84-4E6B-A4E9-D64E89489C44}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Fosol.Schedule.Entities", "Fosol.Schedule.Entities\Fosol.Schedule.Entities.csproj", "{A25DB1E3-9F84-4E6B-A4E9-D64E89489C44}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

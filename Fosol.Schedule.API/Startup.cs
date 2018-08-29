@@ -1,10 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Builder;
+﻿using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -39,9 +36,17 @@ namespace Fosol.Schedule.API
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddOptions();
+            services.Configure<CookiePolicyOptions>(options =>
+            {
+                options.CheckConsentNeeded = context => true;
+                options.MinimumSameSitePolicy = SameSiteMode.None;
+            });
             services.AddMvc(options =>
             {
-            }).AddJsonOptions(options =>
+
+            })
+            .SetCompatibilityVersion(CompatibilityVersion.Version_2_1)
+            .AddJsonOptions(options =>
             {
                 options.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
                 options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
@@ -58,10 +63,14 @@ namespace Fosol.Schedule.API
             else
             {
                 app.UseExceptionHandler("/Error");
+                app.UseHsts();
             }
 
+            app.UseHttpsRedirection();
             app.UseStatusCodePagesWithReExecute("/Error/{0}");
             //app.UseAuthentication();
+            app.UseStaticFiles();
+            app.UseCookiePolicy();
             app.UseMvc(options =>
             {
                 options.MapRoute(
@@ -74,7 +83,6 @@ namespace Fosol.Schedule.API
                     template: "{controller}/{action}/{id?}",
                     defaults: new { controller = "Home", action = "Index" });
             });
-            app.UseStaticFiles();
         }
         #endregion
     }

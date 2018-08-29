@@ -30,7 +30,7 @@ namespace Fosol.Schedule.API.Areas.Data.Controllers
         /// <summary>
         /// Returns an array of all the calendars for the current user.
         /// </summary>
-        /// <returns></returns>
+        /// <returns>An array calendar.</returns>
         [HttpGet("/[area]/calendars")]
         public IActionResult Calendars()
         {
@@ -48,10 +48,10 @@ namespace Fosol.Schedule.API.Areas.Data.Controllers
         /// <summary>
         /// Returns the specified calendar and its events for the current week (or timespan).
         /// </summary>
-        /// <param name="id"></param>
-        /// <param name="startDate"></param>
-        /// <param name="endDate"></param>
-        /// <returns></returns>
+        /// <param name="id">the primary key to identify the calendar.</param>
+        /// <param name="startDate">The start date for the calendar to return.  Defaults to now.</param>
+        /// <param name="endDate">The end date for the calendar to return.</param>
+        /// <returns>A calendar with all events within the specified date range.</returns>
         [HttpGet("{id}")]
         public IActionResult Calendar(int id, DateTime? startDate = null, DateTime? endDate = null)
         {
