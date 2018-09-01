@@ -19,7 +19,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Fosol.Schedule.Entities\Fosol.Schedule.Entities.csproj" />
+    <ProjectReference Include="..\Fosol.Schedule.Models\Fosol.Schedule.Models.csproj" />
   </ItemGroup>
 
 </Project>

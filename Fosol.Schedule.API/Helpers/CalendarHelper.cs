@@ -1,4 +1,4 @@
-﻿using Fosol.Schedule.Entities;
+﻿using Fosol.Schedule.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -6,9 +6,16 @@ using System.Threading.Tasks;
 
 namespace Fosol.Schedule.API.Helpers
 {
-    public static class ScheduleHelper
+    /// <summary>
+    /// <typeparamref name="CalendarHelper"/> static class, provides helper functions to create fake calendars.
+    /// </summary>
+    public static class CalendarHelper
     {
         #region Methods
+        /// <summary>
+        /// Creates a collection of fake calendars.
+        /// </summary>
+        /// <returns>A new List of Calendar object.</returns>
         public static List<Calendar> CreateCalendars()
         {
             return new List<Calendar>()
@@ -18,15 +25,21 @@ namespace Fosol.Schedule.API.Helpers
             };
         }
 
+        /// <summary>
+        /// Creates a fake calendar with events.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns>A new Calendar object.</returns>
         public static Calendar CreateCalendar(int id)
         {
+            var events = new List<CalendarEvent>(365);
             var calendar = new Calendar()
             {
                 Id = id,
                 Key = Guid.NewGuid(),
                 Name = $"calendar {id}",
                 Description = $"calendar {id}",
-                Events = new List<CalendarEvent>(365)
+                Events = events
             };
 
             // Sunday Memorial
@@ -35,7 +48,7 @@ namespace Fosol.Schedule.API.Helpers
             var i = 1;
             while (sunday.Year == DateTime.Now.Year)
             {
-                calendar.Events.Add(new CalendarEvent()
+                events.Add(new CalendarEvent()
                 {
                     Id = i++,
                     Name = "Memorial Meeting",

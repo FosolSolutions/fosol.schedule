@@ -1,5 +1,5 @@
 ﻿using Fosol.Schedule.API.Helpers;
-using Fosol.Schedule.Entities;
+using Fosol.Schedule.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
@@ -9,20 +9,25 @@ using System.Linq;
 
 namespace Fosol.Schedule.API.Areas.Data.Controllers
 {
+    /// <summary>
+    /// <typeparamref name="CalendarController"/> class, provides API endpoints for calendars.
+    /// </summary>
     [Produces("application/json")]
     [Area("data")]
     [Route("[area]/[controller]")]
-    public class CalendarController : Controller
+    public sealed class CalendarController : Controller
     {
         #region Variables
         private readonly List<Calendar> _calendars;
-        private readonly ILogger _logger;
         #endregion
 
         #region Constructors
+        /// <summary>
+        /// Creates a new instance of a <typeparamref name="CalendarController"/> object.
+        /// </summary>
         public CalendarController()
         {
-            _calendars = ScheduleHelper.CreateCalendars();
+            _calendars = CalendarHelper.CreateCalendars();
         }
         #endregion
 
@@ -40,7 +45,7 @@ namespace Fosol.Schedule.API.Areas.Data.Controllers
                 c.Key,
                 c.Name,
                 c.Description,
-                Self = $"/data/calendar/{c.Id}"
+                SelfUrl = $"/data/calendar/{c.Id}"
             }).ToArray();
             return Ok(calendars);
         }
@@ -48,7 +53,7 @@ namespace Fosol.Schedule.API.Areas.Data.Controllers
         /// <summary>
         /// Returns the specified calendar and its events for the current week (or timespan).
         /// </summary>
-        /// <param name="id">the primary key to identify the calendar.</param>
+        /// <param name="id">The primary key to identify the calendar.</param>
         /// <param name="startDate">The start date for the calendar to return.  Defaults to now.</param>
         /// <param name="endDate">The end date for the calendar to return.</param>
         /// <returns>A calendar with all events within the specified date range.</returns>
@@ -65,7 +70,7 @@ namespace Fosol.Schedule.API.Areas.Data.Controllers
                 c.Key,
                 c.Name,
                 c.Description,
-                Self = $"/data/calendar/{c.Id}",
+                SelfUrl = $"/data/calendar/{c.Id}",
                 Events = c.Events.Where(e => e.StartDate >= start && e.EndDate <= end).Select(e => new
                 {
                     e.Id,
@@ -73,12 +78,11 @@ namespace Fosol.Schedule.API.Areas.Data.Controllers
                     e.Description,
                     e.StartDate,
                     e.EndDate,
-                    Self = $"/data/calendar/event/{e.Id}"
+                    SelfUrl = $"/data/calendar/event/{e.Id}"
                 })
             }).FirstOrDefault();
             return calendar != null ? Ok(calendar) : (IActionResult)NoContent();
         }
         #endregion
-
     }
 }
