@@ -25,12 +25,13 @@ namespace Fosol.Schedule.DAL
         #region Methods
         public IEnumerable<Calendar> GetCalendars()
         {
-            return _context.Calendars.Select(c => (Calendar)c);
+            return _context.Calendars.Select(c => new Calendar(c));
         }
 
         public Calendar GetCalendar(int id)
         {
-            return (Calendar)_context.Calendars.Find(id);
+            var calendar = _context.Calendars.Find(id);
+            return new Calendar(calendar);
         }
         #endregion
     }

@@ -6,6 +6,9 @@ using System.Threading.Tasks;
 
 namespace Fosol.Schedule.API.Areas.Data.Controllers
 {
+    /// <summary>
+    /// <typeparamref name="ActivityController"/> sealed class, provides API endpoints for calendar event activities.
+    /// </summary>
     [Produces("application/json")]
     [Area("data")]
     [Route("[area]/calendar/[controller]")]

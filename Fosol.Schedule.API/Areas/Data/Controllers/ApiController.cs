@@ -104,7 +104,7 @@ namespace Fosol.Schedule.API.Areas.Data.Controllers
             {
                 p.Name,
                 Type = GetParameterType(p),
-                Summary = GetValue(nav, $"/param[@name='{p.Name}']")
+                Summary = GetValue(nav, $"{GetMemberPath(type, methodInfo)}/param[@name='{p.Name}']")
             });
         }
         #endregion
