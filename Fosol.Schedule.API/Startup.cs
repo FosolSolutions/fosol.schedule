@@ -51,6 +51,16 @@ namespace Fosol.Schedule.API
                 options.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
                 options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
             });
+            services.AddCors(options =>
+            {
+                options.AddPolicy("development", builder =>
+                {
+                    builder.AllowAnyOrigin()
+                        .AllowAnyHeader()
+                        .AllowAnyMethod()
+                        .AllowCredentials();
+                });
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -66,6 +76,7 @@ namespace Fosol.Schedule.API
                 app.UseHsts();
             }
 
+            app.UseCors("development");
             app.UseHttpsRedirection();
             app.UseStatusCodePagesWithReExecute("/Error/{0}");
             //app.UseAuthentication();
