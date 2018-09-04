@@ -10,7 +10,7 @@ using System.Linq;
 namespace Fosol.Schedule.API.Areas.Data.Controllers
 {
     /// <summary>
-    /// <typeparamref name="CalendarController"/> class, provides API endpoints for calendars.
+    /// CalendarController class, provides API endpoints for calendars.
     /// </summary>
     [Produces("application/json")]
     [Area("data")]
@@ -23,7 +23,7 @@ namespace Fosol.Schedule.API.Areas.Data.Controllers
 
         #region Constructors
         /// <summary>
-        /// Creates a new instance of a <typeparamref name="CalendarController"/> object.
+        /// Creates a new instance of a CalendarController object.
         /// </summary>
         public CalendarController()
         {

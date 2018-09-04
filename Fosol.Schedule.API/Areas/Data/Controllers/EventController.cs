@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace Fosol.Schedule.API.Areas.Data.Controllers
 {
     /// <summary>
-    /// <typeparamref name="EventController"/> sealed class, provides API endpoints for calendar events.
+    /// EventController sealed class, provides API endpoints for calendar events.
     /// </summary>
     [Produces("application/json")]
     [Area("data")]
@@ -19,7 +19,7 @@ namespace Fosol.Schedule.API.Areas.Data.Controllers
 
         #region Constructors
         /// <summary>
-        /// Creates a new instance of a <typeparamref name="EventController"/> object.
+        /// Creates a new instance of a EventController object.
         /// </summary>
         public EventController()
         {

@@ -6,7 +6,7 @@ using System.Linq;
 namespace Fosol.Schedule.API.Helpers
 {
     /// <summary>
-    /// <typeparamref name="CalendarHelper"/> static class, provides helper functions to create fake calendars.
+    /// CalendarHelper static class, provides helper functions to create fake calendars.
     /// </summary>
     public static class CalendarHelper
     {

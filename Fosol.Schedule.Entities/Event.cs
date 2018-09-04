@@ -21,6 +21,11 @@ namespace Fosol.Schedule.Entities
         public int CalendarId { get; set; }
 
         /// <summary>
+        /// get/set - The calendar this event belongs to.
+        /// </summary>
+        public Calendar Calendar { get; set; }
+
+        /// <summary>
         /// get/set - A unique key to identify this event.
         /// </summary>
         public Guid Key { get; set; }
@@ -50,14 +55,19 @@ namespace Fosol.Schedule.Entities
         public DateTime EndDate { get; set; }
 
         /// <summary>
-        /// get/set - A collection of criteria which are required to participate in the events.
+        /// get - A collection of criteria which are required to participate in the events.
         /// </summary>
-        public ICollection<Criteria> Criterias { get; set; }
+        public ICollection<Criteria> Criteria { get; set; }
 
         /// <summary>
-        /// get/set - A collection of activities within this event.
+        /// get - A collection of activities within this event.
         /// </summary>
-        public ICollection<Activity> Activities { get; set; }
+        public ICollection<Activity> Activities { get; set; } = new List<Activity>();
+
+        /// <summary>
+        /// get - A collection of tags associated with this event.
+        /// </summary>
+        public ICollection<Tag> Tags { get; set; } = new List<Tag>();
         #endregion
 
         #region Constructors
