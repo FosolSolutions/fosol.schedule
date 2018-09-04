@@ -1,19 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Fosol.Schedule.Entities
 {
     /// <summary>
-    /// An event is a specific time slot in a calendar.
+    /// <typeparamref name="Event"/> class, provides a way to manage events in the datasource.  An event is a specific time slot in a calendar.
     /// </summary>
-    public class CalendarEvent
+    public class Event : BaseEntity
     {
         #region Properties
         /// <summary>
-        /// get/set - Primary key.  Unique way to identify the event.
+        /// get/set - Primary key uses IDENTITY.  Unique way to identify the event.
         /// </summary>
         public int Id { get; set; }
 
@@ -21,6 +19,11 @@ namespace Fosol.Schedule.Entities
         /// get/set - Foreign key to the calendar.  All events are owned by a calendar.
         /// </summary>
         public int CalendarId { get; set; }
+
+        /// <summary>
+        /// get/set - A unique key to identify this event.
+        /// </summary>
+        public Guid Key { get; set; }
 
         /// <summary>
         /// get/set - A name to identify the event.
@@ -55,6 +58,35 @@ namespace Fosol.Schedule.Entities
         /// get/set - A collection of activities within this event.
         /// </summary>
         public ICollection<Activity> Activities { get; set; }
+        #endregion
+
+        #region Constructors
+        /// <summary>
+        /// Creates a new instance of a <typeparamref name="Event"/> object.
+        /// </summary>
+        public Event()
+        {
+
+        }
+
+        /// <summary>
+        /// Creates a new instance of a <typeparamref name="Event"/> object, and initializes it with the specified properties.
+        /// </summary>
+        /// <param name="calendarId"></param>
+        /// <param name="name"></param>
+        /// <param name="start"></param>
+        /// <param name="end"></param>
+        public Event(int calendarId, string name, DateTime start, DateTime end)
+        {
+            if (String.IsNullOrWhiteSpace(name))
+                throw new ArgumentNullException(nameof(name));
+
+            this.CalendarId = calendarId;
+            this.Name = name;
+            this.Key = Guid.NewGuid();
+            this.StartDate = start;
+            this.EndDate = end;
+        }
         #endregion
     }
 }

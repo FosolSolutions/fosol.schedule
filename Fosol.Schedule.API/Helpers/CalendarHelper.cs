@@ -2,7 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace Fosol.Schedule.API.Helpers
 {
@@ -32,7 +31,7 @@ namespace Fosol.Schedule.API.Helpers
         /// <returns>A new Calendar object.</returns>
         public static Calendar CreateCalendar(int id)
         {
-            var events = new List<CalendarEvent>(365);
+            var events = new List<Event>(365);
             var calendar = new Calendar()
             {
                 Id = id,
@@ -48,7 +47,7 @@ namespace Fosol.Schedule.API.Helpers
             var i = 1;
             while (sunday.Year == DateTime.Now.Year)
             {
-                events.Add(new CalendarEvent()
+                events.Add(new Event()
                 {
                     Id = i++,
                     Name = "Memorial Meeting",

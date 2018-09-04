@@ -4,7 +4,7 @@ using System.Text;
 
 namespace Fosol.Schedule.Models
 {
-    public class CalendarEvent : BaseModel
+    public class Event : BaseModel
     {
         #region Properties
         public int Id { get; set; }

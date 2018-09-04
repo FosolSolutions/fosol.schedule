@@ -17,7 +17,7 @@ namespace Fosol.Schedule.Entities
         public string Description { get; set; }
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }
-        public ICollection<CalendarEvent> Events { get; set; }
+        public ICollection<Event> Events { get; set; }
         #endregion
     }
 }
