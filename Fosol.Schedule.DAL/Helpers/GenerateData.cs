@@ -1,27 +1,18 @@
-﻿using Fosol.Schedule.Models;
+﻿using Fosol.Schedule.Entities;
 using System;
 using System.Collections.Generic;
 
-namespace Fosol.Schedule.API.Helpers
+namespace Fosol.Schedule.DAL.Helpers
 {
-    /// <summary>
-    /// CalendarHelper static class, provides helper functions to create fake calendars.
-    /// </summary>
-    public static class CalendarHelper
+    static class GenerateData
     {
+        #region Properties
+        #endregion
+
+        #region Constructors
+        #endregion
+
         #region Methods
-        /// <summary>
-        /// Creates a collection of fake calendars.
-        /// </summary>
-        /// <returns>A new List of Calendar object.</returns>
-        public static List<Calendar> CreateCalendars()
-        {
-            return new List<Calendar>()
-            {
-                CreateCalendar(1),
-                CreateCalendar(2)
-            };
-        }
 
         /// <summary>
         /// Creates a fake calendar with events.
@@ -37,7 +28,6 @@ namespace Fosol.Schedule.API.Helpers
                 Key = Guid.NewGuid(),
                 Name = $"calendar {id}",
                 Description = $"calendar {id}",
-                SelfUrl = $"/data/calendar/{id}",
                 Events = events
             };
 
@@ -53,8 +43,6 @@ namespace Fosol.Schedule.API.Helpers
                     Description = "Sunday memorial meeting.",
                     StartOn = sunday.AddHours(11),
                     EndOn = sunday.AddHours(13),
-                    SelfUrl = $"/data/event/{i}",
-                    ParentUrl = $"/data/calendar/{id}",
                     Id = i++
                 });
                 sunday = sunday.AddDays(7);

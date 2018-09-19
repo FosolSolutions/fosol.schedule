@@ -1,6 +1,6 @@
-﻿using Fosol.Schedule.Entities;
+﻿using Fosol.Schedule.DAL.Helpers;
+using Fosol.Schedule.Entities;
 using Microsoft.EntityFrameworkCore;
-using System;
 
 namespace Fosol.Schedule.DAL
 {
@@ -14,6 +14,10 @@ namespace Fosol.Schedule.DAL
         #endregion
 
         #region Properties
+        public DbSet<User> Users { get; set; }
+
+        public DbSet<Account> Accounts { get; set; }
+
         public DbSet<Calendar> Calendars { get; set; }
 
         public DbSet<Event> Events { get; set; }
@@ -30,6 +34,14 @@ namespace Fosol.Schedule.DAL
         {
             _connectionString = connectionString;
         }
+
+        /// <summary>
+        /// Creates a new instance of a ScheduleContext object, and initializes it with the specified configuration options.
+        /// </summary>
+        /// <param name="options"></param>
+        public ScheduleContext(DbContextOptions<ScheduleContext> options) : base(options)
+        {
+        }
         #endregion
 
         #region Methods
@@ -39,9 +51,23 @@ namespace Fosol.Schedule.DAL
         /// <param name="optionsBuilder"></param>
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSqlServer(_connectionString);
+            if (!optionsBuilder.IsConfigured)
+            {
+                optionsBuilder.UseSqlServer(_connectionString);
+            }
 
             base.OnConfiguring(optionsBuilder);
+        }
+
+        /// <summary>
+        /// Creates the datasource.
+        /// </summary>
+        /// <param name="modelBuilder"></param>
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            ScheduleContextData.Init(modelBuilder);
+
+            base.OnModelCreating(modelBuilder);
         }
         #endregion
     }

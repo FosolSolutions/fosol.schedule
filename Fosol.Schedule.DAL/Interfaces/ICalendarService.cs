@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Fosol.Schedule.DAL
+namespace Fosol.Schedule.DAL.Interfaces
 {
     public interface ICalendarService : IUpdatableService<Models.Calendar>
     {

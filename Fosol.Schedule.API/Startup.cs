@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Builder;
+﻿using Fosol.Schedule.DAL;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -10,6 +11,9 @@ using Newtonsoft.Json.Serialization;
 
 namespace Fosol.Schedule.API
 {
+    /// <summary>
+    /// Startup class, provides a way to start the web application.
+    /// </summary>
     public class Startup
     {
         #region Variables
@@ -17,10 +21,19 @@ namespace Fosol.Schedule.API
         #endregion
 
         #region Properties
+        /// <summary>
+        /// get - The program configuration.
+        /// </summary>
         public IConfiguration Configuration { get; }
         #endregion
 
         #region Constructors
+        /// <summary>
+        /// Creates a new instance of a Startup object, and intializes it with the specified arguments.
+        /// </summary>
+        /// <param name="env"></param>
+        /// <param name="configuration"></param>
+        /// <param name="logger"></param>
         public Startup(IHostingEnvironment env, IConfiguration configuration, ILoggerFactory logger)
         {
             this.Configuration = configuration;
@@ -31,8 +44,11 @@ namespace Fosol.Schedule.API
         #endregion
 
         #region Methods
-        // This method gets called by the runtime. Use this method to add services to the container.
-        // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
+        /// <summary>
+        /// This method gets called by the runtime. Use this method to add services to the container.
+        /// For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
+        /// </summary>
+        /// <param name="services"></param>
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddOptions();
@@ -61,9 +77,14 @@ namespace Fosol.Schedule.API
                         .AllowCredentials();
                 });
             });
+            services.AddDataSource(this.Configuration);
         }
 
-        // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
+        /// <summary>
+        /// This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
+        /// </summary>
+        /// <param name="app"></param>
+        /// <param name="env"></param>
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
             if (env.IsDevelopment())

@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Fosol.Schedule.Models;
+using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -32,26 +33,36 @@ namespace Fosol.Schedule.API.Areas.Data.Controllers
         /// Returns a calendar event for the specified 'id'.
         /// </summary>
         /// <param name="id">The primary key for the event.</param>
-        /// <returns></returns>
+        /// <returns>An event for the specified 'id'.</returns>
         [HttpGet("{id}")]
         public IActionResult Event(int id)
         {
-            return Ok(new
+            return Ok(new Event()
             {
                 Id = id,
-                Name = "",
-                Description = "",
-                StartDate = new DateTime(),
-                EndDate = new DateTime(),
+                Name = "name",
+                Description = "description",
+                StartOn = new DateTime(),
+                EndOn = new DateTime(),
                 SelfUrl = $"/data/calendar/event/{id}",
                 ParentUrl = $"/data/calendar/1",
-                Criteria = new[] { new { } },
-                Tags = new[] { new { } },
-                Activities = new[] { new { } },
-                DateAdded = new DateTime(),
-                DateUpdated = new DateTime(),
-                RowVersion = ""
+                //Criteria = new[] { new { } },
+                //Tags = new[] { new { } },
+                //Activities = new[] { new { } },
+                AddedOn = new DateTime(),
+                UpdatedOn = new DateTime()
             });
+        }
+
+        /// <summary>
+        /// Returns an array of events for the calendar specified by the 'id'.
+        /// </summary>
+        /// <param name="id">The calendar id.</param>
+        /// <returns>An array of events.</returns>
+        [HttpGet("/[area]/calendar/{id}/events")]
+        public IActionResult EventsForCalendar(int id)
+        {
+            return Ok();
         }
         #endregion
     }

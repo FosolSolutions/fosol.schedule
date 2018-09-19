@@ -1,8 +1,6 @@
 ﻿using AutoMapper;
+using Fosol.Schedule.DAL.Interfaces;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
 
 namespace Fosol.Schedule.DAL
 {

@@ -2,12 +2,15 @@
 
 namespace Fosol.Schedule.Entities
 {
-    public class Quality
+    /// <summary>
+    /// Attribute class, provides a way to describe an attribute or qualification that a participant has.
+    /// </summary>
+    public class Attribute
     {
         #region Properties
         /// <summary>
         /// get/set - Foreign key to calendar.
-        ///     Qualities are calendar specified, but a user may have global qualities that apply to all calendars (i.e. gender, birthdate)
+        ///     Attributes are calendar specified, but a user may have global attributes that apply to all calendars (i.e. gender, birthdate)
         /// </summary>
         public int? CalendarId { get; set; }
 

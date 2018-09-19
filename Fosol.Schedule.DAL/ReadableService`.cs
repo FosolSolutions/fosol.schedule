@@ -1,8 +1,5 @@
 ﻿using Fosol.Schedule.DAL.Exceptions;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
+using Fosol.Schedule.DAL.Interfaces;
 
 namespace Fosol.Schedule.DAL
 {

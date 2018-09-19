@@ -26,6 +26,11 @@ namespace Fosol.Schedule.Entities
         public Guid Key { get; set; }
 
         /// <summary>
+        /// get/set - The state of this participant.
+        /// </summary>
+        public ParticipantState State { get; set; }
+
+        /// <summary>
         /// get/set - The foreign key to the user account for this participant.
         /// </summary>
         public int? UserId { get; set; }
@@ -46,11 +51,54 @@ namespace Fosol.Schedule.Entities
         public Calendar Calendar { get; set; }
 
         /// <summary>
+        /// get/set - A participants name to display for others to see.  This should be unique within each Calendar.
+        /// </summary>
+        public string DisplayName { get; set; }
+
+        /// <summary>
+        /// get/set - The persons title.
+        /// </summary>
+        public string Title { get; set; }
+
+        /// <summary>
+        /// get/set - The persons first name.
+        /// </summary>
+        public string FirstName { get; set; }
+
+        /// <summary>
+        /// get/set - The persons middle name.
+        /// </summary>
+        public string MiddleName { get; set; }
+
+        /// <summary>
+        /// get/set - The persons last name.
+        /// </summary>
+        public string LastName { get; set; }
+
+        /// <summary>
+        /// get/set - The participants gender.
+        /// </summary>
+        public Gender? Gender { get; set; }
+
+        /// <summary>
+        /// get/set - The participants birthdate.
+        /// </summary>
+        public DateTime? Birthdate { get; set; }
+
+        /// <summary>
         /// get - A collection of information about the participant.
         /// </summary>
-        public ICollection<ParticipantInfo> Information { get; set; } = new List<ParticipantInfo>();
+        public ICollection<ContactInfo> Information { get; set; } = new List<ContactInfo>();
 
-        public ICollection<Quality> Qualities { get; set; }
+        /// <summary>
+        /// get - A collection of addresses for the participant.
+        /// </summary>
+        public ICollection<Address> Addresses { get; set; } = new List<Address>();
+
+        /// <summary>
+        /// get - A collection of attributes for the participant.
+        /// </summary>
+        public ICollection<Attribute> Attributes { get; set; } = new List<Attribute>();
         #endregion
 
         #region Constructors
@@ -59,6 +107,45 @@ namespace Fosol.Schedule.Entities
         /// </summary>
         public Participant()
         { }
+
+        /// <summary>
+        /// Craetes a new instance of a Participant object, and initizes it with the specified arguments.
+        /// </summary>
+        /// <param name="calendar"></param>
+        /// <param name="user"></param>
+        public Participant(Calendar calendar, User user)
+        {
+            this.CalendarId = calendar?.Id ?? throw new ArgumentNullException(nameof(calendar));
+            this.Calendar = calendar;
+            this.UserId = user?.Id ?? throw new ArgumentNullException(nameof(user));
+            this.User = user;
+            this.FirstName = user.Info?.FirstName;
+            this.MiddleName = user.Info?.MiddleName;
+            this.LastName = user.Info?.LastName;
+            this.DisplayName = $"{user.Info?.FirstName} {user.Info?.LastName}";
+            this.Title = user.Info?.Title;
+            this.Gender = user.Info?.Gender;
+            this.Birthdate = user.Info?.Birthdate;
+        }
+
+        /// <summary>
+        /// Craetes a new instance of a Participant object, and initizes it with the specified arguments.
+        /// </summary>
+        /// <param name="calendar"></param>
+        /// <param name="displayName"></param>
+        /// <param name="firstName"></param>
+        /// <param name="lastName"></param>
+        public Participant(Calendar calendar, string displayName, string firstName = null, string lastName = null)
+        {
+            if (String.IsNullOrWhiteSpace(displayName))
+                throw new ArgumentException($"The argument '{nameof(displayName)}' is required and cannot be null or empty.");
+
+            this.CalendarId = calendar?.Id ?? throw new ArgumentNullException(nameof(calendar));
+            this.Calendar = calendar;
+            this.DisplayName = displayName;
+            this.FirstName = firstName;
+            this.LastName = lastName;
+        }
         #endregion
     }
 }

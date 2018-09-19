@@ -5,28 +5,23 @@ using System.Text;
 namespace Fosol.Schedule.Entities
 {
     /// <summary>
-    /// UserAddress class, provides a way to manage user address information in the datasource.
+    /// Address class, provides a way to manage address information in the datasource.
     /// </summary>
-    public class UserAddress : BaseEntity
+    public class Address : BaseEntity
     {
         #region Properties
         /// <summary>
-        /// get/set - Primary key and Foreign key to the user this address belongs to.
+        /// get/set - Primary key uses IDENTITY.
         /// </summary>
-        public int UserId { get; set; }
+        public int Id { get; set; }
 
         /// <summary>
-        /// get/set - The user this address belongs to.
-        /// </summary>
-        public User User { get; set; }
-
-        /// <summary>
-        /// get/set - Primary key, a unique name to identify this address.
+        /// get/set - A unique name to identify this address.
         /// </summary>
         public string Name { get; set; }
 
         /// <summary>
-        /// get/set - Whether this address is the primary address for the user.
+        /// get/set - Whether this address is the primary address for the reference.
         /// </summary>
         public bool IsPrimary { get; set; }
 
@@ -59,32 +54,49 @@ namespace Fosol.Schedule.Entities
         /// get/set - Country name.
         /// </summary>
         public string Country { get; set; }
+
+        /// <summary>
+        /// get/set - Category for this type of address.
+        /// </summary>
+        public ContactInfoCategory Category { get; set; }
+
+        /// <summary>
+        /// get - A collection of users who references this address.  It'll only ever be one.
+        /// </summary>
+        public ICollection<User> Users { get; set; }
+
+        /// <summary>
+        /// get - A collection of participants who references this address.  It'll only ever be one.
+        /// </summary>
+        public ICollection<Participant> Participants { get; set; }
         #endregion
 
         #region Constructors
         /// <summary>
         /// Creates a new instances of a UserAddress object.
         /// </summary>
-        public UserAddress()
+        public Address()
         { }
 
         /// <summary>
-        /// Creates a new instance of a UserAddress object, and initializes it with the specified properties.
+        /// Creates a new instance of a Address object, and initializes it with the specified properties.
         /// </summary>
-        /// <param name="userId"></param>
+        /// <param name="user"></param>
         /// <param name="address"></param>
         /// <param name="city"></param>
         /// <param name="province"></param>
         /// <param name="postal"></param>
         /// <param name="country"></param>
-        public UserAddress(int userId, string address, string city, string province, string postal, string country)
+        /// <param name="category"></param>
+        public Address(User user, string address, string city, string province, string postal, string country, ContactInfoCategory category)
         {
-            this.UserId = userId;
+            this.Users.Add(user ?? throw new ArgumentNullException(nameof(user)));
             this.Address1 = address;
             this.City = city;
             this.Province = province;
             this.PostalCode = postal;
             this.Country = country;
+            this.Category = category;
         }
         #endregion
     }

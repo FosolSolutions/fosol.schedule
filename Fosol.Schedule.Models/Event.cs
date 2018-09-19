@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Fosol.Schedule.Models
 {
@@ -17,9 +15,9 @@ namespace Fosol.Schedule.Models
 
         public string ParentUrl { get; set; }
 
-        public DateTime StartDate { get; set; }
+        public DateTime StartOn { get; set; }
 
-        public DateTime EndDate { get; set; }
+        public DateTime EndOn { get; set; }
         #endregion
     }
 }

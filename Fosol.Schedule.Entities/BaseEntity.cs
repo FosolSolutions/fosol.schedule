@@ -11,7 +11,12 @@ namespace Fosol.Schedule.Entities
         /// <summary>
         /// get/set - Foreignkey to the user account who created this entity.
         /// </summary>
-        public int AddedById { get; set; }
+        public int? AddedById { get; set; }
+
+        /// <summary>
+        /// get/set - The user who added this record.
+        /// </summary>
+        public User AddedBy { get; set; }
 
         /// <summary>
         /// get/set - When this entity was created.
@@ -22,6 +27,11 @@ namespace Fosol.Schedule.Entities
         /// get/set - Foreignkey to the user account who updated this entity last.
         /// </summary>
         public int? UpdatedById { get; set; }
+
+        /// <summary>
+        /// get/set - The user who last updated this record.
+        /// </summary>
+        public User UpdatedBy { get; set; }
 
         /// <summary>
         /// get/set - When this entity was updated last.

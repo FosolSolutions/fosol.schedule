@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace Fosol.Schedule.DAL
+namespace Fosol.Schedule.DAL.Interfaces
 {
     /// <summary>
     /// IReadableService interface, provides generic 

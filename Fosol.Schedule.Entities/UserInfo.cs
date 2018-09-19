@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace Fosol.Schedule.Entities
 {
@@ -16,9 +15,9 @@ namespace Fosol.Schedule.Entities
         public int UserId { get; set; }
 
         /// <summary>
-        /// get/set - A user name to display for other users to see.
+        /// get/set - The user who this info belongs to.
         /// </summary>
-        public string DisplayName { get; set; }
+        public User User { get; set; }
 
         /// <summary>
         /// get/set - The persons title.
@@ -43,7 +42,7 @@ namespace Fosol.Schedule.Entities
         /// <summary>
         /// get/set - The persons birthdate.
         /// </summary>
-        public DateTime? BirthDate { get; set; }
+        public DateTime? Birthdate { get; set; }
 
         /// <summary>
         /// get/set - A description of the person.
@@ -56,9 +55,19 @@ namespace Fosol.Schedule.Entities
         public Gender? Gender { get; set; }
 
         /// <summary>
-        /// get/set - A collection of addresses for this user.
+        /// get - A collection of user contact information.
         /// </summary>
-        public ICollection<UserAddress> Addresses { get; set; } = new List<UserAddress>();
+        public ICollection<ContactInfo> ContactInformation { get; set; } = new List<ContactInfo>();
+
+        /// <summary>
+        /// get - A collection of addresses for this user.
+        /// </summary>
+        public ICollection<Address> Addresses { get; set; } = new List<Address>();
+
+        /// <summary>
+        /// get - A collection of attributes for this user.
+        /// </summary>
+        public ICollection<Attribute> Attributes { get; set; } = new List<Attribute>();
         #endregion
 
         #region Constructors
@@ -71,35 +80,27 @@ namespace Fosol.Schedule.Entities
         /// <summary>
         /// Creates anew instance of a UserInfo object, and initializes it with the specified properties.
         /// </summary>
-        /// <param name="userId"></param>
+        /// <param name="user"></param>
         /// <param name="displayName"></param>
-        public UserInfo(int userId, string displayName)
+        public UserInfo(User user, string displayName)
         {
             if (String.IsNullOrWhiteSpace(displayName))
                 throw new ArgumentNullException(nameof(displayName));
 
-            this.UserId = userId;
-            this.DisplayName = displayName;
+            this.UserId = user?.Id ?? throw new ArgumentNullException(nameof(user));
+            this.User = user;
         }
 
         /// <summary>
         /// Creates anew instance of a UserInfo object, and initializes it with the specified properties.
         /// </summary>
-        /// <param name="userId"></param>
+        /// <param name="user"></param>
         /// <param name="firstName"></param>
         /// <param name="lastName"></param>
-        public UserInfo(int userId, string firstName, string lastName)
+        public UserInfo(User user, string firstName, string lastName) : this(user, $"{firstName} {lastName}")
         {
-            if (String.IsNullOrWhiteSpace(firstName))
-                throw new ArgumentNullException(nameof(firstName));
-
-            if (String.IsNullOrWhiteSpace(lastName))
-                throw new ArgumentNullException(nameof(lastName));
-
-            this.UserId = userId;
             this.FirstName = firstName;
             this.LastName = lastName;
-            this.DisplayName = $"{firstName} {lastName}";
         }
         #endregion
     }

@@ -46,13 +46,13 @@ namespace Fosol.Schedule.Entities
         /// get/set - An event always has a start date and time.
         /// </summary>
         [Required]
-        public DateTime StartDate { get; set; }
+        public DateTime StartOn { get; set; }
 
         /// <summary>
         /// get/set - An event always has an end date and time.
         /// </summary>
         [Required]
-        public DateTime EndDate { get; set; }
+        public DateTime EndOn { get; set; }
 
         /// <summary>
         /// get - A collection of criteria which are required to participate in the events.
@@ -94,8 +94,8 @@ namespace Fosol.Schedule.Entities
             this.CalendarId = calendarId;
             this.Name = name;
             this.Key = Guid.NewGuid();
-            this.StartDate = start;
-            this.EndDate = end;
+            this.StartOn = start;
+            this.EndOn = end;
         }
         #endregion
     }

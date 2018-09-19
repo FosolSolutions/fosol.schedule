@@ -1,7 +1,7 @@
-﻿using System;
+﻿using Fosol.Schedule.DAL.Interfaces;
+using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace Fosol.Schedule.DAL
 {
@@ -34,6 +34,42 @@ namespace Fosol.Schedule.DAL
         public IEnumerable<Models.Calendar> Get()
         {
             return this.Source.Context.Calendars.Select(c => this.Source.Mapper.Map<Entities.Calendar, Models.Calendar>(c));
+        }
+
+        /// <summary>
+        /// Get the calendar for the specified 'id'.
+        /// Validates whether the current user is authorized to view the calendar.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        public Models.Calendar Get(int id)
+        {
+            var calendar = this.Source.Context.Calendars.Find(id);
+
+            return this.Source.Mapper.Map<Models.Calendar>(calendar);
+        }
+
+        /// <summary>
+        /// Get the calendar for the specified 'id'.
+        /// Valdiates whether the current user is authorized to view the calendar.
+        /// Includes events for the specified timeframe.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <param name="startOn"></param>
+        /// <param name="endDate"></param>
+        /// <returns></returns>
+        public Models.Calendar Get(int id, DateTime startOn, DateTime endOn)
+        {
+            // Convert datetime to utc.
+            var start = startOn.ToUniversalTime();
+            var end = endOn.ToUniversalTime();
+
+            var calendar = Get(id);
+            var events = this.Source.Context.Events.Where(e => e.CalendarId == id && e.StartOn >= start && e.EndOn <= end);
+
+            calendar.Events = events.Select(e => this.Source.Mapper.Map<Models.Event>(e));
+
+            return calendar;
         }
         #endregion
     }

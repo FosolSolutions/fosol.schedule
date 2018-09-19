@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 
 namespace Fosol.Schedule.Entities
 {
@@ -31,6 +30,11 @@ namespace Fosol.Schedule.Entities
         public UserState State { get; set; } = UserState.Enabled;
 
         /// <summary>
+        /// get/set - The user information.
+        /// </summary>
+        public UserInfo Info { get; set; }
+
+        /// <summary>
         /// get - A collection of all the accounts this user owns.
         /// </summary>
         public ICollection<Account> Accounts { get; set; } = new List<Account>();
@@ -41,7 +45,7 @@ namespace Fosol.Schedule.Entities
         public ICollection<AccountRole> AccountRoles { get; set; } = new List<AccountRole>();
 
         /// <summary>
-        /// get/set - A collection of all the participants associated with this user.
+        /// get - A collection of all the participants associated with this user.
         /// </summary>
         public ICollection<Participant> Participants { get; set; } = new List<Participant>();
         #endregion

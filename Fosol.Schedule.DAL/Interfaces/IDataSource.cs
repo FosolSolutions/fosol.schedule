@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
-namespace Fosol.Schedule.DAL
+namespace Fosol.Schedule.DAL.Interfaces
 {
     /// <summary>
     /// IDataSource interface, provides a way to connect, query and manage data in the datasource.

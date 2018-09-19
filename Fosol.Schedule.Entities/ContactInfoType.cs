@@ -6,28 +6,33 @@
     public enum ContactInfoType
     {
         /// <summary>
-        /// An email address.
+        /// Other type...
         /// </summary>
-        Email = 0,
+        Other = 0,
 
         /// <summary>
-        /// A phone number.
+        /// An email address.
         /// </summary>
-        Phone = 1,
+        Email = 1,
+
+        /// <summary>
+        /// A mobile phone number.
+        /// </summary>
+        Mobile = 2,
+
+        /// <summary>
+        /// A home phone number.
+        /// </summary>
+        Phone = 3,
 
         /// <summary>
         /// A pager number.
         /// </summary>
-        Pager = 2,
+        Pager = 4,
 
         /// <summary>
         /// A fax number.
         /// </summary>
-        Fax = 3,
-
-        /// <summary>
-        /// Other type...
-        /// </summary>
-        Other = 4
+        Fax = 5
     }
 }

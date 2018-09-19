@@ -12,7 +12,7 @@ namespace Fosol.Schedule.Models
         /// <summary>
         /// get/set - Foreign key identifying which user created this entity.
         /// </summary>
-        public int AddedById { get; set; }
+        public int? AddedById { get; set; }
 
         /// <summary>
         /// get/set - When this entity was created.

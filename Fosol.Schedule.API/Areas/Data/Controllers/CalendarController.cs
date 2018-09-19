@@ -1,8 +1,6 @@
 ﻿using Fosol.Schedule.API.Helpers;
 using Fosol.Schedule.Models;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -39,14 +37,7 @@ namespace Fosol.Schedule.API.Areas.Data.Controllers
         [HttpGet("/[area]/calendars")]
         public IActionResult Calendars()
         {
-            var calendars = _calendars.Select(c => new
-            {
-                c.Id,
-                c.Key,
-                c.Name,
-                c.Description,
-                SelfUrl = $"/data/calendar/{c.Id}"
-            }).ToArray();
+            var calendars = _calendars.ToArray();
             return Ok(calendars);
         }
 
@@ -54,32 +45,36 @@ namespace Fosol.Schedule.API.Areas.Data.Controllers
         /// Returns the specified calendar and its events for the current week (or timespan).
         /// </summary>
         /// <param name="id">The primary key to identify the calendar.</param>
-        /// <param name="startDate">The start date for the calendar to return.  Defaults to now.</param>
-        /// <param name="endDate">The end date for the calendar to return.</param>
+        /// <param name="startOn">The start date for the calendar to return.  Defaults to now.</param>
+        /// <param name="endOn">The end date for the calendar to return.</param>
         /// <returns>A calendar with all events within the specified date range.</returns>
         [HttpGet("{id}")]
-        public IActionResult Calendar(int id, DateTime? startDate = null, DateTime? endDate = null)
+        public IActionResult Calendar(int id, DateTime? startOn = null, DateTime? endOn = null)
         {
-            var start = startDate ?? DateTime.UtcNow;
+            var start = startOn ?? DateTime.UtcNow;
             // Start at the beginning of the week.
             start = start.DayOfWeek == DayOfWeek.Sunday ? start : start.AddDays(-1 * (int)start.DayOfWeek);
-            var end = endDate ?? start.AddDays(7);
+            var end = endOn ?? start.AddDays(7);
             var calendar = _calendars.Where(c => c.Id == id).Select(c => new
             {
                 c.Id,
                 c.Key,
                 c.Name,
                 c.Description,
-                SelfUrl = $"/data/calendar/{c.Id}",
-                Events = c.Events.Where(e => e.StartDate >= start && e.EndDate <= end).Select(e => new
+                c.SelfUrl,
+                Events = c.Events.Where(e => e.StartOn >= start && e.EndOn <= end).Select(e => new
                 {
                     e.Id,
                     e.Name,
                     e.Description,
-                    e.StartDate,
-                    e.EndDate,
-                    SelfUrl = $"/data/calendar/event/{e.Id}"
-                })
+                    e.StartOn,
+                    e.EndOn,
+                    e.SelfUrl,
+                    e.ParentUrl
+                }),
+                c.AddedOn,
+                c.UpdatedOn,
+                c.RowVersion
             }).FirstOrDefault();
             return calendar != null ? Ok(calendar) : (IActionResult)NoContent();
         }
