@@ -39,7 +39,7 @@ namespace Fosol.Schedule.Entities
         { }
 
         /// <summary>
-        /// Creates a new instance of a Subscription object, and initializes it with the specified properties.
+        /// Creates a new instance of a Subscription object, and initializes it with the specified arguments.
         /// </summary>
         /// <param name="name"></param>
         /// <param name="description"></param>
@@ -47,6 +47,9 @@ namespace Fosol.Schedule.Entities
         {
             if (String.IsNullOrWhiteSpace(name))
                 throw new ArgumentNullException(nameof(name));
+
+            if (String.IsNullOrWhiteSpace(description))
+                throw new ArgumentNullException(nameof(description));
 
             this.Name = name;
             this.Description = description;

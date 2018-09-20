@@ -72,15 +72,17 @@ namespace Fosol.Schedule.Entities
         /// <summary>
         /// Creates a new instance of an Account object, and initializes it with the specified properties.
         /// </summary>
-        /// <param name="ownerId"></param>
+        /// <param name="owner"></param>
         /// <param name="kind"></param>
-        /// <param name="subscriptionId"></param>
-        public Account(int ownerId, AccountKind kind, int subscriptionId)
+        /// <param name="subscription"></param>
+        public Account(User owner, AccountKind kind, Subscription subscription)
         {
-            this.Key = Guid.NewGuid();
-            this.OwnerId = ownerId;
+            this.OwnerId = owner?.Id ?? throw new ArgumentNullException(nameof(owner));
+            this.Owner = owner;
+            this.SubscriptionId = subscription?.Id ?? throw new ArgumentNullException(nameof(subscription));
+            this.Subscription = subscription;
             this.Kind = kind;
-            this.SubscriptionId = subscriptionId;
+            this.Key = Guid.NewGuid();
         }
         #endregion
     }

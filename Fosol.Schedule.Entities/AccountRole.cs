@@ -28,7 +28,7 @@ namespace Fosol.Schedule.Entities
         /// <summary>
         /// get/set - The privileges this account role grants to a user.
         /// </summary>
-        public AccountPrivilege Privilege { get; set; }
+        public AccountPrivilege Privileges { get; set; }
 
         /// <summary>
         /// get/set - Foreign key to the account this role belongs to.
@@ -48,10 +48,27 @@ namespace Fosol.Schedule.Entities
 
         #region Constructors
         /// <summary>
-        /// Creates a new instances of an AccountRole object.
+        /// Creates a new instance of an AccountRole object.
         /// </summary>
         public AccountRole()
         { }
+
+        /// <summary>
+        /// Creates a new instance of an AccountRole object, and initializes with the specified arguments.
+        /// </summary>
+        /// <param name="account"></param>
+        /// <param name="name"></param>
+        /// <param name="privileges"></param>
+        public AccountRole(Account account, string name, AccountPrivilege privileges)
+        {
+            if (String.IsNullOrWhiteSpace(name))
+                throw new ArgumentException($"Argument '{nameof(name)}' is required and cannot be nullable or empty.");
+
+            this.AccountId = account?.Id ?? throw new ArgumentNullException(nameof(account));
+            this.Account = account;
+            this.Name = name;
+            this.Privileges = privileges;
+        }
         #endregion
     }
 }

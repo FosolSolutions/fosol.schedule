@@ -64,14 +64,15 @@ namespace Fosol.Schedule.Entities
         /// <summary>
         /// Creates a new instance of a <typeparamref name="Calendar"/> object, and initializes it with the specified properties.
         /// </summary>
-        /// <param name="accountId"></param>
+        /// <param name="account"></param>
         /// <param name="name"></param>
-        public Calendar(int accountId, string name)
+        public Calendar(Account account, string name)
         {
             if (String.IsNullOrWhiteSpace(name))
                 throw new ArgumentNullException(nameof(name));
 
-            this.AccountId = accountId;
+            this.AccountId = account?.Id ?? throw new ArgumentNullException(nameof(account));
+            this.Account = account;
             this.Name = name;
             this.Key = Guid.NewGuid();
         }

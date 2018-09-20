@@ -40,9 +40,9 @@ namespace Fosol.Schedule.Entities
         public ICollection<Account> Accounts { get; set; } = new List<Account>();
 
         /// <summary>
-        /// get - A collection of all the account roles this user is part of.
+        /// get - A collection of all the roles this user is part of.
         /// </summary>
-        public ICollection<AccountRole> AccountRoles { get; set; } = new List<AccountRole>();
+        public ICollection<AccountRole> Roles { get; set; } = new List<AccountRole>();
 
         /// <summary>
         /// get - A collection of all the participants associated with this user.
