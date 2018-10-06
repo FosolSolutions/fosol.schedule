@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Fosol.Schedule.Entities
 {
@@ -12,11 +14,13 @@ namespace Fosol.Schedule.Entities
         /// <summary>
         /// get/set - Primary key uses IDENITTY.
         /// </summary>
+        [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
 
         /// <summary>
         /// get/set - A unique key to identify this account.
         /// </summary>
+        [Required]
         public Guid Key { get; set; }
 
         /// <summary>
@@ -27,6 +31,7 @@ namespace Fosol.Schedule.Entities
         /// <summary>
         /// get/set - The owner of this account.
         /// </summary>
+        [ForeignKey(nameof(OwnerId))]
         public User Owner { get; set; }
 
         /// <summary>
@@ -47,12 +52,13 @@ namespace Fosol.Schedule.Entities
         /// <summary>
         /// get/set - The current subscription for this account.
         /// </summary>
+        [ForeignKey(nameof(SubscriptionId))]
         public Subscription Subscription { get; set; }
 
         /// <summary>
         /// get - A collection of users associated with this account.
         /// </summary>
-        public ICollection<User> Users { get; set; } = new List<User>();
+        public ICollection<AccountUser> AccountUsers { get; set; } = new List<AccountUser>();
 
         /// <summary>
         /// get - A collection of all the roles for this account.

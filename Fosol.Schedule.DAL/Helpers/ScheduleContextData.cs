@@ -24,9 +24,11 @@ namespace Fosol.Schedule.DAL.Helpers
 
             users.ForEach(user =>
             {
-                account.Users.Add(user);
-                user.Accounts.Add(account);
-                user.Roles.Add(admin);
+                account.AccountUsers.Add(new AccountUser(account, users[0]));
+                account.AccountUsers.Add(new AccountUser(account, users[1]));
+                user.AccountUsers.Add(new AccountUser(account, users[0]));
+                user.AccountUsers.Add(new AccountUser(account, users[1]));
+                user.UserAccountRoles.Add(new UserAccountRole(users[0], admin));
             });
 
             modelBuilder.Entity<User>().HasData(users);

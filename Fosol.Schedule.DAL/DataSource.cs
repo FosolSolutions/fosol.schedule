@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using Fosol.Schedule.DAL.Interfaces;
+using Fosol.Schedule.DAL.Services;
 using System;
 
 namespace Fosol.Schedule.DAL
@@ -27,6 +28,11 @@ namespace Fosol.Schedule.DAL
         /// get - The service to manage calendars.
         /// </summary>
         public ICalendarService Calendars { get; }
+
+        /// <summary>
+        /// get - The service to manage events.
+        /// </summary>
+        public IEventService Events { get; }
         #endregion
 
         #region Constructors
@@ -41,6 +47,7 @@ namespace Fosol.Schedule.DAL
             {
             }).CreateMapper();
             this.Calendars = new CalendarService(this);
+            this.Events = new EventService(this);
         }
         #endregion
 

@@ -1,4 +1,5 @@
 ﻿using Fosol.Schedule.API.Helpers;
+using Fosol.Schedule.DAL.Interfaces;
 using Fosol.Schedule.Models;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -16,16 +17,17 @@ namespace Fosol.Schedule.API.Areas.Data.Controllers
     public sealed class CalendarController : Controller
     {
         #region Variables
-        private readonly List<Calendar> _calendars;
+        private readonly IDataSource _dataSource;
         #endregion
 
         #region Constructors
         /// <summary>
         /// Creates a new instance of a CalendarController object.
         /// </summary>
-        public CalendarController()
+        /// <param name="dataSource"></param>
+        public CalendarController(IDataSource dataSource)
         {
-            _calendars = CalendarHelper.CreateCalendars();
+            _dataSource = dataSource;
         }
         #endregion
 
@@ -34,10 +36,13 @@ namespace Fosol.Schedule.API.Areas.Data.Controllers
         /// Returns an array of all the calendars for the current user.
         /// </summary>
         /// <returns>An array calendar.</returns>
-        [HttpGet("/[area]/calendars")]
-        public IActionResult Calendars()
+        [HttpGet("/[area]/calendars/{page}")]
+        public IActionResult Calendars(int page)
         {
-            var calendars = _calendars.ToArray();
+            var skip = page <= 0 ? 0 : page - 1;
+            // TODO: Configurable 'take'.
+            // TODO: no tracking.
+            var calendars = _dataSource.Calendars.Get(skip, 10);
             return Ok(calendars);
         }
 
@@ -55,27 +60,9 @@ namespace Fosol.Schedule.API.Areas.Data.Controllers
             // Start at the beginning of the week.
             start = start.DayOfWeek == DayOfWeek.Sunday ? start : start.AddDays(-1 * (int)start.DayOfWeek);
             var end = endOn ?? start.AddDays(7);
-            var calendar = _calendars.Where(c => c.Id == id).Select(c => new
-            {
-                c.Id,
-                c.Key,
-                c.Name,
-                c.Description,
-                c.SelfUrl,
-                Events = c.Events.Where(e => e.StartOn >= start && e.EndOn <= end).Select(e => new
-                {
-                    e.Id,
-                    e.Name,
-                    e.Description,
-                    e.StartOn,
-                    e.EndOn,
-                    e.SelfUrl,
-                    e.ParentUrl
-                }),
-                c.AddedOn,
-                c.UpdatedOn,
-                c.RowVersion
-            }).FirstOrDefault();
+
+            // TODO: no tracking.
+            var calendar = _dataSource.Calendars.Get(id, startOn, endOn);
             return calendar != null ? Ok(calendar) : (IActionResult)NoContent();
         }
         #endregion

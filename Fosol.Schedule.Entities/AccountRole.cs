@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Fosol.Schedule.Entities
 {
@@ -13,16 +14,19 @@ namespace Fosol.Schedule.Entities
         /// <summary>
         /// get/set - Primary key uses IDENTITY.
         /// </summary>
+        [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
 
         /// <summary>
         /// get/set - A unique name to identify this account role.
         /// </summary>
+        [Required, MaxLength(100)]
         public string Name { get; set; }
 
         /// <summary>
         /// get/set - A description of this account role.
         /// </summary>
+        [MaxLength(2000)]
         public string Description { get; set; }
 
         /// <summary>
@@ -38,12 +42,13 @@ namespace Fosol.Schedule.Entities
         /// <summary>
         /// get/set - The account this role belongs to.
         /// </summary>
+        [ForeignKey(nameof(AccountId))]
         public Account Account { get; set; }
 
         /// <summary>
         /// get - A collection of all the users in this account that have this role.
         /// </summary>
-        public ICollection<User> Users { get; set; } = new List<User>();
+        public ICollection<UserAccountRole> UserAccountRoles { get; set; } = new List<UserAccountRole>();
         #endregion
 
         #region Constructors

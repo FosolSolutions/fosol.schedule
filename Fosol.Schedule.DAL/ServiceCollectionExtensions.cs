@@ -10,7 +10,7 @@ namespace Fosol.Schedule.DAL
         {
             var connectionString = configuration.GetConnectionString("Schedule") ?? @"Server=(localdb)\mssqllocaldb;Database=EFProviders.InMemory;Trusted_Connection=True;ConnectRetryCount=0";
             var datasource = new DataSource(connectionString);
-            service.AddScoped<IDataSource>((provider) => datasource);
+            service.AddScoped<IDataSource>(provider => datasource);
             return service;
         }
     }

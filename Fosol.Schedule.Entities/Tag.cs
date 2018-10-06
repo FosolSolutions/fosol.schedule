@@ -6,13 +6,13 @@ namespace Fosol.Schedule.Entities
     /// <summary>
     /// Tag class, provides a way to manage a list of tags in the datasource.
     /// </summary>
-    public class Tag
+    public class Tag : BaseEntity
     {
         #region Properties
         /// <summary>
         /// get/set - Primary key, unique category type [Category|...]
         /// </summary>
-        public string Type { get; set; }
+        public string Key { get; set; }
 
         /// <summary>
         /// get/set - Primary key, unique category value (i.e. Sports)
@@ -35,17 +35,17 @@ namespace Fosol.Schedule.Entities
         /// <summary>
         /// Creates a new instance of a Tag object, and initalizes it with the specified properties.
         /// </summary>
-        /// <param name="type"></param>
+        /// <param name="key"></param>
         /// <param name="value"></param>
-        public Tag(string type, string value)
+        public Tag(string key, string value)
         {
-            if (String.IsNullOrWhiteSpace(type))
-                throw new ArgumentNullException(nameof(type));
+            if (String.IsNullOrWhiteSpace(key))
+                throw new ArgumentNullException(nameof(key));
 
             if (String.IsNullOrWhiteSpace(value))
                 throw new ArgumentNullException(nameof(value));
 
-            this.Type = type;
+            this.Key = key;
             this.Value = value;
         }
         #endregion

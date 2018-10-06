@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Fosol.Schedule.Entities
 {
@@ -13,6 +14,7 @@ namespace Fosol.Schedule.Entities
         /// <summary>
         /// get/set - Primary key uses IDENTITY.  Unique way to identify the event.
         /// </summary>
+        [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
 
         /// <summary>
@@ -23,11 +25,13 @@ namespace Fosol.Schedule.Entities
         /// <summary>
         /// get/set - The calendar this event belongs to.
         /// </summary>
+        [ForeignKey(nameof(CalendarId))]
         public Calendar Calendar { get; set; }
 
         /// <summary>
         /// get/set - A unique key to identify this event.
         /// </summary>
+        [Required]
         public Guid Key { get; set; }
 
         /// <summary>
@@ -57,7 +61,7 @@ namespace Fosol.Schedule.Entities
         /// <summary>
         /// get - A collection of criteria which are required to participate in the events.
         /// </summary>
-        public ICollection<Criteria> Criteria { get; set; }
+        public ICollection<EventCriteria> EventCriteria { get; set; } = new List<EventCriteria>();
 
         /// <summary>
         /// get - A collection of activities within this event.
@@ -67,7 +71,7 @@ namespace Fosol.Schedule.Entities
         /// <summary>
         /// get - A collection of tags associated with this event.
         /// </summary>
-        public ICollection<Tag> Tags { get; set; } = new List<Tag>();
+        public ICollection<EventTag> EventTags { get; set; } = new List<EventTag>();
         #endregion
 
         #region Constructors

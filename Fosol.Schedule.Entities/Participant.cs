@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Fosol.Schedule.Entities
 {
@@ -12,17 +14,19 @@ namespace Fosol.Schedule.Entities
     /// The goal is to provide a way to manage a participant list of people who may or may not have user accounts within the application.
     /// A participant can be managed by the owner of the calendar, or the user.
     /// </remarks>
-    public class Participant
+    public class Participant : BaseEntity
     {
         #region Properties
         /// <summary>
         /// get/set - Primary key uses IDENTITY.
         /// </summary>
+        [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
 
         /// <summary>
         /// get/set - A unique key to identify this participant.
         /// </summary>
+        [Required]
         public Guid Key { get; set; }
 
         /// <summary>
@@ -38,6 +42,7 @@ namespace Fosol.Schedule.Entities
         /// <summary>
         /// get/set - The user account that is represented by this participant.
         /// </summary>
+        [ForeignKey(nameof(UserId))]
         public User User { get; set; }
 
         /// <summary>
@@ -48,31 +53,37 @@ namespace Fosol.Schedule.Entities
         /// <summary>
         /// get/set - The calendar this participant belongs to.
         /// </summary>
+        [ForeignKey(nameof(CalendarId))]
         public Calendar Calendar { get; set; }
 
         /// <summary>
         /// get/set - A participants name to display for others to see.  This should be unique within each Calendar.
         /// </summary>
+        [Required, MaxLength(100)]
         public string DisplayName { get; set; }
 
         /// <summary>
         /// get/set - The persons title.
         /// </summary>
+        [MaxLength(100)]
         public string Title { get; set; }
 
         /// <summary>
         /// get/set - The persons first name.
         /// </summary>
+        [Required, MaxLength(100)]
         public string FirstName { get; set; }
 
         /// <summary>
         /// get/set - The persons middle name.
         /// </summary>
+        [MaxLength(100)]
         public string MiddleName { get; set; }
 
         /// <summary>
         /// get/set - The persons last name.
         /// </summary>
+        [Required, MaxLength(100)]
         public string LastName { get; set; }
 
         /// <summary>
@@ -88,17 +99,17 @@ namespace Fosol.Schedule.Entities
         /// <summary>
         /// get - A collection of information about the participant.
         /// </summary>
-        public ICollection<ContactInfo> Information { get; set; } = new List<ContactInfo>();
+        public ICollection<ParticipantContactInfo> ParticipantContactInfos { get; set; } = new List<ParticipantContactInfo>();
 
         /// <summary>
         /// get - A collection of addresses for the participant.
         /// </summary>
-        public ICollection<Address> Addresses { get; set; } = new List<Address>();
+        public ICollection<ParticipantAddress> ParticipantAddresses { get; set; } = new List<ParticipantAddress>();
 
         /// <summary>
         /// get - A collection of attributes for the participant.
         /// </summary>
-        public ICollection<Attribute> Attributes { get; set; } = new List<Attribute>();
+        public ICollection<ParticipantAttribute> ParticipantAttributes { get; set; } = new List<ParticipantAttribute>();
         #endregion
 
         #region Constructors

@@ -1,5 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Fosol.Schedule.Entities
 {
@@ -12,11 +13,13 @@ namespace Fosol.Schedule.Entities
         /// <summary>
         /// get/set - Primary key and foreign key to the user.
         /// </summary>
+        [Key, DatabaseGenerated(DatabaseGeneratedOption.None)]
         public int UserId { get; set; }
 
         /// <summary>
         /// get/set - The user who this info belongs to.
         /// </summary>
+        [ForeignKey(nameof(UserId))]
         public User User { get; set; }
 
         /// <summary>
@@ -53,21 +56,6 @@ namespace Fosol.Schedule.Entities
         /// get/set - The perons gender.
         /// </summary>
         public Gender? Gender { get; set; }
-
-        /// <summary>
-        /// get - A collection of user contact information.
-        /// </summary>
-        public ICollection<ContactInfo> ContactInformation { get; set; } = new List<ContactInfo>();
-
-        /// <summary>
-        /// get - A collection of addresses for this user.
-        /// </summary>
-        public ICollection<Address> Addresses { get; set; } = new List<Address>();
-
-        /// <summary>
-        /// get - A collection of attributes for this user.
-        /// </summary>
-        public ICollection<Attribute> Attributes { get; set; } = new List<Attribute>();
         #endregion
 
         #region Constructors

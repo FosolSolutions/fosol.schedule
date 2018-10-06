@@ -3,7 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace Fosol.Schedule.DAL
+namespace Fosol.Schedule.DAL.Services
 {
     /// <summary>
     /// CalendarService sealed class, provides a way to manage calendars in the datasource.
@@ -30,10 +30,12 @@ namespace Fosol.Schedule.DAL
         /// <summary>
         /// Get all the calendars owned by the current user.
         /// </summary>
+        /// <param name="skip"></param>
+        /// <param name="take"></param>
         /// <returns></returns>
-        public IEnumerable<Models.Calendar> Get()
+        public IEnumerable<Models.Calendar> Get(int skip, int take)
         {
-            return this.Source.Context.Calendars.Select(c => this.Source.Mapper.Map<Entities.Calendar, Models.Calendar>(c));
+            return this.Source.Context.Calendars.Skip(skip).Take(take).Select(c => this.Source.Mapper.Map<Entities.Calendar, Models.Calendar>(c));
         }
 
         /// <summary>
@@ -44,7 +46,7 @@ namespace Fosol.Schedule.DAL
         /// <returns></returns>
         public Models.Calendar Get(int id)
         {
-            var calendar = this.Source.Context.Calendars.Find(id);
+            var calendar = this.Find(id);
 
             return this.Source.Mapper.Map<Models.Calendar>(calendar);
         }

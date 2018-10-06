@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Text;
 
 namespace Fosol.Schedule.Entities
@@ -14,6 +15,7 @@ namespace Fosol.Schedule.Entities
         /// <summary>
         /// get/set - Primary key uses IDENTITY.
         /// </summary>
+        [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
 
         /// <summary>
@@ -22,13 +24,21 @@ namespace Fosol.Schedule.Entities
         public int EventId { get; set; }
 
         /// <summary>
+        /// get/set - The parent event.
+        /// </summary>
+        [ForeignKey(nameof(EventId))]
+        public Event Event { get; set; }
+
+        /// <summary>
         /// get/set - A unique key to identify this activity.
         /// </summary>
+        [Required]
         public Guid Key { get; set; }
 
         /// <summary>
         /// get/set - A unique name within an event to identify this activity.
         /// </summary>
+        [Required, MaxLength(250)]
         public string Name { get; set; }
 
         /// <summary>
@@ -50,12 +60,12 @@ namespace Fosol.Schedule.Entities
         /// <summary>
         /// get/set - A collection of openings within this activity.
         /// </summary>
-        public ICollection<Opening> Openings { get; set; }
+        public ICollection<Opening> Openings { get; set; } = new List<Opening>();
 
         /// <summary>
         /// get/set - A collection of criteria within this activity.
         /// </summary>
-        public ICollection<Criteria> Criteria { get; set; }
+        public ICollection<ActivityCriteria> ActivityCriteria { get; set; } = new List<ActivityCriteria>();
         #endregion
 
         #region Constructors

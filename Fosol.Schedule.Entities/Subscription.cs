@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.ComponentModel.DataAnnotations.Schema;
 using System.Text;
 
 namespace Fosol.Schedule.Entities
@@ -13,16 +15,19 @@ namespace Fosol.Schedule.Entities
         /// <summary>
         /// get/set - Primary key uses IDENTITY.
         /// </summary>
+        [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
 
         /// <summary>
         /// get/set - A unique name to identify the subscription.
         /// </summary>
+        [Required, MaxLength(100)]
         public string Name { get; set; }
 
         /// <summary>
         /// get/set - A description of this subscription.
         /// </summary>
+        [MaxLength(2000)]
         public string Description { get; set; }
 
         /// <summary>

@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Fosol.Schedule.Entities
 {
@@ -16,6 +17,7 @@ namespace Fosol.Schedule.Entities
         /// <summary>
         /// get/set - The user who added this record.
         /// </summary>
+        [ForeignKey(nameof(AddedById))]
         public User AddedBy { get; set; }
 
         /// <summary>
@@ -31,6 +33,7 @@ namespace Fosol.Schedule.Entities
         /// <summary>
         /// get/set - The user who last updated this record.
         /// </summary>
+        [ForeignKey(nameof(UpdatedById))]
         public User UpdatedBy { get; set; }
 
         /// <summary>
