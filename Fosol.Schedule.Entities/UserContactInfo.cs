@@ -49,9 +49,7 @@ namespace Fosol.Schedule.Entities
         public UserContactInfo(User user, ContactInfo info)
         {
             this.UserId = user?.Id ?? throw new ArgumentNullException(nameof(user));
-            this.User = user;
             this.ContactInfoId = info?.Id ?? throw new ArgumentNullException(nameof(info));
-            this.ContactInfo = info;
         }
         #endregion
     }

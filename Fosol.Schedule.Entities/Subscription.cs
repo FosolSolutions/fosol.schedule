@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Text;
 
 namespace Fosol.Schedule.Entities
 {
@@ -33,7 +32,17 @@ namespace Fosol.Schedule.Entities
         /// <summary>
         /// get/set - The current state of this subscription.
         /// </summary>
-        public SubscriptionState State { get; set; }
+        public SubscriptionState State { get; set; } = SubscriptionState.Enabled;
+
+        /// <summary>
+        /// get/set - Foreign key do the user who added this subscription.
+        /// </summary>
+        public new int? AddedById { get; set; }
+
+        /// <summary>
+        /// get - A Collection of accounts using this subscription.
+        /// </summary>
+        public ICollection<Account> Accounts { get; set; } = new List<Account>();
         #endregion
 
         #region Constructors

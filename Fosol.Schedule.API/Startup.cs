@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
@@ -17,6 +18,7 @@ namespace Fosol.Schedule.API
     public class Startup
     {
         #region Variables
+        private readonly ILoggerFactory _loggerFactory;
         private readonly ILogger _logger;
         #endregion
 
@@ -25,6 +27,11 @@ namespace Fosol.Schedule.API
         /// get - The program configuration.
         /// </summary>
         public IConfiguration Configuration { get; }
+
+        /// <summary>
+        /// get - The hosting environment.
+        /// </summary>
+        public IHostingEnvironment Environment { get; }
         #endregion
 
         #region Constructors
@@ -33,11 +40,13 @@ namespace Fosol.Schedule.API
         /// </summary>
         /// <param name="env"></param>
         /// <param name="configuration"></param>
-        /// <param name="logger"></param>
-        public Startup(IHostingEnvironment env, IConfiguration configuration, ILoggerFactory logger)
+        /// <param name="loggerFactory"></param>
+        public Startup(IHostingEnvironment env, IConfiguration configuration, ILoggerFactory loggerFactory)
         {
             this.Configuration = configuration;
-            _logger = logger.CreateLogger<Startup>();
+            this.Environment = env;
+            _loggerFactory = loggerFactory;
+            _logger = loggerFactory.CreateLogger<Startup>();
 
             _logger.LogInformation("Application starting");
         }
@@ -52,11 +61,13 @@ namespace Fosol.Schedule.API
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddOptions();
+
             services.Configure<CookiePolicyOptions>(options =>
             {
                 options.CheckConsentNeeded = context => true;
                 options.MinimumSameSitePolicy = SameSiteMode.None;
             });
+
             services.AddMvc(options =>
             {
 
@@ -67,6 +78,7 @@ namespace Fosol.Schedule.API
                 options.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
                 options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
             });
+
             services.AddCors(options =>
             {
                 options.AddPolicy("development", builder =>
@@ -77,7 +89,30 @@ namespace Fosol.Schedule.API
                         .AllowCredentials();
                 });
             });
-            services.AddDataSource(this.Configuration);
+
+            //services.AddDbContext<Data.TestContext>(optionsBuilder =>
+            //{
+            //    var connectionString = this.Configuration.GetConnectionString("Schedule") ?? @"Server=(localdb)\mssqllocaldb;Database=EFProviders.InMemory;Trusted_Connection=True;ConnectRetryCount=0";
+            //    optionsBuilder.UseApplicationServiceProvider(services.BuildServiceProvider());
+            //    optionsBuilder.UseLoggerFactory(_loggerFactory);
+            //    optionsBuilder.UseSqlServer(connectionString);
+            //    if (this.Environment.IsDevelopment())
+            //    {
+            //        optionsBuilder.EnableSensitiveDataLogging();
+            //    }
+            //});
+            services.AddDataSource(optionsBuilder =>
+            {
+                var connectionString = this.Configuration.GetConnectionString("Schedule") ?? @"Server=(localdb)\mssqllocaldb;Database=EFProviders.InMemory;Trusted_Connection=True;ConnectRetryCount=0";
+                optionsBuilder.UseApplicationServiceProvider(services.BuildServiceProvider());
+                optionsBuilder.UseLoggerFactory(_loggerFactory);
+                optionsBuilder.UseSqlServer(connectionString);
+                if (this.Environment.IsDevelopment())
+                {
+                    optionsBuilder.EnableSensitiveDataLogging();
+                }
+                //optionsBuilder.UseInMemoryDatabase("Schedule", options => { });
+            });
         }
 
         /// <summary>
@@ -97,6 +132,14 @@ namespace Fosol.Schedule.API
                 app.UseHsts();
             }
 
+            //using (var scope = app.ApplicationServices.GetRequiredService<IServiceScopeFactory>().CreateScope())
+            //{
+            //    var context = scope.ServiceProvider.GetRequiredService<Data.TestContext>();
+            //    context.Database.EnsureCreated();
+            //    //context.Database.Migrate();
+            //    //context.Database.EnsureDeleted();
+            //}
+            app.UseDataSource();
             app.UseCors("development");
             app.UseHttpsRedirection();
             app.UseStatusCodePagesWithReExecute("/Error/{0}");

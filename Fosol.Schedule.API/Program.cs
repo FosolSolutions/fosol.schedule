@@ -7,13 +7,26 @@ using Microsoft.Extensions.Logging;
 
 namespace Fosol.Schedule.API
 {
+    /// <summary>
+    /// 
+    /// </summary>
     public class Program
     {
+        #region Methods
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="args"></param>
         public static void Main(string[] args)
         {
             CreateWebHostBuilder(args).Build().Run();
         }
 
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="args"></param>
+        /// <returns></returns>
         private static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
             WebHost.CreateDefaultBuilder(args)
                 .UseContentRoot(Directory.GetCurrentDirectory())
@@ -50,5 +63,6 @@ namespace Fosol.Schedule.API
                     logging.AddDebug();
                 })
                 .UseStartup<Startup>();
+        #endregion
     }
 }

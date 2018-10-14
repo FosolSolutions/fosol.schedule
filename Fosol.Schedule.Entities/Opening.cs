@@ -66,17 +66,17 @@ namespace Fosol.Schedule.Entities
         /// <summary>
         /// get/set - A collection of participants.
         /// </summary>
-        public ICollection<OpeningParticipant> OpeningParticipants { get; set; } = new List<OpeningParticipant>();
+        public ICollection<OpeningParticipant> Participants { get; set; } = new List<OpeningParticipant>();
 
         /// <summary>
         /// get/set - A collection of applications.
         /// </summary>
-        public ICollection<OpeningParticipantApplication> OpeningParticipantApplications { get; set; } = new List<OpeningParticipantApplication>();
+        public ICollection<OpeningParticipantApplication> Applications { get; set; } = new List<OpeningParticipantApplication>();
 
         /// <summary>
         /// get/set - A collection of criteria.
         /// </summary>
-        public ICollection<OpeningCriteria> OpeningCriteria { get; set; } = new List<OpeningCriteria>();
+        public ICollection<OpeningCriteria> Criteria { get; set; } = new List<OpeningCriteria>();
         #endregion
     }
 }

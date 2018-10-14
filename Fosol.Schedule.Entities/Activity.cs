@@ -65,7 +65,7 @@ namespace Fosol.Schedule.Entities
         /// <summary>
         /// get/set - A collection of criteria within this activity.
         /// </summary>
-        public ICollection<ActivityCriteria> ActivityCriteria { get; set; } = new List<ActivityCriteria>();
+        public ICollection<ActivityCriteria> Criteria { get; set; } = new List<ActivityCriteria>();
         #endregion
 
         #region Constructors

@@ -29,7 +29,7 @@ namespace Fosol.Schedule.Entities
         /// get/set - The criteria associated with the opening.
         /// </summary>
         [ForeignKey(nameof(CriteriaId))]
-        public Criteria Criteria { get; set; }
+        public CriteriaObject Criteria { get; set; }
         #endregion
 
         #region Constructors
@@ -46,12 +46,10 @@ namespace Fosol.Schedule.Entities
         /// </summary>
         /// <param name="opening"></param>
         /// <param name="criteria"></param>
-        public OpeningCriteria(Opening opening, Criteria criteria)
+        public OpeningCriteria(Opening opening, CriteriaObject criteria)
         {
             this.OpeningId = opening?.Id ?? throw new ArgumentNullException(nameof(opening));
-            this.Opening = opening;
             this.CriteriaId = criteria?.Id ?? throw new ArgumentNullException(nameof(criteria));
-            this.Criteria = criteria;
         }
         #endregion
     }

@@ -54,8 +54,9 @@ namespace Fosol.Schedule.DAL.Services
             var start = startOn.ToUniversalTime();
             var end = endOn.ToUniversalTime();
 
-            var events = this.Source.Context.Events.Where(e => e.CalendarId == calendarId && e.StartOn >= start && e.EndOn <= end).Select(e => this.Source.Mapper.Map<Models.Event>(e));
-            return events;
+            //var events = this.Source.Context.Events.Where(e => e.CalendarId == calendarId && e.StartOn >= start && e.EndOn <= end).Select(e => this.Source.Mapper.Map<Models.Event>(e));
+            //return events;
+            return null;
         }
         #endregion
     }

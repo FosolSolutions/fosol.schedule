@@ -1,6 +1,4 @@
-﻿using Fosol.Schedule.API.Helpers;
-using Fosol.Schedule.DAL.Interfaces;
-using Fosol.Schedule.Models;
+﻿using Fosol.Schedule.DAL.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -43,6 +41,7 @@ namespace Fosol.Schedule.API.Areas.Data.Controllers
             // TODO: Configurable 'take'.
             // TODO: no tracking.
             var calendars = _dataSource.Calendars.Get(skip, 10);
+
             return Ok(calendars);
         }
 
@@ -62,8 +61,9 @@ namespace Fosol.Schedule.API.Areas.Data.Controllers
             var end = endOn ?? start.AddDays(7);
 
             // TODO: no tracking.
-            var calendar = _dataSource.Calendars.Get(id, startOn, endOn);
-            return calendar != null ? Ok(calendar) : (IActionResult)NoContent();
+            //var calendar = _dataSource.Calendars.Get(id, startOn, endOn);
+            //return calendar != null ? Ok(calendar) : (IActionResult)NoContent();
+            return null;
         }
         #endregion
     }

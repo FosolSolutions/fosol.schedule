@@ -41,6 +41,11 @@ namespace Fosol.Schedule.Entities
         public UserInfo Info { get; set; }
 
         /// <summary>
+        /// get/set - Foreign key do the user who added this subscription.
+        /// </summary>
+        public new int? AddedById { get; set; }
+
+        /// <summary>
         /// get - A collection of all the acounts owned by this user.
         /// </summary>
         public ICollection<Account> OwnedAccounts { get; set; } = new List<Account>();
@@ -48,12 +53,12 @@ namespace Fosol.Schedule.Entities
         /// <summary>
         /// get - A collection of all the accounts this user is associated with.
         /// </summary>
-        public ICollection<AccountUser> AccountUsers { get; set; } = new List<AccountUser>();
+        public ICollection<AccountUser> Accounts { get; set; } = new List<AccountUser>();
 
         /// <summary>
         /// get - A collection of all the roles this user is part of.
         /// </summary>
-        public ICollection<UserAccountRole> UserAccountRoles { get; set; } = new List<UserAccountRole>();
+        public ICollection<UserAccountRole> Roles { get; set; } = new List<UserAccountRole>();
 
         /// <summary>
         /// get - A collection of all the participants associated with this user.
@@ -63,12 +68,12 @@ namespace Fosol.Schedule.Entities
         /// <summary>
         /// get - A collection of user contact information.
         /// </summary>
-        public ICollection<ContactInfo> ContactInformation { get; set; } = new List<ContactInfo>();
+        public ICollection<UserContactInfo> ContactInformation { get; set; } = new List<UserContactInfo>();
 
         /// <summary>
         /// get - A collection of addresses for this user.
         /// </summary>
-        public ICollection<UserAddress> UserAddresses { get; set; } = new List<UserAddress>();
+        public ICollection<UserAddress> Addresses { get; set; } = new List<UserAddress>();
 
         /// <summary>
         /// get - A collection of attributes for this user.

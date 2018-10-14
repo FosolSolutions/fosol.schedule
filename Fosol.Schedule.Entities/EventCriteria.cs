@@ -29,7 +29,7 @@ namespace Fosol.Schedule.Entities
         /// get/set - The criteria associated with the event.
         /// </summary>
         [ForeignKey(nameof(CriteriaId))]
-        public Criteria Criteria { get; set; }
+        public CriteriaObject Criteria { get; set; }
         #endregion
 
         #region Constructors
@@ -46,12 +46,10 @@ namespace Fosol.Schedule.Entities
         /// </summary>
         /// <param name="calendarEvent"></param>
         /// <param name="criteria"></param>
-        public EventCriteria(Event calendarEvent, Criteria criteria)
+        public EventCriteria(Event calendarEvent, CriteriaObject criteria)
         {
             this.EventId = calendarEvent?.Id ?? throw new ArgumentNullException(nameof(calendarEvent));
-            this.Event = calendarEvent;
             this.CriteriaId = criteria?.Id ?? throw new ArgumentNullException(nameof(criteria));
-            this.Criteria = criteria;
         }
         #endregion
     }

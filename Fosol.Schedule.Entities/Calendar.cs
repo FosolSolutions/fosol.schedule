@@ -59,12 +59,12 @@ namespace Fosol.Schedule.Entities
         /// <summary>
         /// get - A collection of attributes for this calendar.
         /// </summary>
-        public ICollection<CalendarAttribute> CalendarAttributes { get; set; } = new List<CalendarAttribute>();
+        public ICollection<CalendarAttribute> Attributes { get; set; } = new List<CalendarAttribute>();
 
         /// <summary>
         /// get - A collection of criteria for this calendar.
         /// </summary>
-        public ICollection<CalendarCriteria> CalendarCriteria { get; set; } = new List<CalendarCriteria>();
+        public ICollection<CalendarCriteria> Criteria { get; set; } = new List<CalendarCriteria>();
         #endregion
 
         #region Constructors
@@ -87,7 +87,6 @@ namespace Fosol.Schedule.Entities
                 throw new ArgumentNullException(nameof(name));
 
             this.AccountId = account?.Id ?? throw new ArgumentNullException(nameof(account));
-            this.Account = account;
             this.Name = name;
             this.Key = Guid.NewGuid();
         }

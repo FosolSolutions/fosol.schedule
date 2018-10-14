@@ -6,16 +6,17 @@ namespace Fosol.Schedule.Entities
     /// <summary>
     /// Criteria class, provides a way to manage criteria in the datasource.
     /// </summary>
-    public abstract class Criteria : BaseEntity
+    public abstract class Criteria
     {
         #region Properties
-        /// <summary>
-        /// get/set - Primary key uses IDENTITY.
-        /// </summary>
-        [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
-        public int Id { get; set; }
-
         public LogicalOperator LogicalOperator { get; set; }
+        #endregion
+
+        #region Methods
+        public virtual string ToString(bool encode)
+        {
+            return base.ToString();
+        }
         #endregion
     }
 }

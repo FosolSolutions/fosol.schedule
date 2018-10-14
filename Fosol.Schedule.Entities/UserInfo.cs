@@ -76,7 +76,6 @@ namespace Fosol.Schedule.Entities
                 throw new ArgumentNullException(nameof(displayName));
 
             this.UserId = user?.Id ?? throw new ArgumentNullException(nameof(user));
-            this.User = user;
         }
 
         /// <summary>

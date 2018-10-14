@@ -5,15 +5,92 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Migrations\20181013162447_v01.00.00.cs" />
+    <Compile Remove="Migrations\20181013164035_v01.00.00.cs" />
+    <Compile Remove="Migrations\20181013164412_v01.00.00.cs" />
+    <Compile Remove="Migrations\20181013171023_v01.00.00.cs" />
+    <Compile Remove="Migrations\20181013182234_v01.00.00.cs" />
+    <Compile Remove="Migrations\20181013182622_v01.00.00.cs" />
+    <Compile Remove="Migrations\20181013183055_v01.00.00.cs" />
+    <Compile Remove="Migrations\20181013183425_v01.00.00.cs" />
+    <Compile Remove="Migrations\20181013183616_v01.00.00.cs" />
+    <Compile Remove="Migrations\20181013183930_v01.00.00.cs" />
+    <Compile Remove="Migrations\20181013184801_v01.00.00.cs" />
+    <Compile Remove="Migrations\20181013185025_v01.00.00.cs" />
+    <Compile Remove="Migrations\20181013185159_v01.00.00.cs" />
+    <Compile Remove="Migrations\20181013190110_v01.00.00.cs" />
+    <Compile Remove="Migrations\20181013192514_v01.00.00.cs" />
+    <Compile Remove="Migrations\20181013210433_v01.00.00.cs" />
+    <Compile Remove="Migrations\20181013211423_v01.00.00.cs" />
+    <Compile Remove="Migrations\20181013212845_v01.00.00.cs" />
+    <Compile Remove="Migrations\20181013213253_v01.00.00.cs" />
+    <Compile Remove="Migrations\20181013213421_v01.00.00.cs" />
+    <Compile Remove="Migrations\20181013213846_v01.00.00.cs" />
+    <Compile Remove="Migrations\20181013214949_v01.00.00.cs" />
+    <Compile Remove="Migrations\20181013215458_v01.00.00.cs" />
+    <Compile Remove="Migrations\20181013215915_v01.00.00.cs" />
+    <Compile Remove="Migrations\20181013220757_v01.00.00.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Remove="connectionstrings.json" />
+    <None Remove="Migrations\v01.00.00\PostDeploy\00 Subscriptions.sql" />
+    <None Remove="Migrations\v01.00.00\PostDeploy\00 Users.sql" />
+    <None Remove="Migrations\v01.00.00\PostDeploy\01 Accounts.sql" />
+    <None Remove="Migrations\v01.00.00\PostDeploy\02 AccountRoles.sql" />
+    <None Remove="Migrations\v01.00.00\PostDeploy\02 AccountUsers.sql" />
+    <None Remove="Migrations\v01.00.00\PostDeploy\02 UserAccountRoles.sql" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="connectionstrings.json">
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+    <Content Include="Migrations\v01.00.00\PostDeploy\02 UserAccountRoles.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\v01.00.00\PostDeploy\02 AccountUsers.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\v01.00.00\PostDeploy\02 AccountRoles.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\v01.00.00\PostDeploy\01 Accounts.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\v01.00.00\PostDeploy\00 Users.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Migrations\v01.00.00\PostDeploy\00 Subscriptions.sql">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="AutoMapper" Version="7.0.1" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="2.2.0-preview2-35157" />
-    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="2.1.2" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="2.1.4" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.SqlServer" Version="2.1.4" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.EnvironmentVariables" Version="2.1.1" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="2.1.1" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Fosol.Core\Fosol.Core.csproj" />
     <ProjectReference Include="..\Fosol.Schedule.Entities\Fosol.Schedule.Entities.csproj" />
     <ProjectReference Include="..\Fosol.Schedule.Models\Fosol.Schedule.Models.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="Microsoft.AspNetCore.Hosting.Abstractions">
+      <HintPath>..\..\..\..\Program Files\dotnet\sdk\NuGetFallbackFolder\microsoft.aspnetcore.hosting.abstractions\2.1.1\lib\netstandard2.0\Microsoft.AspNetCore.Hosting.Abstractions.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.AspNetCore.Http.Abstractions">
+      <HintPath>..\..\..\..\Program Files\dotnet\sdk\NuGetFallbackFolder\microsoft.aspnetcore.http.abstractions\2.1.1\lib\netstandard2.0\Microsoft.AspNetCore.Http.Abstractions.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Migrations\v01.00.00\PreDeploy\" />
   </ItemGroup>
 
 </Project>

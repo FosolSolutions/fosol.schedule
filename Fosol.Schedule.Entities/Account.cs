@@ -58,7 +58,7 @@ namespace Fosol.Schedule.Entities
         /// <summary>
         /// get - A collection of users associated with this account.
         /// </summary>
-        public ICollection<AccountUser> AccountUsers { get; set; } = new List<AccountUser>();
+        public ICollection<AccountUser> Users { get; set; } = new List<AccountUser>();
 
         /// <summary>
         /// get - A collection of all the roles for this account.
@@ -84,9 +84,7 @@ namespace Fosol.Schedule.Entities
         public Account(User owner, AccountKind kind, Subscription subscription)
         {
             this.OwnerId = owner?.Id ?? throw new ArgumentNullException(nameof(owner));
-            this.Owner = owner;
             this.SubscriptionId = subscription?.Id ?? throw new ArgumentNullException(nameof(subscription));
-            this.Subscription = subscription;
             this.Kind = kind;
             this.Key = Guid.NewGuid();
         }

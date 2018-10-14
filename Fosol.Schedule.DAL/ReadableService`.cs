@@ -13,14 +13,19 @@ namespace Fosol.Schedule.DAL
         where ModelT : class
     {
         #region Variables
-        private readonly DataSource _source;
+        private readonly IDataSource _source;
         #endregion
 
         #region Properties
         /// <summary>
         /// get - The datasource.
         /// </summary>
-        internal DataSource Source { get { return _source; } }
+        internal DataSource Source { get { return _source as DataSource; } }
+
+        /// <summary>
+        /// get - The DbContext used to communicate with the datasource.
+        /// </summary>
+        internal ScheduleContext Context { get { return this.Source.Context; } }
         #endregion
 
         #region Constructors
@@ -28,7 +33,7 @@ namespace Fosol.Schedule.DAL
         /// Creates a new instance of a ReadableService object, and initializes it with the specified properties.
         /// </summary>
         /// <param name="source"></param>
-        internal ReadableService(DataSource source)
+        internal ReadableService(IDataSource source)
         {
             _source = source;
         }
@@ -56,7 +61,7 @@ namespace Fosol.Schedule.DAL
         /// <returns></returns>
         protected EntityT Find(params object[] keyValues)
         {
-            var entity = _source.Context.Set<EntityT>().Find(keyValues);
+            var entity = this.Context.Set<EntityT>().Find(keyValues);
 
             if (entity == null)
                 throw new NoContentException(typeof(ModelT));

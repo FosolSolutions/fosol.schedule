@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Fosol.Schedule.Entities
@@ -12,7 +13,7 @@ namespace Fosol.Schedule.Entities
         /// <summary>
         /// get/set - Foreignkey to the user account who created this entity.
         /// </summary>
-        public int? AddedById { get; set; }
+        public int AddedById { get; set; }
 
         /// <summary>
         /// get/set - The user who added this record.
@@ -44,6 +45,7 @@ namespace Fosol.Schedule.Entities
         /// <summary>
         /// get/set - The timestamp that identifies the current state of this entity.  Used for concurrency.
         /// </summary>
+        [Timestamp]
         public byte[] RowVersion { get; set; }
         #endregion
     }

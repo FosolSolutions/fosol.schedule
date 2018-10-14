@@ -99,17 +99,17 @@ namespace Fosol.Schedule.Entities
         /// <summary>
         /// get - A collection of information about the participant.
         /// </summary>
-        public ICollection<ParticipantContactInfo> ParticipantContactInfos { get; set; } = new List<ParticipantContactInfo>();
+        public ICollection<ParticipantContactInfo> ContactInfos { get; set; } = new List<ParticipantContactInfo>();
 
         /// <summary>
         /// get - A collection of addresses for the participant.
         /// </summary>
-        public ICollection<ParticipantAddress> ParticipantAddresses { get; set; } = new List<ParticipantAddress>();
+        public ICollection<ParticipantAddress> Addresses { get; set; } = new List<ParticipantAddress>();
 
         /// <summary>
         /// get - A collection of attributes for the participant.
         /// </summary>
-        public ICollection<ParticipantAttribute> ParticipantAttributes { get; set; } = new List<ParticipantAttribute>();
+        public ICollection<ParticipantAttribute> Attributes { get; set; } = new List<ParticipantAttribute>();
         #endregion
 
         #region Constructors
@@ -127,9 +127,7 @@ namespace Fosol.Schedule.Entities
         public Participant(Calendar calendar, User user)
         {
             this.CalendarId = calendar?.Id ?? throw new ArgumentNullException(nameof(calendar));
-            this.Calendar = calendar;
             this.UserId = user?.Id ?? throw new ArgumentNullException(nameof(user));
-            this.User = user;
             this.FirstName = user.Info?.FirstName;
             this.MiddleName = user.Info?.MiddleName;
             this.LastName = user.Info?.LastName;
@@ -152,7 +150,6 @@ namespace Fosol.Schedule.Entities
                 throw new ArgumentException($"The argument '{nameof(displayName)}' is required and cannot be null or empty.");
 
             this.CalendarId = calendar?.Id ?? throw new ArgumentNullException(nameof(calendar));
-            this.Calendar = calendar;
             this.DisplayName = displayName;
             this.FirstName = firstName;
             this.LastName = lastName;

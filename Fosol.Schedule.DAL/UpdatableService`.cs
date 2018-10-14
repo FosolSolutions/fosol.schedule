@@ -22,7 +22,7 @@ namespace Fosol.Schedule.DAL
         /// Creates a new instance of a UpdatableService object, and initializes it with the specified properties.
         /// </summary>
         /// <param name="source"></param>
-        internal UpdatableService(DataSource source) : base(source)
+        internal UpdatableService(IDataSource source) : base(source)
         {
         }
         #endregion
@@ -35,7 +35,7 @@ namespace Fosol.Schedule.DAL
         public void Add(ModelT model)
         {
             var entity = this.Source.Mapper.Map<ModelT, EntityT>(model);
-            this.Source.Context.Set<EntityT>().Add(entity);
+            this.Context.Set<EntityT>().Add(entity);
         }
 
         /// <summary>
@@ -45,7 +45,7 @@ namespace Fosol.Schedule.DAL
         public void AddRange(IEnumerable<ModelT> models)
         {
             var entities = models.Select(m => this.Source.Mapper.Map<ModelT, EntityT>(m));
-            this.Source.Context.Set<EntityT>().AddRange(entities);
+            this.Context.Set<EntityT>().AddRange(entities);
         }
 
         /// <summary>
@@ -55,7 +55,7 @@ namespace Fosol.Schedule.DAL
         public void AddRange(params ModelT[] models)
         {
             var entities = models.Select(m => this.Source.Mapper.Map<ModelT, EntityT>(m));
-            this.Source.Context.Set<EntityT>().AddRange(entities);
+            this.Context.Set<EntityT>().AddRange(entities);
         }
 
         /// <summary>
@@ -66,7 +66,7 @@ namespace Fosol.Schedule.DAL
         public void Remove(ModelT model)
         {
             var entity = this.Source.Mapper.Map(model, this.Find(model));
-            this.Source.Context.Set<EntityT>().Remove(entity);
+            this.Context.Set<EntityT>().Remove(entity);
         }
 
         /// <summary>
@@ -78,7 +78,7 @@ namespace Fosol.Schedule.DAL
         {
             // TODO: Need to rewrite because this will make a separate request for each model.
             var entities = models.Select(m => this.Find(m));
-            this.Source.Context.Set<EntityT>().RemoveRange(entities);
+            this.Context.Set<EntityT>().RemoveRange(entities);
         }
 
         /// <summary>
@@ -90,7 +90,7 @@ namespace Fosol.Schedule.DAL
         {
             // TODO: Need to rewrite because this will make a separate request for each model.
             var entities = models.Select(m => this.Find(m));
-            this.Source.Context.Set<EntityT>().RemoveRange(entities);
+            this.Context.Set<EntityT>().RemoveRange(entities);
         }
 
         /// <summary>
@@ -101,7 +101,7 @@ namespace Fosol.Schedule.DAL
         public void Update(ModelT model)
         {
             var entity = this.Source.Mapper.Map(model, this.Find(model));
-            this.Source.Context.Set<EntityT>().Update(entity);
+            this.Context.Set<EntityT>().Update(entity);
         }
 
         /// <summary>
@@ -113,7 +113,7 @@ namespace Fosol.Schedule.DAL
         {
             // TODO: Need to rewrite because this will make a separate request for each model.
             var entities = models.Select(m => this.Find(m));
-            this.Source.Context.Set<EntityT>().UpdateRange(entities);
+            this.Context.Set<EntityT>().UpdateRange(entities);
         }
 
         /// <summary>
@@ -125,7 +125,7 @@ namespace Fosol.Schedule.DAL
         {
             // TODO: Need to rewrite because this will make a separate request for each model.
             var entities = models.Select(m => this.Find(m));
-            this.Source.Context.Set<EntityT>().UpdateRange(entities);
+            this.Context.Set<EntityT>().UpdateRange(entities);
         }
         #endregion
     }

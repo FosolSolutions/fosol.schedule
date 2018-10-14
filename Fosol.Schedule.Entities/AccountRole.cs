@@ -35,6 +35,11 @@ namespace Fosol.Schedule.Entities
         public AccountPrivilege Privileges { get; set; }
 
         /// <summary>
+        /// get/set - The state of this role.
+        /// </summary>
+        public AccountRoleState State { get; set; } = AccountRoleState.Enabled;
+
+        /// <summary>
         /// get/set - Foreign key to the account this role belongs to.
         /// </summary>
         public int AccountId { get; set; }
@@ -48,7 +53,7 @@ namespace Fosol.Schedule.Entities
         /// <summary>
         /// get - A collection of all the users in this account that have this role.
         /// </summary>
-        public ICollection<UserAccountRole> UserAccountRoles { get; set; } = new List<UserAccountRole>();
+        public ICollection<UserAccountRole> Users { get; set; } = new List<UserAccountRole>();
         #endregion
 
         #region Constructors
@@ -70,7 +75,6 @@ namespace Fosol.Schedule.Entities
                 throw new ArgumentException($"Argument '{nameof(name)}' is required and cannot be nullable or empty.");
 
             this.AccountId = account?.Id ?? throw new ArgumentNullException(nameof(account));
-            this.Account = account;
             this.Name = name;
             this.Privileges = privileges;
         }

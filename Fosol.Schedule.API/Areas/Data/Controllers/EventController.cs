@@ -1,5 +1,4 @@
-﻿using Fosol.Schedule.Models;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -37,21 +36,22 @@ namespace Fosol.Schedule.API.Areas.Data.Controllers
         [HttpGet("{id}")]
         public IActionResult Event(int id)
         {
-            return Ok(new Event()
-            {
-                Id = id,
-                Name = "name",
-                Description = "description",
-                StartOn = new DateTime(),
-                EndOn = new DateTime(),
-                SelfUrl = $"/data/calendar/event/{id}",
-                ParentUrl = $"/data/calendar/1",
-                //Criteria = new[] { new { } },
-                //Tags = new[] { new { } },
-                //Activities = new[] { new { } },
-                AddedOn = new DateTime(),
-                UpdatedOn = new DateTime()
-            });
+            return Ok();
+            //return Ok(new Event()
+            //{
+            //    Id = id,
+            //    Name = "name",
+            //    Description = "description",
+            //    StartOn = new DateTime(),
+            //    EndOn = new DateTime(),
+            //    SelfUrl = $"/data/calendar/event/{id}",
+            //    ParentUrl = $"/data/calendar/1",
+            //    //Criteria = new[] { new { } },
+            //    //Tags = new[] { new { } },
+            //    //Activities = new[] { new { } },
+            //    AddedOn = new DateTime(),
+            //    UpdatedOn = new DateTime()
+            //});
         }
 
         /// <summary>
