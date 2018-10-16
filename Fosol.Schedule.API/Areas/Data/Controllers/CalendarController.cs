@@ -1,4 +1,5 @@
-﻿using Fosol.Schedule.DAL.Interfaces;
+﻿using Fosol.Core.Mvc;
+using Fosol.Schedule.DAL.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -12,7 +13,7 @@ namespace Fosol.Schedule.API.Areas.Data.Controllers
     [Produces("application/json")]
     [Area("data")]
     [Route("[area]/[controller]")]
-    public sealed class CalendarController : Controller
+    public sealed class CalendarController : ApiController
     {
         #region Variables
         private readonly IDataSource _dataSource;

@@ -1,4 +1,5 @@
-﻿using Fosol.Schedule.DAL.Exceptions;
+﻿using Fosol.Core.Exceptions;
+using Fosol.Core.Extensions.Principals;
 using Fosol.Schedule.DAL.Interfaces;
 
 namespace Fosol.Schedule.DAL
@@ -40,6 +41,47 @@ namespace Fosol.Schedule.DAL
         #endregion
 
         #region Methods
+        /// <summary>
+        /// Get the current user or participant's id.
+        /// </summary>
+        /// <returns></returns>
+        protected int GetCurrentUserId()
+        {
+            int.TryParse(this.Source.Principal.GetNameIdentifier()?.Value, out int id);
+            return id;
+        }
+
+        /// <summary>
+        /// Get the true current user id when they are impersonating another user.
+        /// </summary>
+        /// <returns></returns>
+        protected int GetImpersontatorId()
+        {
+            int.TryParse(this.Source.Principal.GetImpersonator()?.Value, out int id);
+            return id;
+        }
+
+        /// <summary>
+        /// Whether the current logged in user is a participant or not.
+        /// </summary>
+        /// <returns></returns>
+        protected bool IsCurrentUserParticipant()
+        {
+            bool.TryParse(this.Source.Principal.GetParticipant()?.Value, out bool participant);
+            return participant;
+        }
+
+        /// <summary>
+        /// Checks if the current user is authenticated.
+        /// If they are not it will throw a NotAuthenticatedException.
+        /// </summary>
+        /// <exception cref="NotAuthenticatedException">User is not authenticated.</exception>
+        protected void Authenticated()
+        {
+            if (!this.Source.Principal.Identity.IsAuthenticated)
+                throw new NotAuthenticatedException();
+        }
+
         /// <summary>
         /// Find the entity for the specified model in the datasource.
         /// </summary>

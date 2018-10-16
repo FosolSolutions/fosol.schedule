@@ -51,6 +51,14 @@ namespace Fosol.Schedule.DAL
         public ScheduleContext(DbContextOptions<ScheduleContext> options) : base(options)
         {
         }
+
+        /// <summary>
+        /// Creates a new instance of a ScheduleContext object, and initializes it with the specified configuration options.
+        /// </summary>
+        /// <param name="options"></param>
+        public ScheduleContext(DbContextOptions options) : base(options)
+        {
+        }
         #endregion
 
         #region Methods

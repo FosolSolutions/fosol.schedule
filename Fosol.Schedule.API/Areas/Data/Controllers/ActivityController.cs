@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Fosol.Core.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,7 +13,7 @@ namespace Fosol.Schedule.API.Areas.Data.Controllers
     [Produces("application/json")]
     [Area("data")]
     [Route("[area]/calendar/[controller]")]
-    public sealed class ActivityController : Controller
+    public sealed class ActivityController : ApiController
     {
         #region Variables
         #endregion

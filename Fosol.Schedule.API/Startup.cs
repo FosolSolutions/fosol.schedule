@@ -1,4 +1,6 @@
-﻿using Fosol.Schedule.DAL;
+﻿using Fosol.Core.Extensions.ApplicationBuilders;
+using Fosol.Schedule.DAL;
+using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -6,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Serialization;
@@ -68,16 +71,27 @@ namespace Fosol.Schedule.API
                 options.MinimumSameSitePolicy = SameSiteMode.None;
             });
 
+            services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+                .AddCookie(options =>
+                {
+                    options.LoginPath = "/auth/signin";
+                });
+
+            services.ConfigureApplicationCookie(options =>
+            {
+                options.LoginPath = "/auth/signin";
+            });
+
             services.AddMvc(options =>
             {
 
             })
-            .SetCompatibilityVersion(CompatibilityVersion.Version_2_1)
-            .AddJsonOptions(options =>
-            {
-                options.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
-                options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
-            });
+                .SetCompatibilityVersion(CompatibilityVersion.Version_2_1)
+                .AddJsonOptions(options =>
+                {
+                    options.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
+                    options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
+                });
 
             services.AddCors(options =>
             {
@@ -90,17 +104,9 @@ namespace Fosol.Schedule.API
                 });
             });
 
-            //services.AddDbContext<Data.TestContext>(optionsBuilder =>
-            //{
-            //    var connectionString = this.Configuration.GetConnectionString("Schedule") ?? @"Server=(localdb)\mssqllocaldb;Database=EFProviders.InMemory;Trusted_Connection=True;ConnectRetryCount=0";
-            //    optionsBuilder.UseApplicationServiceProvider(services.BuildServiceProvider());
-            //    optionsBuilder.UseLoggerFactory(_loggerFactory);
-            //    optionsBuilder.UseSqlServer(connectionString);
-            //    if (this.Environment.IsDevelopment())
-            //    {
-            //        optionsBuilder.EnableSensitiveDataLogging();
-            //    }
-            //});
+            services.AddHttpContextAccessor();
+            services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+
             services.AddDataSource(optionsBuilder =>
             {
                 var connectionString = this.Configuration.GetConnectionString("Schedule") ?? @"Server=(localdb)\mssqllocaldb;Database=EFProviders.InMemory;Trusted_Connection=True;ConnectRetryCount=0";
@@ -131,19 +137,13 @@ namespace Fosol.Schedule.API
                 app.UseExceptionHandler("/Error");
                 app.UseHsts();
             }
-
-            //using (var scope = app.ApplicationServices.GetRequiredService<IServiceScopeFactory>().CreateScope())
-            //{
-            //    var context = scope.ServiceProvider.GetRequiredService<Data.TestContext>();
-            //    context.Database.EnsureCreated();
-            //    //context.Database.Migrate();
-            //    //context.Database.EnsureDeleted();
-            //}
+            
             app.UseDataSource();
             app.UseCors("development");
             app.UseHttpsRedirection();
+            //app.UseJsonExceptionMiddleware();
             app.UseStatusCodePagesWithReExecute("/Error/{0}");
-            //app.UseAuthentication();
+            app.UseAuthentication();
             app.UseStaticFiles();
             app.UseCookiePolicy();
             app.UseMvc(options =>

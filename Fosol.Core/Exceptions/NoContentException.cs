@@ -1,8 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
-namespace Fosol.Schedule.DAL.Exceptions
+namespace Fosol.Core.Exceptions
 {
     /// <summary>
     /// NoContentException sealed class, provides a common implementation for handling requests for content that could not be found.

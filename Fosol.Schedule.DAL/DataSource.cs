@@ -1,8 +1,10 @@
 ﻿using AutoMapper;
 using Fosol.Schedule.DAL.Interfaces;
 using Fosol.Schedule.DAL.Services;
+using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using System;
+using System.Security.Principal;
 
 namespace Fosol.Schedule.DAL
 {
@@ -12,6 +14,10 @@ namespace Fosol.Schedule.DAL
     public sealed class DataSource : IDataSource
     {
         #region Variables
+        private readonly Lazy<IUserService> _userService;
+        private readonly Lazy<ICalendarService> _calendarService;
+        private readonly Lazy<IParticipantService> _participantService;
+        private readonly Lazy<IEventService> _eventService;
         #endregion
 
         #region Properties
@@ -26,32 +32,69 @@ namespace Fosol.Schedule.DAL
         public IMapper Mapper { get; }
 
         /// <summary>
+        /// get - The current principal using the datasource.
+        /// </summary>
+        public IPrincipal Principal { get; }
+
+        /// <summary>
+        /// get - The service to manage users.
+        /// </summary>
+        public IUserService Users { get { return _userService.Value; } }
+
+        /// <summary>
         /// get - The service to manage calendars.
         /// </summary>
-        public ICalendarService Calendars { get; }
+        public ICalendarService Calendars { get { return _calendarService.Value; } }
+
+        /// <summary>
+        /// get - The service to manage participants.
+        /// </summary>
+        public IParticipantService Participants { get { return _participantService.Value; } }
 
         /// <summary>
         /// get - The service to manage events.
         /// </summary>
-        public IEventService Events { get; }
+        public IEventService Events { get { return _eventService.Value; } }
         #endregion
 
         #region Constructors
-        DataSource()
+        /// <summary>
+        /// Creates a new instance of a DataSource object, and initializes it with the specified configuration options.
+        /// </summary>
+        /// <param name="httpContext"></param>
+        DataSource(IHttpContextAccessor httpContext)
         {
+            this.Principal = httpContext.HttpContext?.User;
             this.Mapper = new MapperConfiguration(config =>
             {
+                config.CreateMap<Entities.User, Models.User>();
                 config.CreateMap<Entities.Calendar, Models.Calendar>();
+                config.CreateMap<Entities.Participant, Models.Participant>();
+                config.CreateMap<Entities.Attribute, Models.Attribute>();
             }).CreateMapper();
-            this.Calendars = new CalendarService(this);
-            this.Events = new EventService(this);
+
+            _userService = new Lazy<IUserService>(() => new UserService(this));
+            _calendarService = new Lazy<ICalendarService>(() => new CalendarService(this));
+            _participantService = new Lazy<IParticipantService>(() => new ParticipantService(this));
+            _eventService = new Lazy<IEventService>(() => new EventService(this));
         }
 
         /// <summary>
         /// Creates a new instance of a DataSource object, and initializes it with the specified configuration options.
         /// </summary>
         /// <param name="options"></param>
-        internal DataSource(DbContextOptions<ScheduleContext> options) : this()
+        /// <param name="httpContext"></param>
+        internal DataSource(DbContextOptions<ScheduleContext> options, IHttpContextAccessor httpContext) : this(httpContext)
+        {
+            this.Context = new ScheduleContext(options);
+        }
+
+        /// <summary>
+        /// Creates a new instance of a DataSource object, and initializes it with the specified configuration options.
+        /// </summary>
+        /// <param name="options"></param>
+        /// <param name="httpContext"></param>
+        public DataSource(DbContextOptions options, IHttpContextAccessor httpContext) : this(httpContext)
         {
             this.Context = new ScheduleContext(options);
         }
