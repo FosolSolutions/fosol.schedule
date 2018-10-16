@@ -21,7 +21,7 @@ namespace Fosol.Schedule.DAL.Services
         /// Creates a new instance of a EventService object, and initalizes it with the specified options.
         /// </summary>
         /// <param name="source"></param>
-        internal EventService(DataSource source) : base(source)
+        internal EventService(IDataSource source) : base(source)
         {
         }
         #endregion

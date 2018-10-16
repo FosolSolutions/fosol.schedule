@@ -2,6 +2,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using Fosol.Core.Extensions.Principals;
 
 namespace Fosol.Schedule.DAL.Services
 {
@@ -21,8 +22,9 @@ namespace Fosol.Schedule.DAL.Services
         /// Creates a new instance of a CalendarService object, and initalizes it with the specified options.
         /// </summary>
         /// <param name="source"></param>
-        internal CalendarService(DataSource source) : base(source)
+        internal CalendarService(IDataSource source) : base(source)
         {
+            //Authenticated();
         }
         #endregion
 
@@ -35,11 +37,8 @@ namespace Fosol.Schedule.DAL.Services
         /// <returns></returns>
         public IEnumerable<Models.Calendar> Get(int skip, int take)
         {
-            var account = this.Context.Accounts.Find(1);
-            var calendar = new Entities.Calendar(account, "test") { AddedById = 1 };
-            this.Context.Calendars.Add(calendar);
-            this.Context.SaveChanges();
-            return this.Source.Context.Calendars.Skip(skip).Take(take).ToArray().Select(c => this.Source.Mapper.Map<Entities.Calendar, Models.Calendar>(c)).ToArray();
+            var userId = this.GetCurrentUserId();
+            return this.Source.Context.Calendars.Where(c => c.Account.OwnerId == userId).Skip(skip).Take(take).ToArray().Select(c => this.Source.Mapper.Map<Entities.Calendar, Models.Calendar>(c)).ToArray();
         }
 
         /// <summary>

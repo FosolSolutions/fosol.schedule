@@ -90,6 +90,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <Folder Include="Exceptions\" />
     <Folder Include="Migrations\v01.00.00\PreDeploy\" />
   </ItemGroup>
 

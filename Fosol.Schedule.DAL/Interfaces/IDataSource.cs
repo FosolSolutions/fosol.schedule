@@ -15,9 +15,19 @@ namespace Fosol.Schedule.DAL.Interfaces
         IMapper Mapper { get; }
 
         /// <summary>
+        /// get - The service to manage users.
+        /// </summary>
+        IUserService Users { get; }
+
+        /// <summary>
         /// get - The service to manage calendars.
         /// </summary>
         ICalendarService Calendars { get; }
+
+        /// <summary>
+        /// get - The service to manage participants.
+        /// </summary>
+        IParticipantService Participants { get; }
         #endregion
 
         #region Methods
