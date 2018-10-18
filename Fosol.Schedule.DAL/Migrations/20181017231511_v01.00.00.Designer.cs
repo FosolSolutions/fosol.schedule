@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Fosol.Schedule.DAL.Migrations
 {
     [DbContext(typeof(ScheduleContext))]
-    [Migration("20181014041721_v01.00.00")]
+    [Migration("20181017231511_v01.00.00")]
     partial class v010000
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -139,7 +139,7 @@ namespace Fosol.Schedule.DAL.Migrations
                     b.Property<string>("Description")
                         .HasMaxLength(2000);
 
-                    b.Property<DateTime?>("EndDate");
+                    b.Property<DateTime?>("EndOn");
 
                     b.Property<int>("EventId");
 
@@ -153,7 +153,7 @@ namespace Fosol.Schedule.DAL.Migrations
                         .IsConcurrencyToken()
                         .ValueGeneratedOnAddOrUpdate();
 
-                    b.Property<DateTime?>("StartDate");
+                    b.Property<DateTime?>("StartOn");
 
                     b.Property<int?>("UpdatedById");
 

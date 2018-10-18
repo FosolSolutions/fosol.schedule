@@ -28,6 +28,16 @@ namespace Fosol.Schedule.DAL.Interfaces
         /// get - The service to manage participants.
         /// </summary>
         IParticipantService Participants { get; }
+
+        /// <summary>
+        /// get - The service to manage events.
+        /// </summary>
+        IEventService Events { get; }
+
+        /// <summary>
+        /// get - The service to manage activities.
+        /// </summary>
+        IActivityService Activities { get; }
         #endregion
 
         #region Methods
@@ -53,6 +63,19 @@ namespace Fosol.Schedule.DAL.Interfaces
         /// </summary>
         /// <returns></returns>
         int Commit();
+
+        /// <summary>
+        /// Commit the changes in-memory to the datasource in a single transaction.
+        /// </summary>
+        /// <returns></returns>
+        int CommitTransaction();
+
+        /// <summary>
+        /// Commit the changes in-memory to the datasource in a single transaction.
+        /// </summary>
+        /// <param name="action"></param>
+        /// <returns></returns>
+        void CommitTransaction(Action action);
 
         /// <summary>
         /// Commit the changes in-memory to the datasource in a single transaction.

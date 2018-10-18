@@ -27,6 +27,24 @@ namespace Fosol.Schedule.DAL
         /// get - The DbContext used to communicate with the datasource.
         /// </summary>
         internal ScheduleContext Context { get { return this.Source.Context; } }
+
+        /// <summary>
+        /// get - Whether the user is currently authenticated.
+        /// </summary>
+        protected bool IsAuthenticated { get { return this.Source.Principal.Identity.IsAuthenticated; } }
+
+        /// <summary>
+        /// get - Whether the current logged in principal is a participant or not.
+        /// </summary>
+        /// <returns></returns>
+        protected bool IsPrincipalAParticipant
+        {
+            get
+            {
+                bool.TryParse(this.Source.Principal.GetParticipant()?.Value, out bool participant);
+                return participant;
+            }
+        }
         #endregion
 
         #region Constructors
@@ -45,14 +63,27 @@ namespace Fosol.Schedule.DAL
         /// Get the current user or participant's id.
         /// </summary>
         /// <returns></returns>
-        protected int GetCurrentUserId()
+        protected int GetPrincipalId()
         {
             int.TryParse(this.Source.Principal.GetNameIdentifier()?.Value, out int id);
             return id;
         }
 
         /// <summary>
-        /// Get the true current user id when they are impersonating another user.
+        /// Get the current user's id.
+        /// Returns null if a participant is currently signed in.
+        /// </summary>
+        /// <returns></returns>
+        protected int? GetUserId()
+        {
+            if (this.IsPrincipalAParticipant)
+                return null;
+
+            return this.GetPrincipalId();
+        }
+
+        /// <summary>
+        /// Get the true current principal id when they are impersonating another user.
         /// </summary>
         /// <returns></returns>
         protected int GetImpersontatorId()
@@ -62,24 +93,58 @@ namespace Fosol.Schedule.DAL
         }
 
         /// <summary>
-        /// Whether the current logged in user is a participant or not.
+        /// Get the current principal user.
         /// </summary>
         /// <returns></returns>
-        protected bool IsCurrentUserParticipant()
+        protected Entities.User GetUser()
         {
-            bool.TryParse(this.Source.Principal.GetParticipant()?.Value, out bool participant);
-            return participant;
+            var id = this.GetUserId();
+            if (id == null) return null;
+            return this.Context.Users.Find(id);
         }
 
         /// <summary>
-        /// Checks if the current user is authenticated.
-        /// If they are not it will throw a NotAuthenticatedException.
+        /// Get the current principal participant.
+        /// </summary>
+        /// <exception cref="NoContentException">If the user does not exist.</exception>
+        /// <returns></returns>
+        protected Entities.Participant GetParticipant()
+        {
+            if (!this.IsPrincipalAParticipant) return null;
+            var id = this.GetPrincipalId();
+            return this.Context.Participants.Find(id) ?? throw new NoContentException(typeof(Entities.Participant));
+        }
+
+        /// <summary>
+        /// Checks if the current user is authenticated and authorized.
         /// </summary>
         /// <exception cref="NotAuthenticatedException">User is not authenticated.</exception>
-        protected void Authenticated()
+        /// <exception cref="NotAuthorizedException">User is not authorized.</exception>
+        /// <param name="mustBeUser"></param>
+        protected void VerifyPrincipal(bool mustBeUser = false)
         {
-            if (!this.Source.Principal.Identity.IsAuthenticated)
-                throw new NotAuthenticatedException();
+            if (!this.IsAuthenticated) throw new NotAuthenticatedException();
+            if (mustBeUser && this.IsPrincipalAParticipant) throw new NotAuthorizedException();
+        }
+
+        /// <summary>
+        /// Creates a new instance of a <typeparamref name="EntityT"/> by mapping the specified <typeparamref name="ModelT"/>.
+        /// </summary>
+        /// <param name="model"></param>
+        /// <returns></returns>
+        protected EntityT Map(ModelT model)
+        {
+            return this.Source.Mapper.Map<EntityT>(model);
+        }
+
+        /// <summary>
+        /// Creates a new instance of a <typeparamref name="ModelT"/> by mapping the specified <typeparamref name="EntityT"/>.
+        /// </summary>
+        /// <param name="entity"></param>
+        /// <returns></returns>
+        protected ModelT Map(EntityT entity)
+        {
+            return this.Source.Mapper.Map<ModelT>(entity);
         }
 
         /// <summary>
@@ -88,7 +153,7 @@ namespace Fosol.Schedule.DAL
         /// <exception cref="NoContentException">If the entity could not be found in the datasource.</exception>
         /// <param name="model"></param>
         /// <returns></returns>
-        protected EntityT Find(ModelT model)
+        protected virtual EntityT Find(ModelT model)
         {
             // TODO: Need to rewrite to handle different primary key configurations.
             var id = (int)typeof(ModelT).GetProperty("Id").GetValue(model);
@@ -101,7 +166,7 @@ namespace Fosol.Schedule.DAL
         /// <exception cref="NoContentException">If the entity could not be found in the datasource.</exception>
         /// <param name="keyValues"></param>
         /// <returns></returns>
-        protected EntityT Find(params object[] keyValues)
+        protected virtual EntityT Find(params object[] keyValues)
         {
             var entity = this.Context.Set<EntityT>().Find(keyValues);
 
@@ -117,9 +182,9 @@ namespace Fosol.Schedule.DAL
         /// <exception cref="NoContentException">If the entity could not be found in the datasource.</exception>
         /// <param name="keyValues"></param>
         /// <returns></returns>
-        public ModelT Get(params object[] keyValues)
+        public virtual ModelT Get(params object[] keyValues)
         {
-            return _source.Mapper.Map<EntityT, ModelT>(Find(keyValues));
+            return this.Map(Find(keyValues));
         }
         #endregion
     }

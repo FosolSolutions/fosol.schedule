@@ -1,5 +1,0 @@
-﻿{
-  "ConnectionStrings": {
-    "Schedule": "Server=(localdb)\\MSSQLLocalDB;Database=Schedule;Trusted_Connection=True;MultipleActiveResultSets=true"
-  }
-}

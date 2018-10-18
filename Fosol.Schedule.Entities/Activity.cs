@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
-using System.Text;
 
 namespace Fosol.Schedule.Entities
 {
@@ -50,12 +49,12 @@ namespace Fosol.Schedule.Entities
         /// <summary>
         /// get/set - When the activity starts.
         /// </summary>
-        public DateTime? StartDate { get; set; }
+        public DateTime? StartOn { get; set; }
 
         /// <summary>
         /// get/set - When the activity ends.
         /// </summary>
-        public DateTime? EndDate { get; set; }
+        public DateTime? EndOn { get; set; }
 
         /// <summary>
         /// get/set - A collection of openings within this activity.
@@ -102,8 +101,8 @@ namespace Fosol.Schedule.Entities
         /// <param name="end">When the activity ends.</param>
         public Activity(int eventId, string name, DateTime start, DateTime? end = null) : this(eventId, name)
         {
-            this.StartDate = start;
-            this.EndDate = end;
+            this.StartOn = start;
+            this.EndOn = end;
         }
         #endregion
     }

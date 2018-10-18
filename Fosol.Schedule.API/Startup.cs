@@ -1,5 +1,4 @@
-﻿using Fosol.Core.Extensions.ApplicationBuilders;
-using Fosol.Schedule.DAL;
+﻿using Fosol.Schedule.DAL;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;

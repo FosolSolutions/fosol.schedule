@@ -1,9 +1,8 @@
 ﻿using Fosol.Core.Mvc;
+using Fosol.Schedule.DAL.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace Fosol.Schedule.API.Areas.Data.Controllers
 {
@@ -16,14 +15,17 @@ namespace Fosol.Schedule.API.Areas.Data.Controllers
     public sealed class EventController : ApiController
     {
         #region Variables
+        private readonly IDataSource _datasource;
         #endregion
 
         #region Constructors
         /// <summary>
         /// Creates a new instance of a EventController object.
         /// </summary>
-        public EventController()
+        /// <param name="datasource"></param>
+        public EventController(IDataSource datasource)
         {
+            _datasource = datasource;
         }
         #endregion
 
@@ -37,33 +39,27 @@ namespace Fosol.Schedule.API.Areas.Data.Controllers
         [HttpGet("{id}")]
         public IActionResult Event(int id)
         {
-            return Ok();
-            //return Ok(new Event()
-            //{
-            //    Id = id,
-            //    Name = "name",
-            //    Description = "description",
-            //    StartOn = new DateTime(),
-            //    EndOn = new DateTime(),
-            //    SelfUrl = $"/data/calendar/event/{id}",
-            //    ParentUrl = $"/data/calendar/1",
-            //    //Criteria = new[] { new { } },
-            //    //Tags = new[] { new { } },
-            //    //Activities = new[] { new { } },
-            //    AddedOn = new DateTime(),
-            //    UpdatedOn = new DateTime()
-            //});
+            var cevent = _datasource.Events.Get(id);
+            return Ok(cevent);
         }
 
         /// <summary>
         /// Returns an array of events for the calendar specified by the 'id'.
         /// </summary>
         /// <param name="id">The calendar id.</param>
+        /// <param name="startOn">The start date for the calendar to return.  Defaults to now.</param>
+        /// <param name="endOn">The end date for the calendar to return.</param>
         /// <returns>An array of events.</returns>
         [HttpGet("/[area]/calendar/{id}/events")]
-        public IActionResult EventsForCalendar(int id)
+        public IActionResult EventsForCalendar(int id, DateTime? startOn = null, DateTime? endOn = null)
         {
-            return Ok();
+            var start = startOn ?? DateTime.UtcNow;
+            // Start at the beginning of the week.
+            start = start.DayOfWeek == DayOfWeek.Sunday ? start : start.AddDays(-1 * (int)start.DayOfWeek);
+            var end = endOn ?? start.AddDays(7);
+
+            var cevents = _datasource.Events.Get(id, start, end);
+            return cevents.Count() != 0 ? Ok(cevents) : (IActionResult)NoContent();
         }
         #endregion
     }

@@ -1,15 +1,16 @@
-﻿using Fosol.Schedule.DAL.Interfaces;
+﻿using Fosol.Core.Exceptions;
+using Fosol.Schedule.DAL.Interfaces;
+using Fosol.Schedule.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using Fosol.Core.Extensions.Principals;
 
 namespace Fosol.Schedule.DAL.Services
 {
     /// <summary>
     /// CalendarService sealed class, provides a way to manage calendars in the datasource.
     /// </summary>
-    public sealed class CalendarService : UpdatableService<Entities.Calendar, Models.Calendar>, ICalendarService
+    public sealed class CalendarService : UpdatableService<Calendar, Models.Calendar>, ICalendarService
     {
         #region Variables
         #endregion
@@ -37,8 +38,8 @@ namespace Fosol.Schedule.DAL.Services
         /// <returns></returns>
         public IEnumerable<Models.Calendar> Get(int skip, int take)
         {
-            var userId = this.GetCurrentUserId();
-            return this.Source.Context.Calendars.Where(c => c.Account.OwnerId == userId).Skip(skip).Take(take).ToArray().Select(c => this.Source.Mapper.Map<Entities.Calendar, Models.Calendar>(c)).ToArray();
+            var id = this.GetPrincipalId();
+            return this.Context.Calendars.Where(c => c.Account.OwnerId == id).Skip(skip).Take(take).ToArray().Select(c => this.Map(c)).ToArray();
         }
 
         /// <summary>
@@ -50,13 +51,12 @@ namespace Fosol.Schedule.DAL.Services
         public Models.Calendar Get(int id)
         {
             var calendar = this.Find(id);
-
-            return this.Source.Mapper.Map<Models.Calendar>(calendar);
+            return this.Map(calendar);
         }
 
         /// <summary>
         /// Get the calendar for the specified 'id'.
-        /// Valdiates whether the current user is authorized to view the calendar.
+        /// Validates whether the current user is authorized to view the calendar.
         /// Includes events for the specified timeframe.
         /// </summary>
         /// <param name="id"></param>
@@ -70,11 +70,30 @@ namespace Fosol.Schedule.DAL.Services
             var end = endOn.ToUniversalTime();
 
             var calendar = Get(id);
-            //var events = this.Source.Context.Events.Where(e => e.CalendarId == id && e.StartOn >= start && e.EndOn <= end);
+            var events = this.Context.Events.Where(e => e.CalendarId == id && e.StartOn >= start && e.EndOn <= end);
 
-            //calendar.Events = events.Select(e => this.Source.Mapper.Map<Models.Event>(e));
+            calendar.Events = events.Select(e => this.Source.Mapper.Map<Models.Event>(e));
 
             return calendar;
+        }
+
+        /// <summary>
+        /// Add the specified calendar to the datasource.
+        /// Validates whether the current user is authorized to do this.
+        /// </summary>
+        /// <param name="model"></param>
+        public override void Add(Models.Calendar model)
+        {
+            this.VerifyPrincipal(true);
+
+            // Must own the account.
+            // TODO: Permission based action.
+            var userId = this.GetUserId();
+            var ownsAccount = this.Context.Accounts.Any(a => a.OwnerId == userId);
+            if (!ownsAccount) throw new NotAuthorizedException();
+
+            if (model.Key == Guid.Empty) model.Key = Guid.NewGuid();
+            base.Add(model);
         }
         #endregion
     }

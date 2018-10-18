@@ -1,32 +1,32 @@
 ﻿using Fosol.Core.Extensions.ApplicationBuilders;
 using Microsoft.AspNetCore.Mvc.Filters;
-using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.DependencyInjection;
-using System.Threading.Tasks;
 
 namespace Fosol.Core.Mvc.Filters
 {
+    /// <summary>
+    /// JsonExceptionFilterAttribute class, provides a way to create a JSON response for unhandled exceptions.
+    /// </summary>
     public class JsonExceptionFilterAttribute : ExceptionFilterAttribute
     {
         #region Constructors
+        /// <summary>
+        /// Creates a new instance of a JsonExceptionFilterAttribute object.
+        /// </summary>
         public JsonExceptionFilterAttribute()
         {
         }
         #endregion
 
         #region Methods
+        /// <summary>
+        /// When an exception occurs it will create a JSON response with an appropriate status code.
+        /// </summary>
+        /// <param name="context"></param>
         public override void OnException(ExceptionContext context)
         {
-            var logger = context.HttpContext.RequestServices.GetService<ILogger>();
-            context.HttpContext.HandleExceptionResponse(context.Exception, logger);
+            context.HttpContext.HandleExceptionResponse(context.Exception);
+            context.ExceptionHandled = true;
             base.OnException(context);
-        }
-
-        public override Task OnExceptionAsync(ExceptionContext context)
-        {
-            var logger = context.HttpContext.RequestServices.GetService<ILogger>();
-            context.HttpContext.HandleExceptionResponse(context.Exception, logger);
-            return base.OnExceptionAsync(context);
         }
         #endregion
     }

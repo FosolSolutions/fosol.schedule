@@ -31,7 +31,8 @@ namespace Fosol.Schedule.API.Helpers
                 new Claim(ClaimTypes.Surname, participant.LastName),
                 new Claim(ClaimTypes.Gender, $"{participant.Gender}"),
                 new Claim("Key", $"{participant.Key}", "string", "Fosol.Schedule"),
-                new Claim("Participant", "true", "boolean", "Fosol.Schedule")
+                new Claim("Participant", "true", "boolean", "Fosol.Schedule"),
+                new Claim("Calendar", $"{participant.CalendarId}", "Int32", "Fosol.Schedule")
             });
 
             foreach (var attr in participant.Attributes)

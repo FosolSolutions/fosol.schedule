@@ -86,16 +86,16 @@ namespace Fosol.Schedule.Entities
         /// <summary>
         /// Creates a new instance of a <typeparamref name="Event"/> object, and initializes it with the specified properties.
         /// </summary>
-        /// <param name="calendarId"></param>
+        /// <param name="calendar"></param>
         /// <param name="name"></param>
         /// <param name="start"></param>
         /// <param name="end"></param>
-        public Event(int calendarId, string name, DateTime start, DateTime end)
+        public Event(Calendar calendar, string name, DateTime start, DateTime end)
         {
             if (String.IsNullOrWhiteSpace(name))
                 throw new ArgumentNullException(nameof(name));
 
-            this.CalendarId = calendarId;
+            this.CalendarId = calendar?.Id ?? throw new ArgumentNullException(nameof(calendar));
             this.Name = name;
             this.Key = Guid.NewGuid();
             this.StartOn = start;

@@ -1,4 +1,5 @@
 ﻿using Fosol.Core.Exceptions;
+using Fosol.Core.Extensions.Exceptions;
 using Newtonsoft.Json;
 using System;
 using System.Net;
@@ -29,7 +30,7 @@ namespace Fosol.Core.Mvc
             this.StatusCode = statusCode;
 
 #if DEBUG
-            this.Message = exception.Message;
+            this.Message = exception.InnerMessages();
 #else
             if (exception is NoContentException
                 || exception is InvalidOperationException

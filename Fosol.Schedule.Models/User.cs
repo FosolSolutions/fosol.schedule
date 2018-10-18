@@ -19,6 +19,10 @@ namespace Fosol.Schedule.Models
 
         public Gender Gender { get; set; }
 
+        public IList<Account> OwnedAccounts { get; set; }
+
+        public IList<Account> Accounts { get; set; }
+
         public IList<Attribute> Attributes { get; set; }
         #endregion
     }

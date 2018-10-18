@@ -2,7 +2,6 @@
 using Fosol.Schedule.DAL.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 
 namespace Fosol.Schedule.API.Areas.Data.Controllers
@@ -43,7 +42,7 @@ namespace Fosol.Schedule.API.Areas.Data.Controllers
             // TODO: no tracking.
             var calendars = _dataSource.Calendars.Get(skip, 10);
 
-            return Ok(calendars);
+            return calendars.Count() != 0 ? Ok(calendars) : (IActionResult)NoContent();
         }
 
         /// <summary>
@@ -62,9 +61,22 @@ namespace Fosol.Schedule.API.Areas.Data.Controllers
             var end = endOn ?? start.AddDays(7);
 
             // TODO: no tracking.
-            //var calendar = _dataSource.Calendars.Get(id, startOn, endOn);
-            //return calendar != null ? Ok(calendar) : (IActionResult)NoContent();
-            return null;
+            var calendar = _dataSource.Calendars.Get(id, startOn, endOn);
+            return calendar != null ? Ok(calendar) : (IActionResult)NoContent();
+        }
+
+        /// <summary>
+        /// Add the specified calendar to the datasource.
+        /// </summary>
+        /// <param name="calendar"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public IActionResult AddCalendar([FromBody] Models.Calendar calendar)
+        {
+            _dataSource.Calendars.Add(calendar);
+            _dataSource.CommitTransaction();
+
+            return Ok(calendar);
         }
         #endregion
     }

@@ -1,5 +1,4 @@
-﻿using System;
-using Fosol.Schedule.API.Helpers;
+﻿using Fosol.Schedule.API.Helpers;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Fosol.Schedule.API.Controllers

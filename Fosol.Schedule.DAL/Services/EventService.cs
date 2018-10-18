@@ -23,6 +23,7 @@ namespace Fosol.Schedule.DAL.Services
         /// <param name="source"></param>
         internal EventService(IDataSource source) : base(source)
         {
+            //Authenticated();
         }
         #endregion
 
@@ -54,9 +55,8 @@ namespace Fosol.Schedule.DAL.Services
             var start = startOn.ToUniversalTime();
             var end = endOn.ToUniversalTime();
 
-            //var events = this.Source.Context.Events.Where(e => e.CalendarId == calendarId && e.StartOn >= start && e.EndOn <= end).Select(e => this.Source.Mapper.Map<Models.Event>(e));
-            //return events;
-            return null;
+            var events = this.Context.Events.Where(e => e.CalendarId == calendarId && e.StartOn >= start && e.EndOn <= end).Select(e => this.Source.Mapper.Map<Models.Event>(e)).ToArray();
+            return events;
         }
         #endregion
     }

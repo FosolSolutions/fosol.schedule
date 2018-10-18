@@ -15,37 +15,44 @@ namespace Fosol.Schedule.DAL.Helpers
         #region Methods
 
         /// <summary>
-        /// Creates a fake calendar with events.
+        /// Creates a calendar with events for Victoria Ecclesia.
         /// </summary>
         /// <param name="id"></param>
         /// <returns>A new Calendar object.</returns>
-        public static Calendar CreateCalendar(int id)
+        public static Calendar CreateEcclesialCalendar(ScheduleContext context)
         {
+            var account = context.Accounts.Find(1);
             var events = new List<Event>(365);
-            var calendar = new Calendar()
+            var calendar = new Calendar(account, "Victoria Christadelphian Ecclesia")
             {
-                Id = id,
-                Key = Guid.NewGuid(),
-                Name = $"calendar {id}",
-                Description = $"calendar {id}",
-                Events = events
+                Description = "The Victoria Christadelphian ecclesial calendar"
             };
 
             // Sunday Memorial
             var jan1st = new DateTime(DateTime.Now.Year, 1, 1);
             var sunday = jan1st.DayOfWeek == DayOfWeek.Sunday ? jan1st : jan1st.AddDays(7 - (int)jan1st.DayOfWeek);
-            var i = 1;
             while (sunday.Year == DateTime.Now.Year)
             {
-                events.Add(new Event()
+                calendar.Events.Add(new Event(calendar, "Memorial Meeting", sunday.AddHours(11), sunday.AddHours(13))
                 {
-                    Name = "Memorial Meeting",
-                    Description = "Sunday memorial meeting.",
-                    StartOn = sunday.AddHours(11),
-                    EndOn = sunday.AddHours(13),
-                    Id = i++
+                    Description = "Sunday memorial meeting."
                 });
                 sunday = sunday.AddDays(7);
+            }
+
+            using (var transaction = context.Database.BeginTransaction())
+            {
+                try
+                {
+                    context.Calendars.Add(calendar);
+                    context.SaveChanges();
+
+                    transaction.Commit();
+                }
+                catch (Exception ex)
+                {
+                    transaction.Rollback();
+                }
             }
 
             return calendar;

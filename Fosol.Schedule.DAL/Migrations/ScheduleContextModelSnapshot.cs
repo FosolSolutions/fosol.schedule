@@ -137,7 +137,7 @@ namespace Fosol.Schedule.DAL.Migrations
                     b.Property<string>("Description")
                         .HasMaxLength(2000);
 
-                    b.Property<DateTime?>("EndDate");
+                    b.Property<DateTime?>("EndOn");
 
                     b.Property<int>("EventId");
 
@@ -151,7 +151,7 @@ namespace Fosol.Schedule.DAL.Migrations
                         .IsConcurrencyToken()
                         .ValueGeneratedOnAddOrUpdate();
 
-                    b.Property<DateTime?>("StartDate");
+                    b.Property<DateTime?>("StartOn");
 
                     b.Property<int?>("UpdatedById");
 

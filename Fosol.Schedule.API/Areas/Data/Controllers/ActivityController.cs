@@ -1,9 +1,6 @@
 ﻿using Fosol.Core.Mvc;
+using Fosol.Schedule.DAL.Interfaces;
 using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Fosol.Schedule.API.Areas.Data.Controllers
 {
@@ -16,14 +13,17 @@ namespace Fosol.Schedule.API.Areas.Data.Controllers
     public sealed class ActivityController : ApiController
     {
         #region Variables
+        private readonly IDataSource _datasource;
         #endregion
 
         #region Constructors
         /// <summary>
         /// Creates a new instance of a ActivityController object.
         /// </summary>
-        public ActivityController()
+        /// <param name="datasource"></param>
+        public ActivityController(IDataSource datasource)
         {
+            _datasource = datasource;
         }
         #endregion
 
@@ -37,19 +37,8 @@ namespace Fosol.Schedule.API.Areas.Data.Controllers
         [HttpGet("{id}")]
         public IActionResult Activity(int id)
         {
-            return Ok(new
-            {
-                Id = id,
-                Name = "",
-                Description = "",
-                SelfUrl = $"",
-                ParentUrl = $"",
-                Criteria = new[] { new { } },
-                Openings = new[] { new { } },
-                DateAdded = new DateTime(),
-                DateUpdated = new DateTime(),
-                RowVersion = ""
-            });
+            var activity = _datasource.Activities.Get(id);
+            return Ok(activity);
         }
         #endregion
     }

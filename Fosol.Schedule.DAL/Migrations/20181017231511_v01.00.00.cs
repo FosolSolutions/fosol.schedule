@@ -677,8 +677,8 @@ namespace Fosol.Schedule.DAL.Migrations
                     Key = table.Column<Guid>(nullable: false),
                     Name = table.Column<string>(maxLength: 250, nullable: false),
                     Description = table.Column<string>(maxLength: 2000, nullable: true),
-                    StartDate = table.Column<DateTime>(nullable: true),
-                    EndDate = table.Column<DateTime>(nullable: true)
+                    StartOn = table.Column<DateTime>(nullable: true),
+                    EndOn = table.Column<DateTime>(nullable: true)
                 },
                 constraints: table =>
                 {

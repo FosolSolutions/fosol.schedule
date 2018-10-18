@@ -331,3 +331,4 @@ ASALocalRun/
 
 # MFractors (Xamarin productivity tool) working folder 
 .mfractor/
+/Fosol.Schedule.DAL/connectionstrings.json
