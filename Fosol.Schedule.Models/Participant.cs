@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace Fosol.Schedule.Models
 {
-    public class Participant
+    public class Participant : BaseModel
     {
         #region Properties
         /// <summary>

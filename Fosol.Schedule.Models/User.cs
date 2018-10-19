@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace Fosol.Schedule.Models
 {
-    public class User
+    public class User : BaseModel
     {
         #region Properties
         public int Id { get; set; }

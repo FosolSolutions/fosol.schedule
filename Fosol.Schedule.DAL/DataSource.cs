@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using Fosol.Core.Extensions.Principals;
 using Fosol.Schedule.DAL.Interfaces;
 using Fosol.Schedule.DAL.Services;
 using Microsoft.AspNetCore.Http;
@@ -7,6 +8,7 @@ using System;
 using System.Linq;
 using System.Reflection;
 using System.Security.Principal;
+using System.Text;
 using System.Transactions;
 
 namespace Fosol.Schedule.DAL
@@ -76,13 +78,28 @@ namespace Fosol.Schedule.DAL
             this.Principal = httpContext.HttpContext?.User;
             this.Mapper = new MapperConfiguration(config =>
             {
-                config.CreateMap<Entities.User, Models.User>();
-                config.CreateMap<Entities.Calendar, Models.Calendar>();
-                config.CreateMap<Models.Calendar, Entities.Calendar>();
-                config.CreateMap<Entities.Participant, Models.Participant>();
-                config.CreateMap<Entities.Event, Models.Event>();
-                config.CreateMap<Entities.Activity, Models.Activity>();
-                config.CreateMap<Entities.Attribute, Models.Attribute>();
+                config.CreateMap<Entities.BaseEntity, Models.BaseModel>()
+                    .Include<Entities.User, Models.User>()
+                    .Include<Entities.Calendar, Models.Calendar>()
+                    .Include<Entities.Participant, Models.Participant>()
+                    .Include<Entities.Event, Models.Event>()
+                    .Include<Entities.Activity, Models.Activity>()
+                    .Include<Entities.Attribute, Models.Attribute>()
+                    .ForMember(dest => dest.AddedById, opt => opt.ResolveUsing(src => this.Principal.GetNameIdentifier().Value))
+                    .ForMember(dest => dest.RowVersion, opt => opt.MapFrom(src => Convert.ToBase64String(src.RowVersion)))
+                    .ReverseMap()
+                    .ForMember(dest => dest.RowVersion, opt => opt.MapFrom(src => Convert.FromBase64String(src.RowVersion)));
+
+                config.CreateMap<Entities.User, Models.User>().ReverseMap();
+                config.CreateMap<Entities.Calendar, Models.Calendar>()
+                    .ForMember(dest => dest.Key, opt => opt.ResolveUsing(src => src.Key == Guid.Empty ? Guid.NewGuid() : src.Key))
+                    .ReverseMap();
+                config.CreateMap<Entities.Participant, Models.Participant>()
+                    .ForMember(dest => dest.Key, opt => opt.ResolveUsing(src => src.Key == Guid.Empty ? Guid.NewGuid() : src.Key))
+                    .ReverseMap();
+                config.CreateMap<Entities.Event, Models.Event>().ReverseMap();
+                config.CreateMap<Entities.Activity, Models.Activity>().ReverseMap();
+                config.CreateMap<Entities.Attribute, Models.Attribute>().ReverseMap();
             }).CreateMapper();
 
             _userService = new Lazy<IUserService>(() => new UserService(this));
@@ -198,8 +215,13 @@ namespace Fosol.Schedule.DAL
             this.CommitTransaction(() => { action(); return 0; });
         }
 
+        /// <summary>
+        /// Sync every active service that contains tracked entities and models.
+        /// This will update each model with their referenced entity after an update.
+        /// </summary>
         private void Sync()
         {
+            // TODO: Rewrite to be better performance.
             var type = this.GetType();
             var gtype = typeof(Lazy<>);
             var fields = type.GetFields(BindingFlags.Instance | BindingFlags.NonPublic).Where(f => f.FieldType.IsGenericType && f.FieldType.GetGenericTypeDefinition() == gtype).ToArray();
