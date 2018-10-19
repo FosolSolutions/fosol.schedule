@@ -19,6 +19,10 @@ namespace Fosol.Schedule.Models
         public DateTime StartOn { get; set; }
 
         public DateTime EndOn { get; set; }
+
+        public IEnumerable<Opening> Openings { get; set; }
+
+        public IEnumerable<Criteria> Criteria { get; set; }
         #endregion
     }
 }
