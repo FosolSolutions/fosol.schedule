@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Fosol.Schedule.Entities
@@ -31,6 +32,23 @@ namespace Fosol.Schedule.Entities
         /// get/set - The datatype of the attribute.
         /// </summary>
         public DataType DataType { get; set; }
+        #endregion
+
+        #region Constructors
+        public Attribute()
+        {
+
+        }
+
+        public Attribute(string key, string value, DataType type)
+        {
+            if (string.IsNullOrWhiteSpace(key)) throw new ArgumentException($"Argument 'key' must not be null, empty or whitespace.");
+            if (string.IsNullOrWhiteSpace(value)) throw new ArgumentException($"Argument 'value' must not be null, empty or whitespace.");
+
+            this.Key = key;
+            this.Value = value;
+            this.DataType = type;
+        }
         #endregion
     }
 }

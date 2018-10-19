@@ -1,4 +1,5 @@
 ﻿using Fosol.Schedule.DAL.Interfaces;
+using Fosol.Schedule.Entities;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -36,8 +37,7 @@ namespace Fosol.Schedule.DAL.Services
         /// <returns></returns>
         public Models.Activity Get(int id)
         {
-            var activity = this.Find(id);
-            return this.Source.Mapper.Map<Models.Activity>(activity);
+            return this.Find(id);
         }
 
         /// <summary>
@@ -56,7 +56,7 @@ namespace Fosol.Schedule.DAL.Services
             var start = startOn?.ToUniversalTime() ?? cevent.StartOn;
             var end = endOn?.ToUniversalTime() ?? cevent.EndOn;
 
-            var activities = this.Context.Activities.Where(a => a.EventId == eventId && a.StartOn >= start && a.EndOn <= end).ToArray().Select(a => this.Source.Mapper.Map<Models.Activity>(a));
+            var activities = this.Context.Activities.Where(a => a.EventId == eventId && a.StartOn >= start && a.EndOn <= end).ToArray().Select(a => this.Map(a));
             return activities;
         }
         #endregion

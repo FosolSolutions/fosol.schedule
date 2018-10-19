@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
-using Fosol.Core.Extensions.Principals;
 using Fosol.Schedule.DAL.Interfaces;
+using Fosol.Schedule.DAL.Map;
 using Fosol.Schedule.DAL.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
@@ -8,8 +8,6 @@ using System;
 using System.Linq;
 using System.Reflection;
 using System.Security.Principal;
-using System.Text;
-using System.Transactions;
 
 namespace Fosol.Schedule.DAL
 {
@@ -19,11 +17,15 @@ namespace Fosol.Schedule.DAL
     public sealed class DataSource : IDataSource
     {
         #region Variables
+        private readonly Lazy<IHelperService> _helperService;
+        private readonly Lazy<ISubscriptionService> _subscriptionService;
         private readonly Lazy<IUserService> _userService;
+        private readonly Lazy<IAccountService> _accountService;
         private readonly Lazy<ICalendarService> _calendarService;
         private readonly Lazy<IParticipantService> _participantService;
         private readonly Lazy<IEventService> _eventService;
         private readonly Lazy<IActivityService> _activityService;
+        private readonly Lazy<IOpeningService> _openingService;
         #endregion
 
         #region Properties
@@ -33,9 +35,14 @@ namespace Fosol.Schedule.DAL
         internal ScheduleContext Context { get; }
 
         /// <summary>
-        /// get - The AutoMapper used to cast objects.
+        /// get - The AutoMapper used to cast objects that will be added to the datasource.
         /// </summary>
-        public IMapper Mapper { get; }
+        public IMapper AddMapper { get; }
+
+        /// <summary>
+        /// get - The AutoMapper used to cast objects that will be updated in the datasource.
+        /// </summary>
+        public IMapper UpdateMapper { get; }
 
         /// <summary>
         /// get - The current principal using the datasource.
@@ -43,9 +50,24 @@ namespace Fosol.Schedule.DAL
         public IPrincipal Principal { get; }
 
         /// <summary>
+        /// get - A helper service with various functions.
+        /// </summary>
+        public IHelperService Helper { get { return _helperService.Value; } }
+
+        /// <summary>
+        /// get - The service to manage subscriptions.
+        /// </summary>
+        public ISubscriptionService Subscriptions { get { return _subscriptionService.Value; } }
+
+        /// <summary>
         /// get - The service to manage users.
         /// </summary>
         public IUserService Users { get { return _userService.Value; } }
+
+        /// <summary>
+        /// get - The service to manage accounts.
+        /// </summary>
+        public IAccountService Accounts { get { return _accountService.Value; } }
 
         /// <summary>
         /// get - The service to manage calendars.
@@ -66,6 +88,11 @@ namespace Fosol.Schedule.DAL
         /// get - The service to manage activities.
         /// </summary>
         public IActivityService Activities { get { return _activityService.Value; } }
+
+        /// <summary>
+        /// get - The service to manage openings.
+        /// </summary>
+        public IOpeningService Openings { get { return _openingService.Value; } }
         #endregion
 
         #region Constructors
@@ -76,37 +103,25 @@ namespace Fosol.Schedule.DAL
         DataSource(IHttpContextAccessor httpContext)
         {
             this.Principal = httpContext.HttpContext?.User;
-            this.Mapper = new MapperConfiguration(config =>
+            this.AddMapper = new MapperConfiguration(config =>
             {
-                config.CreateMap<Entities.BaseEntity, Models.BaseModel>()
-                    .Include<Entities.User, Models.User>()
-                    .Include<Entities.Calendar, Models.Calendar>()
-                    .Include<Entities.Participant, Models.Participant>()
-                    .Include<Entities.Event, Models.Event>()
-                    .Include<Entities.Activity, Models.Activity>()
-                    .Include<Entities.Attribute, Models.Attribute>()
-                    .ForMember(dest => dest.AddedById, opt => opt.ResolveUsing(src => this.Principal.GetNameIdentifier().Value))
-                    .ForMember(dest => dest.RowVersion, opt => opt.MapFrom(src => Convert.ToBase64String(src.RowVersion)))
-                    .ReverseMap()
-                    .ForMember(dest => dest.RowVersion, opt => opt.MapFrom(src => Convert.FromBase64String(src.RowVersion)));
-
-                config.CreateMap<Entities.User, Models.User>().ReverseMap();
-                config.CreateMap<Entities.Calendar, Models.Calendar>()
-                    .ForMember(dest => dest.Key, opt => opt.ResolveUsing(src => src.Key == Guid.Empty ? Guid.NewGuid() : src.Key))
-                    .ReverseMap();
-                config.CreateMap<Entities.Participant, Models.Participant>()
-                    .ForMember(dest => dest.Key, opt => opt.ResolveUsing(src => src.Key == Guid.Empty ? Guid.NewGuid() : src.Key))
-                    .ReverseMap();
-                config.CreateMap<Entities.Event, Models.Event>().ReverseMap();
-                config.CreateMap<Entities.Activity, Models.Activity>().ReverseMap();
-                config.CreateMap<Entities.Attribute, Models.Attribute>().ReverseMap();
+                config.AddProfile(new AddProfile(this));
+            }).CreateMapper();
+            this.UpdateMapper = new MapperConfiguration(config =>
+            {
+                config.AddProfile(new UpdateProfile(this));
             }).CreateMapper();
 
+            // TODO: reflection to auto initialize the services.
+            _helperService = new Lazy<IHelperService>(() => new HelperService(this));
+            _subscriptionService = new Lazy<ISubscriptionService>(() => new SubscriptionService(this));
             _userService = new Lazy<IUserService>(() => new UserService(this));
+            _accountService = new Lazy<IAccountService>(() => new AccountService(this));
             _calendarService = new Lazy<ICalendarService>(() => new CalendarService(this));
             _participantService = new Lazy<IParticipantService>(() => new ParticipantService(this));
             _eventService = new Lazy<IEventService>(() => new EventService(this));
             _activityService = new Lazy<IActivityService>(() => new ActivityService(this));
+            _openingService = new Lazy<IOpeningService>(() => new OpeningService(this));
         }
 
         /// <summary>

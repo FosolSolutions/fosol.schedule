@@ -18,6 +18,12 @@ namespace Fosol.Schedule.Entities
         public int Id { get; set; }
 
         /// <summary>
+        /// get/set - A unique key to identify this subscription.
+        /// </summary>
+        [Required]
+        public Guid Key { get; set; }
+
+        /// <summary>
         /// get/set - A unique name to identify the subscription.
         /// </summary>
         [Required, MaxLength(100)]
@@ -67,6 +73,7 @@ namespace Fosol.Schedule.Entities
 
             this.Name = name;
             this.Description = description;
+            this.Key = Guid.NewGuid();
         }
         #endregion
     }

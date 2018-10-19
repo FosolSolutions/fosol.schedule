@@ -2,7 +2,7 @@
 using Fosol.Core.Extensions.Principals;
 using Fosol.Schedule.DAL.Interfaces;
 
-namespace Fosol.Schedule.DAL
+namespace Fosol.Schedule.DAL.Services
 {
     /// <summary>
     /// ReadableService abstract class, provides a common generic implementation for all services.  This provides a way to manage entities in the datasource.
@@ -21,7 +21,7 @@ namespace Fosol.Schedule.DAL
         /// <summary>
         /// get - The datasource.
         /// </summary>
-        internal DataSource Source { get { return _source as DataSource; } }
+        protected DataSource Source { get { return _source as DataSource; } }
 
         /// <summary>
         /// get - The DbContext used to communicate with the datasource.
@@ -130,21 +130,42 @@ namespace Fosol.Schedule.DAL
         /// <summary>
         /// Creates a new instance of a <typeparamref name="EntityT"/> by mapping the specified <typeparamref name="ModelT"/>.
         /// </summary>
-        /// <param name="model"></param>
+        /// <param name="source"></param>
         /// <returns></returns>
-        protected EntityT Map(ModelT model)
+        protected EntityT AddMap(ModelT source)
         {
-            return this.Source.Mapper.Map<EntityT>(model);
+            return this.Source.AddMapper.Map<EntityT>(source);
+        }
+
+        /// <summary>
+        /// Creates a new instance of a <typeparamref name="EntityT"/> by mapping the specified <typeparamref name="ModelT"/>.
+        /// </summary>
+        /// <param name="source"></param>
+        /// <returns></returns>
+        protected EntityT UpdateMap(ModelT source)
+        {
+            return this.Source.UpdateMapper.Map<EntityT>(source);
         }
 
         /// <summary>
         /// Creates a new instance of a <typeparamref name="ModelT"/> by mapping the specified <typeparamref name="EntityT"/>.
         /// </summary>
-        /// <param name="entity"></param>
+        /// <param name="source"></param>
         /// <returns></returns>
-        protected ModelT Map(EntityT entity)
+        protected ModelT Map(EntityT source)
         {
-            return this.Source.Mapper.Map<ModelT>(entity);
+            return this.Source.UpdateMapper.Map<ModelT>(source);
+        }
+
+        /// <summary>
+        /// Creates a new instance of a <typeparamref name="ModelT"/> by mapping the specified <typeparamref name="EntityT"/>.
+        /// </summary>
+        /// <param name="source"></param>
+        /// <param name="destination"></param>
+        /// <returns></returns>
+        protected ModelT Map(EntityT source, ModelT destination)
+        {
+            return this.Source.UpdateMapper.Map(source, destination);
         }
 
         /// <summary>
@@ -153,11 +174,11 @@ namespace Fosol.Schedule.DAL
         /// <exception cref="NoContentException">If the entity could not be found in the datasource.</exception>
         /// <param name="model"></param>
         /// <returns></returns>
-        protected virtual EntityT Find(ModelT model)
+        protected virtual T Find<T>(ModelT model) where T : class
         {
             // TODO: Need to rewrite to handle different primary key configurations.
             var id = (int)typeof(ModelT).GetProperty("Id").GetValue(model);
-            return this.Find(id);
+            return this.Find<T>(id);
         }
 
         /// <summary>
@@ -166,9 +187,9 @@ namespace Fosol.Schedule.DAL
         /// <exception cref="NoContentException">If the entity could not be found in the datasource.</exception>
         /// <param name="keyValues"></param>
         /// <returns></returns>
-        protected virtual EntityT Find(params object[] keyValues)
+        protected virtual T Find<T>(params object[] keyValues) where T : class
         {
-            var entity = this.Context.Set<EntityT>().Find(keyValues);
+            var entity = this.Context.Set<T>().Find(keyValues);
 
             if (entity == null)
                 throw new NoContentException(typeof(ModelT));
@@ -182,9 +203,9 @@ namespace Fosol.Schedule.DAL
         /// <exception cref="NoContentException">If the entity could not be found in the datasource.</exception>
         /// <param name="keyValues"></param>
         /// <returns></returns>
-        public virtual ModelT Get(params object[] keyValues)
+        public virtual ModelT Find(params object[] keyValues)
         {
-            return this.Map(Find(keyValues));
+            return this.Map(this.Find<EntityT>(keyValues));
         }
         #endregion
     }

@@ -1,8 +1,18 @@
 ﻿namespace Fosol.Schedule.Entities
 {
+    /// <summary>
+    /// ApplicationProcess enum, application process options control the behaviour of an application.
+    /// </summary>
     public enum ApplicationProcess
     {
+        /// <summary>
+        /// Accept - The participant application is immediately accepted.
+        /// </summary>
         Accept = 0,
+
+        /// <summary>
+        /// Review - The participant application must be reviewed before being accepted.
+        /// </summary>
         Review = 1
     }
 }

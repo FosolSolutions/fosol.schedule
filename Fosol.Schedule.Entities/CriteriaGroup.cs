@@ -1,8 +1,8 @@
 ﻿using Fosol.Core.Extensions.Collection;
+using Fosol.Core.Extensions.Enumerable;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text.RegularExpressions;
 
 namespace Fosol.Schedule.Entities
 {
@@ -33,14 +33,14 @@ namespace Fosol.Schedule.Entities
         {
             this.Id = criteria.Id;
             var values = criteria.Criteria.Split(';');
-            this.Criteria.AddRange(values.Select(v => new CriteriaValue(v)).ToArray());
+            values.ForEach(c => this.Criteria.Add(new CriteriaValue(c)));
         }
         #endregion
 
         #region Methods
         public override string ToString()
         {
-            return String.Join(';', this.Criteria.Select(c => c.ToString()));
+            return this.ToString(false);
         }
 
         public override string ToString(bool encode)

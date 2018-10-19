@@ -1,7 +1,4 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
-
-namespace Fosol.Schedule.Entities
+﻿namespace Fosol.Schedule.Entities
 {
     /// <summary>
     /// Criteria class, provides a way to manage criteria in the datasource.

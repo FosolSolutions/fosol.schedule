@@ -100,6 +100,18 @@ namespace Fosol.Schedule.Entities
             this.Key = Guid.NewGuid();
             this.Email = email;
         }
+
+        /// <summary>
+        /// Creates a new instance of a User object, and initializes it with the specified properties and links it to the account.
+        /// </summary>
+        /// <param name="email"></param>
+        /// <param name="account"></param>
+        public User(string email, Account account) : this(email)
+        {
+            if (account == null) throw new ArgumentNullException(nameof(account));
+
+            this.Accounts.Add(new AccountUser(account, this));
+        }
         #endregion
     }
 }

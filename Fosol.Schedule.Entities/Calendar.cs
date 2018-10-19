@@ -87,6 +87,7 @@ namespace Fosol.Schedule.Entities
                 throw new ArgumentNullException(nameof(name));
 
             this.AccountId = account?.Id ?? throw new ArgumentNullException(nameof(account));
+            this.Account = account;
             this.Name = name;
             this.Key = Guid.NewGuid();
         }

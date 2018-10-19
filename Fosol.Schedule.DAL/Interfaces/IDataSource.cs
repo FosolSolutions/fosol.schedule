@@ -1,5 +1,6 @@
 ﻿using AutoMapper;
 using System;
+using System.Security.Principal;
 
 namespace Fosol.Schedule.DAL.Interfaces
 {
@@ -10,14 +11,38 @@ namespace Fosol.Schedule.DAL.Interfaces
     {
         #region Properties
         /// <summary>
-        /// get - The AutoMapper used to cast objects.
+        /// get - The AutoMapper used to cast objects that are being added to the datasource.
         /// </summary>
-        IMapper Mapper { get; }
+        IMapper AddMapper { get; }
+        /// <summary>
+        /// get - The AutoMapper used to cast objects that are being updated in the datasource.
+        /// </summary>
+        IMapper UpdateMapper { get; }
+
+        /// <summary>
+        /// get - The current principal using the datasource.
+        /// </summary>
+        IPrincipal Principal { get; }
+
+        /// <summary>
+        /// get - A helper service for various functions.
+        /// </summary>
+        IHelperService Helper { get; }
+
+        /// <summary>
+        /// get - The service to manage subscriptions.
+        /// </summary>
+        ISubscriptionService Subscriptions { get; }
 
         /// <summary>
         /// get - The service to manage users.
         /// </summary>
         IUserService Users { get; }
+
+        /// <summary>
+        /// get - The service to manage accounts.
+        /// </summary>
+        IAccountService Accounts { get; }
 
         /// <summary>
         /// get - The service to manage calendars.
@@ -38,6 +63,11 @@ namespace Fosol.Schedule.DAL.Interfaces
         /// get - The service to manage activities.
         /// </summary>
         IActivityService Activities { get; }
+
+        /// <summary>
+        /// get - The service to manage openings.
+        /// </summary>
+        IOpeningService Openings { get; }
         #endregion
 
         #region Methods

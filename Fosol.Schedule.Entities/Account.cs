@@ -84,7 +84,9 @@ namespace Fosol.Schedule.Entities
         public Account(User owner, AccountKind kind, Subscription subscription)
         {
             this.OwnerId = owner?.Id ?? throw new ArgumentNullException(nameof(owner));
+            this.Owner = owner;
             this.SubscriptionId = subscription?.Id ?? throw new ArgumentNullException(nameof(subscription));
+            this.Subscription = subscription;
             this.Kind = kind;
             this.Key = Guid.NewGuid();
         }

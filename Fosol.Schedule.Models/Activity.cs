@@ -16,8 +16,6 @@ namespace Fosol.Schedule.Models
 
         public string Description { get; set; }
 
-        public string SelfUrl { get; set; }
-
         public DateTime StartOn { get; set; }
 
         public DateTime EndOn { get; set; }

@@ -1,12 +1,12 @@
-﻿using Fosol.Core.Extensions.Enumerable;
-using System;
-using System.Collections.Generic;
+﻿using System;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
-using System.Text;
 
 namespace Fosol.Schedule.Entities
 {
+    /// <summary>
+    /// CriteriaObject class, provides an object within the datasource that represents a criteria.
+    /// </summary>
     public class CriteriaObject : BaseEntity
     {
         #region Properties
@@ -26,11 +26,24 @@ namespace Fosol.Schedule.Entities
             this.IsGroup = false;
         }
 
-        public CriteriaObject(LogicalOperator logicalOperator, string key, string value, DataType type)
+        public CriteriaObject(string key, string value, Type type) : this(LogicalOperator.And, key, value, type)
+        {
+        }
+
+        public CriteriaObject(LogicalOperator logicalOperator, string key, string value, Type type)
         {
             this.IsGroup = false;
-            // TODO: encode key and value.
-            this.Criteria = $"{logicalOperator},{key},{value},{type}";
+            this.Criteria = new CriteriaValue(logicalOperator, key, value, type).ToString(true);
+        }
+
+        public CriteriaObject(string key, object value) : this(LogicalOperator.And, key, value)
+        {
+        }
+
+        public CriteriaObject(LogicalOperator logicalOperator, string key, object value)
+        {
+            this.IsGroup = false;
+            this.Criteria = new CriteriaValue(logicalOperator, key, value).ToString(true);
         }
 
         public CriteriaObject(CriteriaValue criteria)
@@ -47,10 +60,16 @@ namespace Fosol.Schedule.Entities
             this.Criteria = criteria.ToString(true);
         }
 
-        public CriteriaObject(params CriteriaValue[] criteria)
+        public CriteriaObject(params Criteria[] criteria)
         {
             this.IsGroup = true;
             this.Criteria = String.Join(";", criteria.Select(c => c.ToString(true)));
+        }
+
+        public CriteriaObject(CriteriaObject criteria)
+        {
+            this.IsGroup = criteria.IsGroup;
+            this.Criteria = criteria.ToString(true);
         }
         #endregion
 
@@ -58,6 +77,17 @@ namespace Fosol.Schedule.Entities
         public static explicit operator Criteria(CriteriaObject criteria)
         {
             return criteria.IsGroup ? new CriteriaGroup(criteria) : new CriteriaValue(criteria) as Criteria;
+        }
+
+        public override string ToString()
+        {
+            return this.ToString(false);
+        }
+
+        public string ToString(bool encode)
+        {
+            var criteria = this.IsGroup ? new CriteriaGroup(this) : new CriteriaValue(this) as Criteria;
+            return criteria?.ToString(encode);
         }
         #endregion
     }

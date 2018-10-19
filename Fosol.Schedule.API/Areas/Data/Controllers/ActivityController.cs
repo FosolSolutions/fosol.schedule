@@ -9,7 +9,7 @@ namespace Fosol.Schedule.API.Areas.Data.Controllers
     /// </summary>
     [Produces("application/json")]
     [Area("data")]
-    [Route("[area]/calendar/[controller]")]
+    [Route("[area]/calendar/event/[controller]")]
     public sealed class ActivityController : ApiController
     {
         #region Variables
@@ -35,10 +35,52 @@ namespace Fosol.Schedule.API.Areas.Data.Controllers
         /// <param name="id">The primary key for the activity.</param>
         /// <returns></returns>
         [HttpGet("{id}")]
-        public IActionResult Activity(int id)
+        public IActionResult GetActivity(int id)
         {
             var activity = _datasource.Activities.Get(id);
             return Ok(activity);
+        }
+
+        /// <summary>
+        /// Add the new activity to the datasource.
+        /// </summary>
+        /// <param name="activity"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public IActionResult AddActivity([FromBody] Models.Activity activity)
+        {
+            _datasource.Activities.Add(activity);
+            _datasource.CommitTransaction();
+
+            return Created(Url.RouteUrl(nameof(GetActivity), new { activity.Id }), activity);
+        }
+
+        /// <summary>
+        /// Update the specified activity in the datasource.
+        /// </summary>
+        /// <param name="activity"></param>
+        /// <returns></returns>
+        [HttpPut]
+        public IActionResult UpdateActivity([FromBody] Models.Activity activity)
+        {
+            _datasource.Activities.Update(activity);
+            _datasource.CommitTransaction();
+
+            return Ok(activity);
+        }
+
+        /// <summary>
+        /// Delete the specified activity from the datasource.
+        /// </summary>
+        /// <param name="activity"></param>
+        /// <returns></returns>
+        [HttpDelete]
+        public IActionResult DeleteActivity([FromBody] Models.Activity activity)
+        {
+            _datasource.Activities.Remove(activity);
+            _datasource.CommitTransaction();
+
+            return Ok();
         }
         #endregion
     }

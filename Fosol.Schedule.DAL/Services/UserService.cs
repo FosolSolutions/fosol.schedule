@@ -37,7 +37,7 @@ namespace Fosol.Schedule.DAL.Services
         {
             var user = this.Context.Users.FirstOrDefault(p => p.Key == key) ?? throw new NoContentException(typeof(Models.User));
 
-            return this.Source.Mapper.Map<Models.User>(user);
+            return this.Map(user);
         }
 
         /// <summary>
@@ -48,9 +48,7 @@ namespace Fosol.Schedule.DAL.Services
         /// <returns></returns>
         public Models.User Get(int id)
         {
-            var user = this.Find(id);
-
-            return this.Source.Mapper.Map<Models.User>(user);
+            return this.Find(id);
         }
         #endregion
     }

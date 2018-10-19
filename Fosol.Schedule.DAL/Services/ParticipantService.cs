@@ -37,7 +37,7 @@ namespace Fosol.Schedule.DAL.Services
         {
             var participant = this.Context.Participants.FirstOrDefault(p => p.Key == key) ?? throw new NoContentException(typeof(Models.Participant));
 
-            return this.Source.Mapper.Map<Models.Participant>(participant);
+            return this.Map(participant);
         }
 
         /// <summary>
@@ -48,9 +48,7 @@ namespace Fosol.Schedule.DAL.Services
         /// <returns></returns>
         public Models.Participant Get(int id)
         {
-            var participant = this.Find(id);
-
-            return this.Source.Mapper.Map<Models.Participant>(participant);
+            return this.Find(id);
         }
         #endregion
     }

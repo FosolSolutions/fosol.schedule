@@ -30,7 +30,7 @@ namespace Fosol.Schedule.DAL
 
         public DbSet<Address> Addresses { get; set; }
 
-        public DbSet<CriteriaObject> Criterias { get; set; }
+        public DbSet<CriteriaObject> Criteria { get; set; }
 
         public DbSet<Entities.Attribute> Attributes { get; set; }
 

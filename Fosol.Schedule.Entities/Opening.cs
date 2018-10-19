@@ -64,12 +64,12 @@ namespace Fosol.Schedule.Entities
         public ApplicationProcess ApplicationProcess { get; set; }
 
         /// <summary>
-        /// get/set - A collection of participants.
+        /// get/set - A collection of participants that have been accepted to the opening.
         /// </summary>
         public ICollection<OpeningParticipant> Participants { get; set; } = new List<OpeningParticipant>();
 
         /// <summary>
-        /// get/set - A collection of applications.
+        /// get/set - A collection of applications.  These are participants that are apply for the opening.
         /// </summary>
         public ICollection<OpeningParticipantApplication> Applications { get; set; } = new List<OpeningParticipantApplication>();
 
@@ -77,6 +77,40 @@ namespace Fosol.Schedule.Entities
         /// get/set - A collection of criteria.
         /// </summary>
         public ICollection<OpeningCriteria> Criteria { get; set; } = new List<OpeningCriteria>();
+        #endregion
+
+        #region Constructors
+        /// <summary>
+        /// Creates a new instance of a Opening object.
+        /// </summary>
+        public Opening()
+        {
+
+        }
+
+        /// <summary>
+        /// Creates a new instance of a Opening object, and initializes it with the specified property values.
+        /// </summary>
+        /// <param name="activity"></param>
+        /// <param name="name"></param>
+        /// <param name="minParticipants"></param>
+        /// <param name="maxParticipants"></param>
+        /// <param name="type"></param>
+        /// <param name="process"></param>
+        public Opening(Activity activity, string name, int minParticipants, int maxParticipants, OpeningType type, ApplicationProcess process)
+        {
+            if (String.IsNullOrWhiteSpace(name)) throw new ArgumentException($"Argument 'name' cannot be null, empty or whitespace.");
+            if (minParticipants <= 0) throw new ArgumentException($"Argument 'minParticipants' must be greater than 0.");
+            if (maxParticipants < minParticipants) throw new ArgumentException($"Argument 'maxParticipants' must be greater than or equal to 'minParticipants'.");
+
+            this.ActivityId = activity?.Id ?? throw new ArgumentNullException(nameof(activity));
+            this.Activity = activity;
+            this.Name = name;
+            this.MinParticipants = minParticipants;
+            this.MaxParticipants = maxParticipants;
+            this.OpeningType = type;
+            this.ApplicationProcess = process;
+        }
         #endregion
     }
 }

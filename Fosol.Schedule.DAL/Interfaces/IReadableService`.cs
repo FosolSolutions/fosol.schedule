@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace Fosol.Schedule.DAL.Interfaces
+﻿namespace Fosol.Schedule.DAL.Interfaces
 {
     /// <summary>
     /// IReadableService interface, provides generic 
@@ -14,6 +12,6 @@ namespace Fosol.Schedule.DAL.Interfaces
         /// </summary>
         /// <param name="keyValues"></param>
         /// <returns></returns>
-        ModelT Get(params object[] keyValues);
+        ModelT Find(params object[] keyValues);
     }
 }

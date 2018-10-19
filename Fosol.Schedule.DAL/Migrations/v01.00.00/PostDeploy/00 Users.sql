@@ -14,4 +14,7 @@ INSERT INTO dbo.Users (
 	, 1
 )
 
+UPDATE dbo.[Subscriptions]
+SET AddedById = 1
+
 SET IDENTITY_INSERT dbo.[Users] OFF

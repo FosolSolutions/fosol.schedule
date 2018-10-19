@@ -49,7 +49,9 @@ namespace Fosol.Schedule.Entities
         public ActivityCriteria(Activity activity, CriteriaObject criteria)
         {
             this.ActivityId = activity?.Id ?? throw new ArgumentNullException(nameof(activity));
+            this.Activity = activity;
             this.CriteriaId = criteria?.Id ?? throw new ArgumentNullException(nameof(criteria));
+            this.Criteria = criteria;
         }
         #endregion
     }

@@ -79,14 +79,15 @@ namespace Fosol.Schedule.Entities
         /// <summary>
         /// Creates a new instance of a <typeparamref name="Activity"/> object, and initializes it with the specified properties.
         /// </summary>
-        /// <param name="eventId"></param>
+        /// <param name="cevent"></param>
         /// <param name="name"></param>
-        public Activity(int eventId, string name)
+        public Activity(Event cevent, string name)
         {
             if (String.IsNullOrWhiteSpace(name))
                 throw new ArgumentNullException(nameof(name));
 
-            this.EventId = eventId;
+            this.EventId = cevent.Id;
+            this.Event = cevent;
             this.Name = name;
             this.Key = Guid.NewGuid();
         }
@@ -95,11 +96,11 @@ namespace Fosol.Schedule.Entities
         /// <summary>
         /// Creates a new instance of a <typeparamref name="Activity"/> object, and initializes it with the specified properties.
         /// </summary>
-        /// <param name="eventId"></param>
+        /// <param name="cevent"></param>
         /// <param name="name"></param>
         /// <param name="start">When the activity starts.</param>
         /// <param name="end">When the activity ends.</param>
-        public Activity(int eventId, string name, DateTime start, DateTime? end = null) : this(eventId, name)
+        public Activity(Event cevent, string name, DateTime start, DateTime? end = null) : this(cevent, name)
         {
             this.StartOn = start;
             this.EndOn = end;

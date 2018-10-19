@@ -728,6 +728,8 @@ namespace Fosol.Schedule.DAL.Migrations
                     b.Property<string>("Description")
                         .HasMaxLength(2000);
 
+                    b.Property<Guid>("Key");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(100);

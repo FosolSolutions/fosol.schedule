@@ -35,7 +35,7 @@ namespace Fosol.Schedule.API.Areas.Data.Controllers
         /// </summary>
         /// <returns>An array calendar.</returns>
         [HttpGet("/[area]/calendars/{page}")]
-        public IActionResult Calendars(int page)
+        public IActionResult GetCalendars(int page)
         {
             var skip = page <= 0 ? 0 : page - 1;
             // TODO: Configurable 'take'.
@@ -53,7 +53,7 @@ namespace Fosol.Schedule.API.Areas.Data.Controllers
         /// <param name="endOn">The end date for the calendar to return.</param>
         /// <returns>A calendar with all events within the specified date range.</returns>
         [HttpGet("{id}")]
-        public IActionResult Calendar(int id, DateTime? startOn = null, DateTime? endOn = null)
+        public IActionResult GetCalendar(int id, DateTime? startOn = null, DateTime? endOn = null)
         {
             var start = startOn ?? DateTime.UtcNow;
             // Start at the beginning of the week.
@@ -61,7 +61,7 @@ namespace Fosol.Schedule.API.Areas.Data.Controllers
             var end = endOn ?? start.AddDays(7);
 
             // TODO: no tracking.
-            var calendar = _dataSource.Calendars.Get(id, startOn, endOn);
+            var calendar = _dataSource.Calendars.Get(id, start, end);
             return calendar != null ? Ok(calendar) : (IActionResult)NoContent();
         }
 
@@ -76,7 +76,48 @@ namespace Fosol.Schedule.API.Areas.Data.Controllers
             _dataSource.Calendars.Add(calendar);
             _dataSource.CommitTransaction();
 
+            return Created(Url.RouteUrl(nameof(GetCalendar), new { calendar.Id }), calendar);
+        }
+
+        /// <summary>
+        /// Update the specified calendar in the datasource.
+        /// </summary>
+        /// <param name="calendar"></param>
+        /// <returns></returns>
+        [HttpPut]
+        public IActionResult UpdateCalendar([FromBody] Models.Calendar calendar)
+        {
+            _dataSource.Calendars.Update(calendar);
+            _dataSource.CommitTransaction();
+
             return Ok(calendar);
+        }
+
+        /// <summary>
+        /// Delete the specified calendar from the datasource.
+        /// </summary>
+        /// <param name="calendar"></param>
+        /// <returns></returns>
+        [HttpDelete]
+        public IActionResult DeleteCalendar([FromBody] Models.Calendar calendar)
+        {
+            _dataSource.Calendars.Remove(calendar);
+            _dataSource.CommitTransaction();
+
+            return Ok();
+        }
+
+        /// <summary>
+        /// Creates and adds a new calendar for the specified ecclesia.
+        /// </summary>
+        /// <param name="calendar"></param>
+        /// <returns></returns>
+        [HttpPost("ecclesia")]
+        public IActionResult AddEcclesialCalendar([FromBody] Models.Calendar calendar)
+        {
+            var result = _dataSource.Helper.AddEcclesialCalendar(calendar.Name, calendar.Description);
+
+            return Ok(result);
         }
         #endregion
     }

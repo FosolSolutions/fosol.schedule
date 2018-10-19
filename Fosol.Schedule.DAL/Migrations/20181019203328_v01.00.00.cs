@@ -193,6 +193,7 @@ namespace Fosol.Schedule.DAL.Migrations
                     RowVersion = table.Column<byte[]>(rowVersion: true, nullable: true),
                     Id = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                    Key = table.Column<Guid>(nullable: false),
                     Name = table.Column<string>(maxLength: 100, nullable: false),
                     Description = table.Column<string>(maxLength: 2000, nullable: true),
                     State = table.Column<int>(nullable: false),

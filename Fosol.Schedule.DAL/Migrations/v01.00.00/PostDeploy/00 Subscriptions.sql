@@ -7,11 +7,13 @@ INSERT INTO dbo.[Subscriptions] (
 	, [Name]
 	, [Description]
 	, [State]
+	, [Key]
 ) VALUES (
 	1
 	, 'Free'
 	, 'A free subscription'
 	, 1
+	, NEWID()
 )
 
 SET IDENTITY_INSERT dbo.[Subscriptions] OFF

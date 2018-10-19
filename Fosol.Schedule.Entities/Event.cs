@@ -96,6 +96,7 @@ namespace Fosol.Schedule.Entities
                 throw new ArgumentNullException(nameof(name));
 
             this.CalendarId = calendar?.Id ?? throw new ArgumentNullException(nameof(calendar));
+            this.Calendar = calendar;
             this.Name = name;
             this.Key = Guid.NewGuid();
             this.StartOn = start;

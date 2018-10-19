@@ -127,6 +127,7 @@ namespace Fosol.Schedule.Entities
         public Participant(Calendar calendar, User user)
         {
             this.CalendarId = calendar?.Id ?? throw new ArgumentNullException(nameof(calendar));
+            this.Calendar = calendar;
             this.UserId = user?.Id ?? throw new ArgumentNullException(nameof(user));
             this.FirstName = user.Info?.FirstName;
             this.MiddleName = user.Info?.MiddleName;
@@ -150,6 +151,7 @@ namespace Fosol.Schedule.Entities
                 throw new ArgumentException($"The argument '{nameof(displayName)}' is required and cannot be null or empty.");
 
             this.CalendarId = calendar?.Id ?? throw new ArgumentNullException(nameof(calendar));
+            this.Calendar = calendar;
             this.DisplayName = displayName;
             this.FirstName = firstName;
             this.LastName = lastName;

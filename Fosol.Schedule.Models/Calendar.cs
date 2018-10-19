@@ -16,9 +16,9 @@ namespace Fosol.Schedule.Models
 
         public string Description { get; set; }
 
-        public string SelfUrl { get; set; }
-
         public IEnumerable<Event> Events { get; set; }
+
+        public IEnumerable<Criteria> Criteria { get; set; }
         #endregion
     }
 }

@@ -36,9 +36,7 @@ namespace Fosol.Schedule.DAL.Services
         /// <returns></returns>
         public Models.Event Get(int id)
         {
-            var calendar = this.Find(id);
-
-            return this.Source.Mapper.Map<Models.Event>(calendar);
+            return this.Find(id);
         }
 
         /// <summary>
@@ -55,7 +53,7 @@ namespace Fosol.Schedule.DAL.Services
             var start = startOn.ToUniversalTime();
             var end = endOn.ToUniversalTime();
 
-            var events = this.Context.Events.Where(e => e.CalendarId == calendarId && e.StartOn >= start && e.EndOn <= end).Select(e => this.Source.Mapper.Map<Models.Event>(e)).ToArray();
+            var events = this.Context.Events.Where(e => e.CalendarId == calendarId && e.StartOn >= start && e.EndOn <= end).Select(e => this.Map(e)).ToArray();
             return events;
         }
         #endregion

@@ -50,8 +50,7 @@ namespace Fosol.Schedule.DAL.Services
         /// <returns></returns>
         public Models.Calendar Get(int id)
         {
-            var calendar = this.Find(id);
-            return this.Map(calendar);
+            return this.Find(id);
         }
 
         /// <summary>
@@ -72,7 +71,7 @@ namespace Fosol.Schedule.DAL.Services
             var calendar = Get(id);
             var events = this.Context.Events.Where(e => e.CalendarId == id && e.StartOn >= start && e.EndOn <= end);
 
-            calendar.Events = events.Select(e => this.Source.Mapper.Map<Models.Event>(e));
+            calendar.Events = events.Select(e => this.Source.UpdateMapper.Map<Models.Event>(e));
 
             return calendar;
         }
@@ -89,11 +88,54 @@ namespace Fosol.Schedule.DAL.Services
             // Must own the account.
             // TODO: Permission based action.
             var userId = this.GetUserId();
-            var ownsAccount = this.Context.Accounts.Any(a => a.OwnerId == userId);
+            var ownsAccount = this.Context.Accounts.Any(a => a.Id == model.AccountId && a.OwnerId == userId);
             if (!ownsAccount) throw new NotAuthorizedException();
 
-            if (model.Key == Guid.Empty) model.Key = Guid.NewGuid();
             base.Add(model);
+        }
+
+        /// <summary>
+        /// Update the specified calendar in the datasource.
+        /// Validates whether the current user is authorized to do this.
+        /// </summary>
+        /// <param name="model"></param>
+        public override void Update(Models.Calendar model)
+        {
+            this.VerifyPrincipal(true);
+
+            // Must own the account.
+            // TODO: Permission based action.
+            var userId = this.GetUserId();
+            var calendar = this.Find(model);
+            var ownsAccount = this.Context.Accounts.Count(a => (a.Id == calendar.AccountId || a.Id == model.AccountId) && a.OwnerId == userId) == (calendar.AccountId == model.AccountId ? 1 : 2);
+            if (!ownsAccount) throw new NotAuthorizedException();
+
+            // TODO: Need to travel children to determine whether it's an Add/Update/Remove action.
+            model.Events = null;
+
+            base.Update(model);
+        }
+
+        /// <summary>
+        /// Remove the specified calendar from the datasource.
+        /// Validates whether the current user is authorized to do this.
+        /// </summary>
+        /// <param name="model"></param>
+        public override void Remove(Models.Calendar model)
+        {
+            this.VerifyPrincipal(true);
+
+            // Must own the account.
+            // TODO: Permission based action.
+            var userId = this.GetUserId();
+            var calendar = this.Find(model);
+            var ownsAccount = this.Context.Accounts.Any(a => a.Id == calendar.AccountId && a.OwnerId == userId);
+            if (!ownsAccount) throw new NotAuthorizedException();
+
+            // TODO: Need to travel children to Remove them all.
+            model.Events = null;
+
+            base.Remove(model);
         }
         #endregion
     }
