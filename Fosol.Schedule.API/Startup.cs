@@ -1,4 +1,6 @@
-﻿using Fosol.Schedule.DAL;
+﻿using Fosol.Core.Extensions.ApplicationBuilders;
+using Fosol.Core.Extensions.ServiceCollections;
+using Fosol.Schedule.DAL;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -103,6 +105,12 @@ namespace Fosol.Schedule.API
                 });
             });
 
+            services.AddResponseHeaders(options =>
+            {
+                options.AddDefaultSecurePolicy();
+                options.AddCustomHeader("Content-Language", "en-US");
+            });
+
             services.AddHttpContextAccessor();
             services.TryAddSingleton<IHttpContextAccessor, HttpContextAccessor>();
 
@@ -138,6 +146,7 @@ namespace Fosol.Schedule.API
             }
             
             app.UseDataSource();
+            app.UseResponseHeaders();
             app.UseCors("development");
             app.UseHttpsRedirection();
             //app.UseJsonExceptionMiddleware();

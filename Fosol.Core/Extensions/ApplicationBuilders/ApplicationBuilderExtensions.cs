@@ -8,7 +8,6 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc.Formatters;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
-using Newtonsoft.Json;
 using System;
 using System.IO;
 using System.Net;
@@ -23,9 +22,9 @@ namespace Fosol.Core.Extensions.ApplicationBuilders
         /// Using the default 'UseExceptionHandler' all unhandled exceptions will be returned as JSON.
         /// </summary>
         /// <param name="app"></param>
-        public static void UseJsonExceptionHandler(this IApplicationBuilder app)
+        public static IApplicationBuilder UseJsonExceptionHandler(this IApplicationBuilder app)
         {
-            app.UseExceptionHandler(appBuilder =>
+            return app.UseExceptionHandler(appBuilder =>
             {
                 appBuilder.Run(async context =>
                 {
@@ -45,9 +44,9 @@ namespace Fosol.Core.Extensions.ApplicationBuilders
         /// Add the JsonException middleware to return all unhandled exceptions as JSON.
         /// </summary>
         /// <param name="app"></param>
-        public static void UseJsonExceptionMiddleware(this IApplicationBuilder app)
+        public static IApplicationBuilder UseJsonExceptionMiddleware(this IApplicationBuilder app)
         {
-            app.UseMiddleware<JsonExceptionHandler>();
+            return app.UseMiddleware<JsonExceptionHandlerMiddleware>();
         }
 
         /// <summary>
@@ -102,6 +101,38 @@ namespace Fosol.Core.Extensions.ApplicationBuilders
                 var response = writer.ToString();
                 return context.Response.WriteAsync(response);
             }
+        }
+
+        /// <summary>
+        /// Add the ResponseHeaders middleware to include the configured response headers with each response.
+        /// </summary>
+        /// <param name="app"></param>
+        public static IApplicationBuilder UseResponseHeaders(this IApplicationBuilder app)
+        {
+            var policy = app.ApplicationServices.GetService<ResponseHeaderPolicy>() ?? new ResponseHeaderBuilder(builder => builder.AddDefaultSecurePolicy()).Build();
+            return app.UseMiddleware<ResponseHeadersMiddleware>(policy);
+        }
+
+        /// <summary>
+        /// Add the ResponseHeaders middleware to include the configured response headers with each response.
+        /// </summary>
+        /// <param name="app"></param>
+        public static IApplicationBuilder UseResponseHeaders(this IApplicationBuilder app, ResponseHeaderBuilder builder)
+        {
+            var policy = builder.Build();
+            return app.UseMiddleware<ResponseHeadersMiddleware>(policy);
+        }
+
+        /// <summary>
+        /// Add the ResponseHeaders middleware to include the configured response headers with each response.
+        /// </summary>
+        /// <param name="app"></param>
+        public static IApplicationBuilder UseResponseHeaders(this IApplicationBuilder app, Action<ResponseHeaderBuilder> options)
+        {
+            var builder = new ResponseHeaderBuilder();
+            options?.Invoke(builder);
+            var policy = builder.Build();
+            return app.UseMiddleware<ResponseHeadersMiddleware>(policy);
         }
         #endregion
     }

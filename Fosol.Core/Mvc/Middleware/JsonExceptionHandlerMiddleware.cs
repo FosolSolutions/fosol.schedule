@@ -6,14 +6,14 @@ using System.Threading.Tasks;
 
 namespace Fosol.Core.Mvc.Middleware
 {
-    public class JsonExceptionHandler
+    public class JsonExceptionHandlerMiddleware
     {
         #region Properties
         private readonly RequestDelegate _next;
         #endregion
 
         #region Constructors
-        public JsonExceptionHandler(RequestDelegate next)
+        public JsonExceptionHandlerMiddleware(RequestDelegate next)
         {
             _next = next;
         }
