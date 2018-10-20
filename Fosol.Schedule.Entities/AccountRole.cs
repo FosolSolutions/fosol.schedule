@@ -75,6 +75,7 @@ namespace Fosol.Schedule.Entities
                 throw new ArgumentException($"Argument '{nameof(name)}' is required and cannot be nullable or empty.");
 
             this.AccountId = account?.Id ?? throw new ArgumentNullException(nameof(account));
+            this.Account = account;
             this.Name = name;
             this.Privileges = privileges;
         }

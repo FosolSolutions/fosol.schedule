@@ -49,7 +49,9 @@ namespace Fosol.Schedule.Entities
         public UserAccountRole(User user, AccountRole role)
         {
             this.UserId = user?.Id ?? throw new ArgumentNullException(nameof(user));
+            this.User = user;
             this.AccountRoleId = role?.Id ?? throw new ArgumentNullException(nameof(role));
+            this.AccountRole = role;
         }
         #endregion
     }

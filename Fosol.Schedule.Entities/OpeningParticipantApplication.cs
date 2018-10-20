@@ -49,7 +49,9 @@ namespace Fosol.Schedule.Entities
         public OpeningParticipantApplication(Opening opening, Participant participant)
         {
             this.OpeningId = opening?.Id ?? throw new ArgumentNullException(nameof(opening));
+            this.Opening = opening;
             this.ParticipantId = participant?.Id ?? throw new ArgumentNullException(nameof(participant));
+            this.Participant = participant;
         }
         #endregion
     }

@@ -49,7 +49,9 @@ namespace Fosol.Schedule.Entities
         public ParticipantAddress(Participant participant, Address address)
         {
             this.ParticipantId = participant?.Id ?? throw new ArgumentNullException(nameof(participant));
+            this.Participant = participant;
             this.AddressId = address?.Id ?? throw new ArgumentNullException(nameof(address));
+            this.Address = address;
         }
         #endregion
     }

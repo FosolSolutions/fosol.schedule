@@ -1,5 +1,6 @@
 ﻿using Fosol.Core.Extensions.Strings;
 using System;
+using System.Linq;
 
 namespace Fosol.Schedule.Entities
 {
@@ -73,6 +74,16 @@ namespace Fosol.Schedule.Entities
         #endregion
 
         #region Methods
+        /// <summary>
+        /// Validates that the attribute(s) match the criteria.
+        /// </summary>
+        /// <param name="attributes"></param>
+        /// <returns></returns>
+        public override bool Validate(params Attribute[] attributes)
+        {
+            return attributes.Any(a => a.Key.Equals(this.Key) && a.Value.Equals(this.Value));
+        }
+
         /// <summary>
         /// Convert this object into a string representation.
         /// </summary>

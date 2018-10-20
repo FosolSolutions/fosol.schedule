@@ -49,7 +49,9 @@ namespace Fosol.Schedule.Entities
         public OpeningCriteria(Opening opening, CriteriaObject criteria)
         {
             this.OpeningId = opening?.Id ?? throw new ArgumentNullException(nameof(opening));
+            this.Opening = opening;
             this.CriteriaId = criteria?.Id ?? throw new ArgumentNullException(nameof(criteria));
+            this.Criteria = criteria;
         }
         #endregion
     }

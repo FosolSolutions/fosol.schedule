@@ -1,5 +1,7 @@
-﻿using Fosol.Core.Mvc;
+﻿using Fosol.Core.Extensions.Principals;
+using Fosol.Core.Mvc;
 using Fosol.Schedule.DAL.Interfaces;
+using Fosol.Schedule.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Fosol.Schedule.API.Areas.Data.Controllers
@@ -28,7 +30,6 @@ namespace Fosol.Schedule.API.Areas.Data.Controllers
         #endregion
 
         #region Methods
-
         /// <summary>
         /// Returns an event opening for the specified 'id'.
         /// </summary>
@@ -47,7 +48,7 @@ namespace Fosol.Schedule.API.Areas.Data.Controllers
         /// <param name="opening"></param>
         /// <returns></returns>
         [HttpPost]
-        public IActionResult AddOpening([FromBody] Models.Opening opening)
+        public IActionResult AddOpening([FromBody] Opening opening)
         {
             _datasource.Openings.Add(opening);
             _datasource.CommitTransaction();
@@ -61,7 +62,7 @@ namespace Fosol.Schedule.API.Areas.Data.Controllers
         /// <param name="opening"></param>
         /// <returns></returns>
         [HttpPut]
-        public IActionResult UpdateOpening([FromBody] Models.Opening opening)
+        public IActionResult UpdateOpening([FromBody] Opening opening)
         {
             _datasource.Openings.Update(opening);
             _datasource.CommitTransaction();
@@ -75,12 +76,40 @@ namespace Fosol.Schedule.API.Areas.Data.Controllers
         /// <param name="opening"></param>
         /// <returns></returns>
         [HttpDelete]
-        public IActionResult DeleteOpening([FromBody] Models.Opening opening)
+        public IActionResult DeleteOpening([FromBody] Opening opening)
         {
             _datasource.Openings.Remove(opening);
             _datasource.CommitTransaction();
 
             return Ok();
+        }
+
+        /// <summary>
+        /// Submit an application for the current participant.
+        /// </summary>
+        /// <param name="opening"></param>
+        /// <returns></returns>
+        [HttpPut("apply")]
+        public IActionResult Apply([FromBody] Opening opening)
+        {
+            var result = _datasource.Openings.Apply(opening);
+            _datasource.CommitTransaction();
+
+            return Ok(result);
+        }
+
+        /// <summary>
+        /// Remove an application for the current participant.
+        /// </summary>
+        /// <param name="opening"></param>
+        /// <returns></returns>
+        [HttpPut("unapply")]
+        public IActionResult Unapply([FromBody] Opening opening)
+        {
+            var result = _datasource.Openings.Unapply(opening);
+            _datasource.CommitTransaction();
+
+            return Ok(result);
         }
         #endregion
     }

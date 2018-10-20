@@ -42,12 +42,12 @@ namespace Fosol.Schedule.Entities
         /// <summary>
         /// get - A collection of users who own this contact information.  It'll only ever be one.
         /// </summary>
-        public ICollection<UserContactInfo> UserContactInfos { get; set; } = new List<UserContactInfo>();
+        public ICollection<UserContactInfo> UserContactInfo { get; set; } = new List<UserContactInfo>();
 
         /// <summary>
         /// get - A collection of participants who references this information.  It'll only ever be one.
         /// </summary>
-        public ICollection<ParticipantContactInfo> ParticipantContactInfos { get; set; } = new List<ParticipantContactInfo>();
+        public ICollection<ParticipantContactInfo> ParticipantContactInfo { get; set; } = new List<ParticipantContactInfo>();
         #endregion
 
         #region Constructors
@@ -73,7 +73,30 @@ namespace Fosol.Schedule.Entities
             if (String.IsNullOrWhiteSpace(value))
                 throw new ArgumentNullException(nameof(value));
 
-            this.UserContactInfos.Add(new UserContactInfo(user, this) ?? throw new ArgumentNullException(nameof(user)));
+            this.UserContactInfo.Add(new UserContactInfo(user, this));
+            this.Name = name;
+            this.Type = type;
+            this.Category = category;
+            this.Value = value;
+        }
+
+        /// <summary>
+        /// Creates a new instance of a ContactInfo object, and initializes it with the specified properties.
+        /// </summary>
+        /// <param name="participant"></param>
+        /// <param name="name"></param>
+        /// <param name="type"></param>
+        /// <param name="category"></param>
+        /// <param name="value"></param>
+        public ContactInfo(Participant participant, string name, ContactInfoType type, ContactInfoCategory category, string value)
+        {
+            if (String.IsNullOrWhiteSpace(name))
+                throw new ArgumentNullException(nameof(name));
+
+            if (String.IsNullOrWhiteSpace(value))
+                throw new ArgumentNullException(nameof(value));
+
+            this.ParticipantContactInfo.Add(new ParticipantContactInfo(participant, this));
             this.Name = name;
             this.Type = type;
             this.Category = category;

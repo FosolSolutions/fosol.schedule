@@ -92,10 +92,12 @@ namespace Fosol.Schedule.DAL.Services
         /// <returns></returns>
         protected int? GetParticipantId()
         {
-            if (!this.IsPrincipalAParticipant)
-                return null;
+            var participantId = this.Source.Principal.GetParticipant()?.Value;
 
-            return this.GetParticipantId();
+            if (participantId == null) return null;
+
+            int.TryParse(participantId, out int id);
+            return id;
         }
 
         /// <summary>

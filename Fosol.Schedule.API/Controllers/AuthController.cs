@@ -69,7 +69,7 @@ namespace Fosol.Schedule.API.Controllers
             var participant = new ClaimsPrincipal(identity);
             await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, participant);
 
-            return Ok();
+            return Ok(true);
         }
 
         /// <summary>
@@ -85,7 +85,7 @@ namespace Fosol.Schedule.API.Controllers
             var principal = new ClaimsPrincipal(User);
             await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal);
 
-            return Ok();
+            return Ok(true);
         }
 
         /// <summary>
@@ -97,7 +97,7 @@ namespace Fosol.Schedule.API.Controllers
         {
             await HttpContext.SignOutAsync();
 
-            return Ok();
+            return Ok(true);
         }
 
         /// <summary>
@@ -118,7 +118,7 @@ namespace Fosol.Schedule.API.Controllers
             var principal = new ClaimsPrincipal(identity);
             await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal);
 
-            return Ok();
+            return Ok(true);
         }
 
         /// <summary>
@@ -139,7 +139,7 @@ namespace Fosol.Schedule.API.Controllers
             var principal = new ClaimsPrincipal(identity);
             await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal);
 
-            return Ok();
+            return Ok(true);
         }
 
         /// <summary>
@@ -173,7 +173,7 @@ namespace Fosol.Schedule.API.Controllers
             var impersonate = new ClaimsPrincipal(identity);
             await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, impersonate);
 
-            return Ok();
+            return Ok(true);
         }
 
         /// <summary>
@@ -207,7 +207,7 @@ namespace Fosol.Schedule.API.Controllers
             var impersonate = new ClaimsPrincipal(identity);
             await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, impersonate);
 
-            return Ok();
+            return Ok(true);
         }
         #endregion
     }

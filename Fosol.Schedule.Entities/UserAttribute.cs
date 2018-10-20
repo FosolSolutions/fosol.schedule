@@ -49,7 +49,9 @@ namespace Fosol.Schedule.Entities
         public UserAttribute(User user, Attribute attribute)
         {
             this.UserId = user?.Id ?? throw new ArgumentNullException(nameof(user));
+            this.User = user;
             this.AttributeId = attribute?.Id ?? throw new ArgumentNullException(nameof(attribute));
+            this.Attribute = attribute;
         }
         #endregion
     }

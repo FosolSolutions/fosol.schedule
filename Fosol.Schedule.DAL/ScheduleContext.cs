@@ -26,11 +26,23 @@ namespace Fosol.Schedule.DAL
 
         public DbSet<Calendar> Calendars { get; set; }
 
+        public DbSet<CalendarCriteria> CalendarCriteria { get; set; }
+
         public DbSet<Event> Events { get; set; }
+
+        public DbSet<EventCriteria> EventCriteria { get; set; }
 
         public DbSet<Activity> Activities { get; set; }
 
+        public DbSet<ActivityCriteria> ActivityCriteria { get; set; }
+
         public DbSet<Opening> Openings { get; set; }
+
+        public DbSet<OpeningCriteria> OpeningCriteria { get; set; }
+
+        public DbSet<OpeningParticipant> OpeningParticipants { get; set; }
+
+        public DbSet<OpeningParticipantApplication> OpeningParticipantApplications { get; set; }
 
         public DbSet<Participant> Participants { get; set; }
 

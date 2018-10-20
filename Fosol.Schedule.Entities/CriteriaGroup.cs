@@ -38,11 +38,47 @@ namespace Fosol.Schedule.Entities
         #endregion
 
         #region Methods
+        /// <summary>
+        /// Validates that the attribute(s) match the criteria.
+        /// Currently this is a simple check; one OR must pass and all AND must pass.
+        /// </summary>
+        /// <param name="attributes"></param>
+        /// <returns></returns>
+        public override bool Validate(params Attribute[] attributes) // TODO: Handle complex grouping.
+        {
+            var results = new List<Tuple<LogicalOperator, bool>>();
+            foreach (var criteria in this.Criteria)
+            {
+                var pass = new Tuple<LogicalOperator, bool>(criteria.LogicalOperator, criteria.Validate(attributes));
+
+                switch (criteria.LogicalOperator)
+                {
+                    case (LogicalOperator.Or):
+                        results.Add(pass);
+                        continue;
+                    case (LogicalOperator.And):
+                        if (!pass.Item2) return false;
+                        break;
+                }
+            }
+
+            return results.Any(r => r.Item2);
+        }
+
+        /// <summary>
+        /// Converts the criteria group into a string value.
+        /// </summary>
+        /// <returns></returns>
         public override string ToString()
         {
             return this.ToString(false);
         }
 
+        /// <summary>
+        /// Converts the criteria group into a string value and encodes it.
+        /// </summary>
+        /// <param name="encode"></param>
+        /// <returns></returns>
         public override string ToString(bool encode)
         {
             return String.Join(';', this.Criteria.Select(c => c.ToString(encode)));

@@ -2,7 +2,6 @@
 using Fosol.Core.Extensions.Principals;
 using Fosol.Core.Extensions.Strings;
 using Fosol.Schedule.DAL.Interfaces;
-using Fosol.Schedule.Entities;
 using System;
 using System.Linq;
 
@@ -55,21 +54,30 @@ namespace Fosol.Schedule.DAL.Map
                 .ReverseMap()
                 .ForMember(dest => dest.Key, opt => opt.MapFrom(src => (src.Key != Guid.Empty) ? src.Key : Guid.NewGuid()));
             CreateMap<Entities.Calendar, Models.Calendar>()
+                .ForPath(dest => dest.Criteria, opt => opt.MapFrom(src => src.Criteria.Select(c => c.Criteria)))
                 .ReverseMap()
                 .ForMember(dest => dest.Key, opt => opt.MapFrom(src => (src.Key != Guid.Empty) ? src.Key : Guid.NewGuid()));
             CreateMap<Entities.Participant, Models.Participant>()
                 .ReverseMap()
                 .ForMember(dest => dest.Key, opt => opt.MapFrom(src => (src.Key != Guid.Empty) ? src.Key : Guid.NewGuid()));
+            CreateMap<Entities.OpeningParticipant, Models.Participant>()
+                .ForMember(dest => dest.Id, opt => opt.MapFrom(src => src.ParticipantId))
+                .ReverseMap()
+                .ForMember(dest => dest.ParticipantId, opt => opt.MapFrom(src => src.Id));
             CreateMap<Entities.Event, Models.Event>()
+                .ForPath(dest => dest.Criteria, opt => opt.MapFrom(src => src.Criteria.Select(c => c.Criteria)))
                 .ForPath(dest => dest.Criteria, opt => opt.MapFrom(src => src.Criteria.Select(c => c.Criteria)))
                 .ReverseMap()
                 .ForMember(dest => dest.Key, opt => opt.MapFrom(src => (src.Key != Guid.Empty) ? src.Key : Guid.NewGuid()));
             CreateMap<Entities.Activity, Models.Activity>()
                 .ForPath(dest => dest.Criteria, opt => opt.MapFrom(src => src.Criteria.Select(c => c.Criteria)))
+                .ForPath(dest => dest.Criteria, opt => opt.MapFrom(src => src.Criteria.Select(c => c.Criteria)))
                 .ReverseMap()
                 .ForMember(dest => dest.Key, opt => opt.MapFrom(src => (src.Key != Guid.Empty) ? src.Key : Guid.NewGuid()));
             CreateMap<Entities.Opening, Models.Opening>()
                 .ForPath(dest => dest.Criteria, opt => opt.MapFrom(src => src.Criteria.Select(c => c.Criteria)))
+                .ForPath(dest => dest.Applications, opt => opt.MapFrom(src => src.Applications.Select(a => a.Participant)))
+                .ForPath(dest => dest.Participants, opt => opt.MapFrom(src => src.Participants.Select(a => a.Participant)))
                 .ReverseMap()
                 .ForMember(dest => dest.Key, opt => opt.MapFrom(src => (src.Key != Guid.Empty) ? src.Key : Guid.NewGuid()));
             CreateMap<Entities.CriteriaObject, Models.Criteria>()

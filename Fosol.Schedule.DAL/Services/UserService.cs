@@ -59,7 +59,7 @@ namespace Fosol.Schedule.DAL.Services
         /// <returns></returns>
         public IEnumerable<Claim> GetClaims(int userId)
         {
-            var user = this.Find((set) => set.Include(u => u.Attributes).ThenInclude(a => a.Attribute).Include(u => u.DefaultAccount).Include(u => u.Info).SingleOrDefault(u => u.Id == userId));
+            var user = this.Find((set) => set.Include(u => u.Attributes).ThenInclude(a => a.Attribute).Include(u => u.OwnedAccounts).Include(u => u.Info).SingleOrDefault(u => u.Id == userId));
 
             var claims = new List<Claim>(new[]
             {
@@ -69,7 +69,7 @@ namespace Fosol.Schedule.DAL.Services
                 new Claim(ClaimTypes.Surname, user.Info.LastName ?? ""),
                 new Claim(ClaimTypes.Gender, $"{user.Info.Gender}"),
                 new Claim("Key", $"{user.Key}", typeof(Guid).FullName, "Fosol.Schedule"),
-                new Claim("Account", $"{user.DefaultAccountId}", typeof(int).FullName, "Fosol.Schedule")
+                new Claim("Account", $"{user.DefaultAccountId ?? user.OwnedAccounts.FirstOrDefault().Id}", typeof(int).FullName, "Fosol.Schedule")
             });
 
             foreach (var attr in user.Attributes)

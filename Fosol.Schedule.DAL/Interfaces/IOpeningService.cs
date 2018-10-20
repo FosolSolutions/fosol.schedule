@@ -9,5 +9,21 @@
         /// <param name="id"></param>
         /// <returns></returns>
         Models.Opening Get(int id);
+
+        /// <summary>
+        /// The participant is apply for the opening.
+        /// </summary>
+        /// <param name="opening"></param>
+        /// <param name="participants"></param>
+        /// <returns></returns>
+        Models.Opening Apply(Models.Opening opening, params Models.Participant[] participants);
+
+        /// <summary>
+        /// The participant is unapply to the opening.
+        /// </summary>
+        /// <param name="opening"></param>
+        /// <param name="participants"></param>
+        /// <returns></returns>
+        Models.Opening Unapply(Models.Opening opening, params Models.Participant[] participants);
     }
 }

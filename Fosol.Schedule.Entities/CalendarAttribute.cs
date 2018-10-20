@@ -49,7 +49,9 @@ namespace Fosol.Schedule.Entities
         public CalendarAttribute(Calendar calendar, Attribute attribute)
         {
             this.CalendarId = calendar?.Id ?? throw new ArgumentNullException(nameof(calendar));
+            this.Calendar = calendar;
             this.AttributeId = attribute?.Id ?? throw new ArgumentNullException(nameof(attribute));
+            this.Attribute = attribute;
         }
         #endregion
     }

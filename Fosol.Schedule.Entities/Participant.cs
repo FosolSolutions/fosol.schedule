@@ -137,6 +137,7 @@ namespace Fosol.Schedule.Entities
             this.Title = user.Info?.Title;
             this.Gender = user.Info?.Gender;
             this.Birthdate = user.Info?.Birthdate;
+            this.Key = Guid.NewGuid();
         }
 
         /// <summary>
@@ -156,6 +157,7 @@ namespace Fosol.Schedule.Entities
             this.DisplayName = displayName;
             this.FirstName = firstName;
             this.LastName = lastName;
+            this.Key = Guid.NewGuid();
         }
         #endregion
     }
