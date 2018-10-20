@@ -1,8 +1,8 @@
-﻿using Fosol.Schedule.DAL.Interfaces;
-using Fosol.Schedule.Models;
+﻿using Fosol.Core.Extensions.Enumerable;
+using Fosol.Schedule.DAL.Interfaces;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using System;
-using System.Collections.Generic;
+using System.Linq;
 using System.Security.Claims;
 
 namespace Fosol.Schedule.API.Helpers
@@ -13,36 +13,6 @@ namespace Fosol.Schedule.API.Helpers
     public static class AuthenticationHelper
     {
         #region Methods
-        /// <summary>
-        /// Creates an identity for the specified participant.
-        /// </summary>
-        /// <param name="participant"></param>
-        /// <returns></returns>
-        private static ClaimsIdentity CreateIdentity(Participant participant)
-        {
-            if (participant == null)
-                return null;
-
-            var claims = new List<Claim>(new[]
-            {
-                new Claim(ClaimTypes.NameIdentifier, $"{participant.Id}"),
-                //new Claim(ClaimTypes.Email, participant.Email),
-                new Claim(ClaimTypes.Name, $"{participant.FirstName} {participant.LastName}"),
-                new Claim(ClaimTypes.Surname, participant.LastName),
-                new Claim(ClaimTypes.Gender, $"{participant.Gender}"),
-                new Claim("Key", $"{participant.Key}", "string", "Fosol.Schedule"),
-                new Claim("Participant", "true", "boolean", "Fosol.Schedule"),
-                new Claim("Calendar", $"{participant.CalendarId}", "Int32", "Fosol.Schedule")
-            });
-
-            foreach (var attr in participant.Attributes)
-            {
-                claims.Add(new Claim(attr.Key, attr.Value, "string", "Fosol.Schedule"));
-            }
-
-            return new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
-        }
-
         /// <summary>
         /// Creates an identity object for a participant that matches the specified 'key'.
         /// </summary>
@@ -55,34 +25,7 @@ namespace Fosol.Schedule.API.Helpers
                 return null;
 
             var participant = service.Get(key);
-            return CreateIdentity(participant);
-        }
-
-        /// <summary>
-        /// Creates an identity for the specified user.
-        /// </summary>
-        /// <param name="user"></param>
-        /// <returns></returns>
-        private static ClaimsIdentity CreateIdentity(User user)
-        {
-            if (user == null)
-                return null;
-
-            var claims = new List<Claim>(new[]
-            {
-                new Claim(ClaimTypes.NameIdentifier, $"{user.Id}"),
-                //new Claim(ClaimTypes.Email, user.Email),
-                new Claim(ClaimTypes.Name, $"{user.FirstName} {user.LastName}"),
-                new Claim(ClaimTypes.Surname, user.LastName ?? ""),
-                new Claim(ClaimTypes.Gender, $"{user.Gender}"),
-                new Claim("Key", $"{user.Key}", "string", "Fosol.Schedule")
-            });
-
-            foreach (var attr in user.Attributes)
-            {
-                claims.Add(new Claim(attr.Key, attr.Value, "string", "Fosol.Schedule"));
-            }
-
+            var claims = service.GetClaims(participant.Id);
             return new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
         }
 
@@ -98,7 +41,26 @@ namespace Fosol.Schedule.API.Helpers
                 return null;
 
             var user = service.Get(key);
-            return CreateIdentity(user);
+            var claims = service.GetClaims(user.Id);
+            return new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
+        }
+
+        /// <summary>
+        /// When a user selects a calendar it must update the principal claims.
+        /// </summary>
+        /// <param name="service"></param>
+        /// <param name="principal"></param>
+        /// <param name="calendarId"></param>
+        public static void SelectCalendar(this ICalendarService service, ClaimsPrincipal principal, int calendarId)
+        {
+            var claims = service.GetClaims(calendarId);
+            var identity = principal.Identity as ClaimsIdentity;
+            claims.ForEach(c =>
+            {
+                var claim = identity.Claims.FirstOrDefault(cl => cl.Type == c.Type);
+                if (claim != null) identity?.TryRemoveClaim(claim);
+            });
+            identity?.AddClaims(claims);
         }
         #endregion
     }

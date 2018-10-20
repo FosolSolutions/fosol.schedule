@@ -27,11 +27,12 @@ namespace Fosol.Schedule.Entities
         /// </summary>
         [Required, MaxLength(100)]
         public string Value { get; set; }
-        
+
         /// <summary>
         /// get/set - The datatype of the attribute.
         /// </summary>
-        public DataType DataType { get; set; }
+        [Required, MaxLength(200)]
+        public string ValueType { get; set; }
         #endregion
 
         #region Constructors
@@ -40,14 +41,24 @@ namespace Fosol.Schedule.Entities
 
         }
 
-        public Attribute(string key, string value, DataType type)
+        public Attribute(string key, string value, Type type)
         {
-            if (string.IsNullOrWhiteSpace(key)) throw new ArgumentException($"Argument 'key' must not be null, empty or whitespace.");
-            if (string.IsNullOrWhiteSpace(value)) throw new ArgumentException($"Argument 'value' must not be null, empty or whitespace.");
+            if (string.IsNullOrWhiteSpace(key)) throw new ArgumentException($"Argument 'key' cannot be null, empty or whitespace.");
+            if (string.IsNullOrWhiteSpace(value)) throw new ArgumentException($"Argument 'value' cannot be null, empty or whitespace.");
 
             this.Key = key;
             this.Value = value;
-            this.DataType = type;
+            this.ValueType = type?.FullName ?? throw new ArgumentNullException(nameof(type)); // TODO: handle generic names
+        }
+
+        public Attribute(string key, object value)
+        {
+            if (string.IsNullOrWhiteSpace(key)) throw new ArgumentException($"Argument 'key' cannot be null, empty or whitespace.");
+            if (value == null) throw new ArgumentException($"Argument 'value' cannot be null.");
+
+            this.Key = key;
+            this.Value = $"{value}"; // TODO: serialize.
+            this.ValueType = value.GetType()?.FullName; // TODO: handle generic names
         }
         #endregion
     }

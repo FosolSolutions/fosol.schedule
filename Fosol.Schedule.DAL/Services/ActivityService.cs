@@ -1,5 +1,7 @@
-﻿using Fosol.Schedule.DAL.Interfaces;
+﻿using Fosol.Core.Exceptions;
+using Fosol.Schedule.DAL.Interfaces;
 using Fosol.Schedule.Entities;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,7 +11,7 @@ namespace Fosol.Schedule.DAL.Services
     /// <summary>
     /// ActivityService sealed class, provides a way to manage activities in the datasource.
     /// </summary>
-    public sealed class ActivityService : UpdatableService<Entities.Activity, Models.Activity>, IActivityService
+    public sealed class ActivityService : UpdatableService<Activity, Models.Activity>, IActivityService
     {
         #region Variables
         #endregion
@@ -37,7 +39,8 @@ namespace Fosol.Schedule.DAL.Services
         /// <returns></returns>
         public Models.Activity Get(int id)
         {
-            return this.Find(id);
+            var calendarId = this.GetCalendarId();
+            return this.Map(this.Find((set) => set.Include(a => a.Criteria).Include(a => a.Openings).ThenInclude(o => o.Criteria).SingleOrDefault(a => a.Id == id && a.Event.CalendarId == calendarId)));
         }
 
         /// <summary>
@@ -50,13 +53,14 @@ namespace Fosol.Schedule.DAL.Services
         /// <returns></returns>
         public IEnumerable<Models.Activity> Get(int eventId, DateTime? startOn = null, DateTime? endOn = null)
         {
-            var cevent = this.Context.Events.Find(eventId);
+            var calendarId = this.GetCalendarId();
+            var cevent = this.Find<Event>((set) => set.SingleOrDefault(e => e.Id == eventId && e.CalendarId == calendarId));
 
             // Convert datetime to utc.
             var start = startOn?.ToUniversalTime() ?? cevent.StartOn;
             var end = endOn?.ToUniversalTime() ?? cevent.EndOn;
 
-            var activities = this.Context.Activities.Where(a => a.EventId == eventId && a.StartOn >= start && a.EndOn <= end).ToArray().Select(a => this.Map(a));
+            var activities = this.Context.Activities.Include(a => a.Criteria).Include(a => a.Openings).ThenInclude(o => o.Criteria).Where(a => a.EventId == eventId && a.StartOn >= start && a.EndOn <= end).OrderBy(a => a.StartOn).ThenBy(a => a.Sequence).ToArray().Select(a => this.Map(a));
             return activities;
         }
         #endregion

@@ -37,7 +37,17 @@ namespace Fosol.Schedule.DAL.Map
                 .ReverseMap()
                 .ForMember(dest => dest.Key, opt => opt.MapFrom(src => (src.Key != Guid.Empty) ? src.Key : Guid.NewGuid()));
             CreateMap<Entities.User, Models.User>()
+                .ForPath(dest => dest.Gender, opt => opt.MapFrom(src => src.Info.Gender))
+                .ForPath(dest => dest.FirstName, opt => opt.MapFrom(src => src.Info.FirstName))
+                .ForPath(dest => dest.MiddleName, opt => opt.MapFrom(src => src.Info.MiddleName))
+                .ForPath(dest => dest.LastName, opt => opt.MapFrom(src => src.Info.LastName))
+                .ForPath(dest => dest.Birthdate, opt => opt.MapFrom(src => src.Info.Birthdate))
                 .ReverseMap()
+                .ForPath(dest => dest.Info.Gender, opt => opt.MapFrom(src => src.Gender))
+                .ForPath(dest => dest.Info.FirstName, opt => opt.MapFrom(src => src.FirstName))
+                .ForPath(dest => dest.Info.MiddleName, opt => opt.MapFrom(src => src.MiddleName))
+                .ForPath(dest => dest.Info.LastName, opt => opt.MapFrom(src => src.LastName))
+                .ForPath(dest => dest.Info.Birthdate, opt => opt.MapFrom(src => src.Birthdate))
                 .ForMember(dest => dest.Key, opt => opt.MapFrom(src => (src.Key != Guid.Empty) ? src.Key : Guid.NewGuid()));
             CreateMap<Entities.Account, Models.Account>()
                 .ReverseMap()

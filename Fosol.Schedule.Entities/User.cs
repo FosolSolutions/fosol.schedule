@@ -41,9 +41,20 @@ namespace Fosol.Schedule.Entities
         public UserInfo Info { get; set; }
 
         /// <summary>
-        /// get/set - Foreign key do the user who added this subscription.
+        /// get/set - Foreign key to the user who added this subscription.
         /// </summary>
         public new int? AddedById { get; set; }
+
+        /// <summary>
+        /// get/set - Foreign key to the default account this user signs into.
+        /// </summary>
+        public int? DefaultAccountId { get; set; }
+
+        /// <summary>
+        /// get/set - The default account this user signs into.
+        /// </summary>
+        [ForeignKey(nameof(DefaultAccountId))]
+        public Account DefaultAccount { get; set; }
 
         /// <summary>
         /// get - A collection of all the acounts owned by this user.
@@ -78,7 +89,7 @@ namespace Fosol.Schedule.Entities
         /// <summary>
         /// get - A collection of attributes for this user.
         /// </summary>
-        public ICollection<Attribute> Attributes { get; set; } = new List<Attribute>();
+        public ICollection<UserAttribute> Attributes { get; set; } = new List<UserAttribute>();
         #endregion
 
         #region Constructors

@@ -1,4 +1,5 @@
 ﻿using Fosol.Schedule.DAL.Interfaces;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -36,12 +37,13 @@ namespace Fosol.Schedule.DAL.Services
         /// <returns></returns>
         public Models.Event Get(int id)
         {
-            return this.Find(id);
+            // TODO: Is user allowed ot see event?
+            return this.Map(this.Find((set) => set.Include(e => e.Criteria).Include(e => e.Activities).SingleOrDefault(e => e.Id == id)));
         }
 
         /// <summary>
         /// Get the events for the specified calendar, within the specified date range.
-        /// Valdiates whether the current user is authorized to view the calendar.
+        /// Validates whether the current user is authorized to view the calendar.
         /// </summary>
         /// <param name="calendarId"></param>
         /// <param name="startOn"></param>
@@ -49,11 +51,13 @@ namespace Fosol.Schedule.DAL.Services
         /// <returns></returns>
         public IEnumerable<Models.Event> Get(int calendarId, DateTime startOn, DateTime endOn)
         {
+            // TODO: Is user allowed ot see calendar?
+
             // Convert datetime to utc.
             var start = startOn.ToUniversalTime();
             var end = endOn.ToUniversalTime();
 
-            var events = this.Context.Events.Where(e => e.CalendarId == calendarId && e.StartOn >= start && e.EndOn <= end).Select(e => this.Map(e)).ToArray();
+            var events = this.Context.Events.Include(e => e.Criteria).Where(e => e.CalendarId == calendarId && e.StartOn >= start && e.EndOn <= end).Select(e => this.Map(e)).ToArray();
             return events;
         }
         #endregion

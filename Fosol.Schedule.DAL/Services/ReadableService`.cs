@@ -1,6 +1,8 @@
 ﻿using Fosol.Core.Exceptions;
 using Fosol.Core.Extensions.Principals;
 using Fosol.Schedule.DAL.Interfaces;
+using Microsoft.EntityFrameworkCore;
+using System;
 
 namespace Fosol.Schedule.DAL.Services
 {
@@ -41,8 +43,9 @@ namespace Fosol.Schedule.DAL.Services
         {
             get
             {
-                bool.TryParse(this.Source.Principal.GetParticipant()?.Value, out bool participant);
-                return participant;
+                var userId = this.GetPrincipalId();
+                int.TryParse(this.Source.Principal.GetParticipant()?.Value, out int participantId);
+                return userId == participantId;
             }
         }
         #endregion
@@ -83,6 +86,19 @@ namespace Fosol.Schedule.DAL.Services
         }
 
         /// <summary>
+        /// Get the current participant's id.
+        /// Returns null if user is not signed in as a participant.
+        /// </summary>
+        /// <returns></returns>
+        protected int? GetParticipantId()
+        {
+            if (!this.IsPrincipalAParticipant)
+                return null;
+
+            return this.GetParticipantId();
+        }
+
+        /// <summary>
         /// Get the true current principal id when they are impersonating another user.
         /// </summary>
         /// <returns></returns>
@@ -93,26 +109,23 @@ namespace Fosol.Schedule.DAL.Services
         }
 
         /// <summary>
-        /// Get the current principal user.
+        /// Get the current user's active account id.
         /// </summary>
         /// <returns></returns>
-        protected Entities.User GetUser()
+        protected int GetAccountId()
         {
-            var id = this.GetUserId();
-            if (id == null) return null;
-            return this.Context.Users.Find(id);
+            int.TryParse(this.Source.Principal.GetAccount()?.Value, out int id);
+            return id;
         }
 
         /// <summary>
-        /// Get the current principal participant.
+        /// Get the current user's active calendar id.
         /// </summary>
-        /// <exception cref="NoContentException">If the user does not exist.</exception>
         /// <returns></returns>
-        protected Entities.Participant GetParticipant()
+        protected int GetCalendarId()
         {
-            if (!this.IsPrincipalAParticipant) return null;
-            var id = this.GetPrincipalId();
-            return this.Context.Participants.Find(id) ?? throw new NoContentException(typeof(Entities.Participant));
+            int.TryParse(this.Source.Principal.GetCalendar()?.Value, out int id);
+            return id;
         }
 
         /// <summary>
@@ -190,6 +203,38 @@ namespace Fosol.Schedule.DAL.Services
         protected virtual T Find<T>(params object[] keyValues) where T : class
         {
             var entity = this.Context.Set<T>().Find(keyValues);
+
+            if (entity == null)
+                throw new NoContentException(typeof(ModelT));
+
+            return entity;
+        }
+
+        /// <summary>
+        /// Find the entity in the datasource.
+        /// </summary>
+        /// <exception cref="NoContentException">If the entity could not be found in the datasource.</exception>
+        /// <param name="action"></param>
+        /// <returns></returns>
+        protected virtual T Find<T>(Func<DbSet<T>, T> action) where T : class
+        {
+            var entity = action?.Invoke(this.Context.Set<T>());
+
+            if (entity == null)
+                throw new NoContentException(typeof(ModelT));
+
+            return entity;
+        }
+
+        /// <summary>
+        /// Find the entity in the datasource.
+        /// </summary>
+        /// <exception cref="NoContentException">If the entity could not be found in the datasource.</exception>
+        /// <param name="action"></param>
+        /// <returns></returns>
+        protected virtual EntityT Find(Func<DbSet<EntityT>, EntityT> action)
+        {
+            var entity = action?.Invoke(this.Context.Set<EntityT>());
 
             if (entity == null)
                 throw new NoContentException(typeof(ModelT));

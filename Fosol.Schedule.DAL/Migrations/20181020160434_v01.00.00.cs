@@ -11,6 +11,73 @@ namespace Fosol.Schedule.DAL.Migrations
             PreDeploy(migrationBuilder);
 
             migrationBuilder.CreateTable(
+                name: "UserAccountRoles",
+                columns: table => new
+                {
+                    UserId = table.Column<int>(nullable: false),
+                    AccountRoleId = table.Column<int>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_UserAccountRoles", x => new { x.UserId, x.AccountRoleId });
+                });
+
+            migrationBuilder.CreateTable(
+                name: "AccountRoles",
+                columns: table => new
+                {
+                    AddedById = table.Column<int>(nullable: false),
+                    AddedOn = table.Column<DateTime>(type: "DATETIME2", nullable: false, defaultValueSql: "GETUTCDATE()"),
+                    UpdatedById = table.Column<int>(nullable: true),
+                    UpdatedOn = table.Column<DateTime>(nullable: true),
+                    RowVersion = table.Column<byte[]>(rowVersion: true, nullable: true),
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                    Name = table.Column<string>(maxLength: 100, nullable: false),
+                    Description = table.Column<string>(maxLength: 2000, nullable: true),
+                    Privileges = table.Column<int>(nullable: false),
+                    State = table.Column<int>(nullable: false),
+                    AccountId = table.Column<int>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AccountRoles", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "AccountUsers",
+                columns: table => new
+                {
+                    AccountId = table.Column<int>(nullable: false),
+                    UserId = table.Column<int>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_AccountUsers", x => new { x.AccountId, x.UserId });
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Calendars",
+                columns: table => new
+                {
+                    AddedById = table.Column<int>(nullable: false),
+                    AddedOn = table.Column<DateTime>(type: "DATETIME2", nullable: false, defaultValueSql: "GETUTCDATE()"),
+                    UpdatedById = table.Column<int>(nullable: true),
+                    UpdatedOn = table.Column<DateTime>(nullable: true),
+                    RowVersion = table.Column<byte[]>(rowVersion: true, nullable: true),
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                    AccountId = table.Column<int>(nullable: false),
+                    Key = table.Column<Guid>(nullable: false),
+                    Name = table.Column<string>(maxLength: 100, nullable: false),
+                    Description = table.Column<string>(maxLength: 2000, nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Calendars", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Users",
                 columns: table => new
                 {
@@ -23,7 +90,8 @@ namespace Fosol.Schedule.DAL.Migrations
                     Key = table.Column<Guid>(nullable: false),
                     Email = table.Column<string>(maxLength: 250, nullable: false),
                     State = table.Column<int>(nullable: false),
-                    AddedById = table.Column<int>(nullable: true)
+                    AddedById = table.Column<int>(nullable: true),
+                    DefaultAccountId = table.Column<int>(nullable: true)
                 },
                 constraints: table =>
                 {
@@ -93,8 +161,7 @@ namespace Fosol.Schedule.DAL.Migrations
                         .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
                     Key = table.Column<string>(maxLength: 100, nullable: false),
                     Value = table.Column<string>(maxLength: 100, nullable: false),
-                    DataType = table.Column<int>(nullable: false),
-                    UserId = table.Column<int>(nullable: true)
+                    ValueType = table.Column<string>(maxLength: 200, nullable: false)
                 },
                 constraints: table =>
                 {
@@ -111,16 +178,10 @@ namespace Fosol.Schedule.DAL.Migrations
                         principalTable: "Users",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_Attributes_Users_UserId",
-                        column: x => x.UserId,
-                        principalTable: "Users",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
-                name: "ContactInfos",
+                name: "ContactInfo",
                 columns: table => new
                 {
                     AddedById = table.Column<int>(nullable: false),
@@ -137,15 +198,15 @@ namespace Fosol.Schedule.DAL.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_ContactInfos", x => x.Id);
+                    table.PrimaryKey("PK_ContactInfo", x => x.Id);
                     table.ForeignKey(
-                        name: "FK_ContactInfos_Users_AddedById",
+                        name: "FK_ContactInfo_Users_AddedById",
                         column: x => x.AddedById,
                         principalTable: "Users",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_ContactInfos_Users_UpdatedById",
+                        name: "FK_ContactInfo_Users_UpdatedById",
                         column: x => x.UpdatedById,
                         principalTable: "Users",
                         principalColumn: "Id",
@@ -246,7 +307,7 @@ namespace Fosol.Schedule.DAL.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "UserInfos",
+                name: "UserInfo",
                 columns: table => new
                 {
                     AddedById = table.Column<int>(nullable: false),
@@ -265,342 +326,24 @@ namespace Fosol.Schedule.DAL.Migrations
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_UserInfos", x => x.UserId);
+                    table.PrimaryKey("PK_UserInfo", x => x.UserId);
                     table.ForeignKey(
-                        name: "FK_UserInfos_Users_AddedById",
+                        name: "FK_UserInfo_Users_AddedById",
                         column: x => x.AddedById,
                         principalTable: "Users",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
-                        name: "FK_UserInfos_Users_UpdatedById",
+                        name: "FK_UserInfo_Users_UpdatedById",
                         column: x => x.UpdatedById,
                         principalTable: "Users",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_UserInfos_Users_UserId",
+                        name: "FK_UserInfo_Users_UserId",
                         column: x => x.UserId,
                         principalTable: "Users",
                         principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "UserAddresses",
-                columns: table => new
-                {
-                    UserId = table.Column<int>(nullable: false),
-                    AddressId = table.Column<int>(nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_UserAddresses", x => new { x.UserId, x.AddressId });
-                    table.ForeignKey(
-                        name: "FK_UserAddresses_Addresses_AddressId",
-                        column: x => x.AddressId,
-                        principalTable: "Addresses",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_UserAddresses_Users_UserId",
-                        column: x => x.UserId,
-                        principalTable: "Users",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "UserContactInfos",
-                columns: table => new
-                {
-                    UserId = table.Column<int>(nullable: false),
-                    ContactInfoId = table.Column<int>(nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_UserContactInfos", x => new { x.UserId, x.ContactInfoId });
-                    table.ForeignKey(
-                        name: "FK_UserContactInfos_ContactInfos_ContactInfoId",
-                        column: x => x.ContactInfoId,
-                        principalTable: "ContactInfos",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_UserContactInfos_Users_UserId",
-                        column: x => x.UserId,
-                        principalTable: "Users",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Accounts",
-                columns: table => new
-                {
-                    AddedById = table.Column<int>(nullable: false),
-                    AddedOn = table.Column<DateTime>(type: "DATETIME2", nullable: false, defaultValueSql: "GETUTCDATE()"),
-                    UpdatedById = table.Column<int>(nullable: true),
-                    UpdatedOn = table.Column<DateTime>(nullable: true),
-                    RowVersion = table.Column<byte[]>(rowVersion: true, nullable: true),
-                    Id = table.Column<int>(nullable: false)
-                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
-                    Key = table.Column<Guid>(nullable: false),
-                    OwnerId = table.Column<int>(nullable: false),
-                    State = table.Column<int>(nullable: false),
-                    Kind = table.Column<int>(nullable: false),
-                    SubscriptionId = table.Column<int>(nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Accounts", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Accounts_Users_AddedById",
-                        column: x => x.AddedById,
-                        principalTable: "Users",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_Accounts_Users_OwnerId",
-                        column: x => x.OwnerId,
-                        principalTable: "Users",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_Accounts_Subscriptions_SubscriptionId",
-                        column: x => x.SubscriptionId,
-                        principalTable: "Subscriptions",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_Accounts_Users_UpdatedById",
-                        column: x => x.UpdatedById,
-                        principalTable: "Users",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "AccountRoles",
-                columns: table => new
-                {
-                    AddedById = table.Column<int>(nullable: false),
-                    AddedOn = table.Column<DateTime>(type: "DATETIME2", nullable: false, defaultValueSql: "GETUTCDATE()"),
-                    UpdatedById = table.Column<int>(nullable: true),
-                    UpdatedOn = table.Column<DateTime>(nullable: true),
-                    RowVersion = table.Column<byte[]>(rowVersion: true, nullable: true),
-                    Id = table.Column<int>(nullable: false)
-                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
-                    Name = table.Column<string>(maxLength: 100, nullable: false),
-                    Description = table.Column<string>(maxLength: 2000, nullable: true),
-                    Privileges = table.Column<int>(nullable: false),
-                    State = table.Column<int>(nullable: false),
-                    AccountId = table.Column<int>(nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_AccountRoles", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_AccountRoles_Accounts_AccountId",
-                        column: x => x.AccountId,
-                        principalTable: "Accounts",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_AccountRoles_Users_AddedById",
-                        column: x => x.AddedById,
-                        principalTable: "Users",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_AccountRoles_Users_UpdatedById",
-                        column: x => x.UpdatedById,
-                        principalTable: "Users",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "AccountUsers",
-                columns: table => new
-                {
-                    AccountId = table.Column<int>(nullable: false),
-                    UserId = table.Column<int>(nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_AccountUsers", x => new { x.AccountId, x.UserId });
-                    table.ForeignKey(
-                        name: "FK_AccountUsers_Accounts_AccountId",
-                        column: x => x.AccountId,
-                        principalTable: "Accounts",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_AccountUsers_Users_UserId",
-                        column: x => x.UserId,
-                        principalTable: "Users",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Calendars",
-                columns: table => new
-                {
-                    AddedById = table.Column<int>(nullable: false),
-                    AddedOn = table.Column<DateTime>(type: "DATETIME2", nullable: false, defaultValueSql: "GETUTCDATE()"),
-                    UpdatedById = table.Column<int>(nullable: true),
-                    UpdatedOn = table.Column<DateTime>(nullable: true),
-                    RowVersion = table.Column<byte[]>(rowVersion: true, nullable: true),
-                    Id = table.Column<int>(nullable: false)
-                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
-                    AccountId = table.Column<int>(nullable: false),
-                    Key = table.Column<Guid>(nullable: false),
-                    Name = table.Column<string>(maxLength: 100, nullable: false),
-                    Description = table.Column<string>(maxLength: 2000, nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Calendars", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Calendars_Accounts_AccountId",
-                        column: x => x.AccountId,
-                        principalTable: "Accounts",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_Calendars_Users_AddedById",
-                        column: x => x.AddedById,
-                        principalTable: "Users",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_Calendars_Users_UpdatedById",
-                        column: x => x.UpdatedById,
-                        principalTable: "Users",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "UserAccountRoles",
-                columns: table => new
-                {
-                    UserId = table.Column<int>(nullable: false),
-                    AccountRoleId = table.Column<int>(nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_UserAccountRoles", x => new { x.UserId, x.AccountRoleId });
-                    table.ForeignKey(
-                        name: "FK_UserAccountRoles_AccountRoles_AccountRoleId",
-                        column: x => x.AccountRoleId,
-                        principalTable: "AccountRoles",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_UserAccountRoles_Users_UserId",
-                        column: x => x.UserId,
-                        principalTable: "Users",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "CalendarAttributes",
-                columns: table => new
-                {
-                    CalendarId = table.Column<int>(nullable: false),
-                    AttributeId = table.Column<int>(nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_CalendarAttributes", x => new { x.CalendarId, x.AttributeId });
-                    table.ForeignKey(
-                        name: "FK_CalendarAttributes_Attributes_AttributeId",
-                        column: x => x.AttributeId,
-                        principalTable: "Attributes",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_CalendarAttributes_Calendars_CalendarId",
-                        column: x => x.CalendarId,
-                        principalTable: "Calendars",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "CalendarCriteria",
-                columns: table => new
-                {
-                    CalendarId = table.Column<int>(nullable: false),
-                    CriteriaId = table.Column<int>(nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_CalendarCriteria", x => new { x.CalendarId, x.CriteriaId });
-                    table.ForeignKey(
-                        name: "FK_CalendarCriteria_Calendars_CalendarId",
-                        column: x => x.CalendarId,
-                        principalTable: "Calendars",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_CalendarCriteria_Criteria_CriteriaId",
-                        column: x => x.CriteriaId,
-                        principalTable: "Criteria",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Events",
-                columns: table => new
-                {
-                    AddedById = table.Column<int>(nullable: false),
-                    AddedOn = table.Column<DateTime>(type: "DATETIME2", nullable: false, defaultValueSql: "GETUTCDATE()"),
-                    UpdatedById = table.Column<int>(nullable: true),
-                    UpdatedOn = table.Column<DateTime>(nullable: true),
-                    RowVersion = table.Column<byte[]>(rowVersion: true, nullable: true),
-                    Id = table.Column<int>(nullable: false)
-                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
-                    CalendarId = table.Column<int>(nullable: false),
-                    Key = table.Column<Guid>(nullable: false),
-                    Name = table.Column<string>(maxLength: 250, nullable: false),
-                    Description = table.Column<string>(maxLength: 2000, nullable: true),
-                    StartOn = table.Column<DateTime>(type: "DATETIME2", nullable: false),
-                    EndOn = table.Column<DateTime>(type: "DATETIME2", nullable: false),
-                    TagKey = table.Column<string>(nullable: true),
-                    TagValue = table.Column<string>(nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Events", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Events_Users_AddedById",
-                        column: x => x.AddedById,
-                        principalTable: "Users",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_Events_Calendars_CalendarId",
-                        column: x => x.CalendarId,
-                        principalTable: "Calendars",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_Events_Users_UpdatedById",
-                        column: x => x.UpdatedById,
-                        principalTable: "Users",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_Events_Tags_TagKey_TagValue",
-                        columns: x => new { x.TagKey, x.TagValue },
-                        principalTable: "Tags",
-                        principalColumns: new[] { "Key", "Value" },
                         onDelete: ReferentialAction.Restrict);
                 });
 
@@ -664,6 +407,293 @@ namespace Fosol.Schedule.DAL.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "UserAddresses",
+                columns: table => new
+                {
+                    UserId = table.Column<int>(nullable: false),
+                    AddressId = table.Column<int>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_UserAddresses", x => new { x.UserId, x.AddressId });
+                    table.ForeignKey(
+                        name: "FK_UserAddresses_Addresses_AddressId",
+                        column: x => x.AddressId,
+                        principalTable: "Addresses",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_UserAddresses_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "CalendarAttributes",
+                columns: table => new
+                {
+                    CalendarId = table.Column<int>(nullable: false),
+                    AttributeId = table.Column<int>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_CalendarAttributes", x => new { x.CalendarId, x.AttributeId });
+                    table.ForeignKey(
+                        name: "FK_CalendarAttributes_Attributes_AttributeId",
+                        column: x => x.AttributeId,
+                        principalTable: "Attributes",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_CalendarAttributes_Calendars_CalendarId",
+                        column: x => x.CalendarId,
+                        principalTable: "Calendars",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "UserAttributes",
+                columns: table => new
+                {
+                    UserId = table.Column<int>(nullable: false),
+                    AttributeId = table.Column<int>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_UserAttributes", x => new { x.UserId, x.AttributeId });
+                    table.ForeignKey(
+                        name: "FK_UserAttributes_Attributes_AttributeId",
+                        column: x => x.AttributeId,
+                        principalTable: "Attributes",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_UserAttributes_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "UserContactInfo",
+                columns: table => new
+                {
+                    UserId = table.Column<int>(nullable: false),
+                    ContactInfoId = table.Column<int>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_UserContactInfo", x => new { x.UserId, x.ContactInfoId });
+                    table.ForeignKey(
+                        name: "FK_UserContactInfo_ContactInfo_ContactInfoId",
+                        column: x => x.ContactInfoId,
+                        principalTable: "ContactInfo",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_UserContactInfo_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "CalendarCriteria",
+                columns: table => new
+                {
+                    CalendarId = table.Column<int>(nullable: false),
+                    CriteriaId = table.Column<int>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_CalendarCriteria", x => new { x.CalendarId, x.CriteriaId });
+                    table.ForeignKey(
+                        name: "FK_CalendarCriteria_Calendars_CalendarId",
+                        column: x => x.CalendarId,
+                        principalTable: "Calendars",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_CalendarCriteria_Criteria_CriteriaId",
+                        column: x => x.CriteriaId,
+                        principalTable: "Criteria",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Accounts",
+                columns: table => new
+                {
+                    AddedById = table.Column<int>(nullable: false),
+                    AddedOn = table.Column<DateTime>(type: "DATETIME2", nullable: false, defaultValueSql: "GETUTCDATE()"),
+                    UpdatedById = table.Column<int>(nullable: true),
+                    UpdatedOn = table.Column<DateTime>(nullable: true),
+                    RowVersion = table.Column<byte[]>(rowVersion: true, nullable: true),
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                    Key = table.Column<Guid>(nullable: false),
+                    OwnerId = table.Column<int>(nullable: false),
+                    State = table.Column<int>(nullable: false),
+                    Kind = table.Column<int>(nullable: false),
+                    SubscriptionId = table.Column<int>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Accounts", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Accounts_Users_AddedById",
+                        column: x => x.AddedById,
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Accounts_Users_OwnerId",
+                        column: x => x.OwnerId,
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Accounts_Subscriptions_SubscriptionId",
+                        column: x => x.SubscriptionId,
+                        principalTable: "Subscriptions",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Accounts_Users_UpdatedById",
+                        column: x => x.UpdatedById,
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Events",
+                columns: table => new
+                {
+                    AddedById = table.Column<int>(nullable: false),
+                    AddedOn = table.Column<DateTime>(type: "DATETIME2", nullable: false, defaultValueSql: "GETUTCDATE()"),
+                    UpdatedById = table.Column<int>(nullable: true),
+                    UpdatedOn = table.Column<DateTime>(nullable: true),
+                    RowVersion = table.Column<byte[]>(rowVersion: true, nullable: true),
+                    Id = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+                    CalendarId = table.Column<int>(nullable: false),
+                    Key = table.Column<Guid>(nullable: false),
+                    Name = table.Column<string>(maxLength: 250, nullable: false),
+                    Description = table.Column<string>(maxLength: 2000, nullable: true),
+                    StartOn = table.Column<DateTime>(type: "DATETIME2", nullable: false),
+                    EndOn = table.Column<DateTime>(type: "DATETIME2", nullable: false),
+                    TagKey = table.Column<string>(nullable: true),
+                    TagValue = table.Column<string>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Events", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_Events_Users_AddedById",
+                        column: x => x.AddedById,
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Events_Calendars_CalendarId",
+                        column: x => x.CalendarId,
+                        principalTable: "Calendars",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Events_Users_UpdatedById",
+                        column: x => x.UpdatedById,
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Events_Tags_TagKey_TagValue",
+                        columns: x => new { x.TagKey, x.TagValue },
+                        principalTable: "Tags",
+                        principalColumns: new[] { "Key", "Value" },
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ParticipantAddresses",
+                columns: table => new
+                {
+                    ParticipantId = table.Column<int>(nullable: false),
+                    AddressId = table.Column<int>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ParticipantAddresses", x => new { x.ParticipantId, x.AddressId });
+                    table.ForeignKey(
+                        name: "FK_ParticipantAddresses_Addresses_AddressId",
+                        column: x => x.AddressId,
+                        principalTable: "Addresses",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_ParticipantAddresses_Participants_ParticipantId",
+                        column: x => x.ParticipantId,
+                        principalTable: "Participants",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ParticipantAttributes",
+                columns: table => new
+                {
+                    ParticipantId = table.Column<int>(nullable: false),
+                    AttributeId = table.Column<int>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ParticipantAttributes", x => new { x.ParticipantId, x.AttributeId });
+                    table.ForeignKey(
+                        name: "FK_ParticipantAttributes_Attributes_AttributeId",
+                        column: x => x.AttributeId,
+                        principalTable: "Attributes",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_ParticipantAttributes_Participants_ParticipantId",
+                        column: x => x.ParticipantId,
+                        principalTable: "Participants",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "ParticipantContactInfo",
+                columns: table => new
+                {
+                    ParticipantId = table.Column<int>(nullable: false),
+                    ContactInfoId = table.Column<int>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_ParticipantContactInfo", x => new { x.ParticipantId, x.ContactInfoId });
+                    table.ForeignKey(
+                        name: "FK_ParticipantContactInfo_ContactInfo_ContactInfoId",
+                        column: x => x.ContactInfoId,
+                        principalTable: "ContactInfo",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_ParticipantContactInfo_Participants_ParticipantId",
+                        column: x => x.ParticipantId,
+                        principalTable: "Participants",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Activities",
                 columns: table => new
                 {
@@ -679,7 +709,8 @@ namespace Fosol.Schedule.DAL.Migrations
                     Name = table.Column<string>(maxLength: 250, nullable: false),
                     Description = table.Column<string>(maxLength: 2000, nullable: true),
                     StartOn = table.Column<DateTime>(nullable: true),
-                    EndOn = table.Column<DateTime>(nullable: true)
+                    EndOn = table.Column<DateTime>(nullable: true),
+                    Sequence = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -751,78 +782,6 @@ namespace Fosol.Schedule.DAL.Migrations
                         principalTable: "Tags",
                         principalColumns: new[] { "Key", "Value" },
                         onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "ParticipantAddresses",
-                columns: table => new
-                {
-                    ParticipantId = table.Column<int>(nullable: false),
-                    AddressId = table.Column<int>(nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_ParticipantAddresses", x => new { x.ParticipantId, x.AddressId });
-                    table.ForeignKey(
-                        name: "FK_ParticipantAddresses_Addresses_AddressId",
-                        column: x => x.AddressId,
-                        principalTable: "Addresses",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_ParticipantAddresses_Participants_ParticipantId",
-                        column: x => x.ParticipantId,
-                        principalTable: "Participants",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "ParticipantAttributes",
-                columns: table => new
-                {
-                    ParticipantId = table.Column<int>(nullable: false),
-                    AttributeId = table.Column<int>(nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_ParticipantAttributes", x => new { x.ParticipantId, x.AttributeId });
-                    table.ForeignKey(
-                        name: "FK_ParticipantAttributes_Attributes_AttributeId",
-                        column: x => x.AttributeId,
-                        principalTable: "Attributes",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_ParticipantAttributes_Participants_ParticipantId",
-                        column: x => x.ParticipantId,
-                        principalTable: "Participants",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "ParticipantContactInfos",
-                columns: table => new
-                {
-                    ParticipantId = table.Column<int>(nullable: false),
-                    ContactInfoId = table.Column<int>(nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_ParticipantContactInfos", x => new { x.ParticipantId, x.ContactInfoId });
-                    table.ForeignKey(
-                        name: "FK_ParticipantContactInfos_ContactInfos_ContactInfoId",
-                        column: x => x.ContactInfoId,
-                        principalTable: "ContactInfos",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_ParticipantContactInfos_Participants_ParticipantId",
-                        column: x => x.ParticipantId,
-                        principalTable: "Participants",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -1045,11 +1004,6 @@ namespace Fosol.Schedule.DAL.Migrations
                 column: "UpdatedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Attributes_UserId",
-                table: "Attributes",
-                column: "UserId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_CalendarAttributes_AttributeId",
                 table: "CalendarAttributes",
                 column: "AttributeId");
@@ -1075,13 +1029,13 @@ namespace Fosol.Schedule.DAL.Migrations
                 column: "UpdatedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ContactInfos_AddedById",
-                table: "ContactInfos",
+                name: "IX_ContactInfo_AddedById",
+                table: "ContactInfo",
                 column: "AddedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ContactInfos_UpdatedById",
-                table: "ContactInfos",
+                name: "IX_ContactInfo_UpdatedById",
+                table: "ContactInfo",
                 column: "UpdatedById");
 
             migrationBuilder.CreateIndex(
@@ -1165,8 +1119,8 @@ namespace Fosol.Schedule.DAL.Migrations
                 column: "AttributeId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_ParticipantContactInfos_ContactInfoId",
-                table: "ParticipantContactInfos",
+                name: "IX_ParticipantContactInfo_ContactInfoId",
+                table: "ParticipantContactInfo",
                 column: "ContactInfoId");
 
             migrationBuilder.CreateIndex(
@@ -1225,18 +1179,23 @@ namespace Fosol.Schedule.DAL.Migrations
                 column: "AddressId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_UserContactInfos_ContactInfoId",
-                table: "UserContactInfos",
+                name: "IX_UserAttributes_AttributeId",
+                table: "UserAttributes",
+                column: "AttributeId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_UserContactInfo_ContactInfoId",
+                table: "UserContactInfo",
                 column: "ContactInfoId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_UserInfos_AddedById",
-                table: "UserInfos",
+                name: "IX_UserInfo_AddedById",
+                table: "UserInfo",
                 column: "AddedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_UserInfos_UpdatedById",
-                table: "UserInfos",
+                name: "IX_UserInfo_UpdatedById",
+                table: "UserInfo",
                 column: "UpdatedById");
 
             migrationBuilder.CreateIndex(
@@ -1245,15 +1204,112 @@ namespace Fosol.Schedule.DAL.Migrations
                 column: "AddedById");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Users_DefaultAccountId",
+                table: "Users",
+                column: "DefaultAccountId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Users_UpdatedById",
                 table: "Users",
                 column: "UpdatedById");
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_UserAccountRoles_Users_UserId",
+                table: "UserAccountRoles",
+                column: "UserId",
+                principalTable: "Users",
+                principalColumn: "Id",
+                onDelete: ReferentialAction.Restrict);
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_UserAccountRoles_AccountRoles_AccountRoleId",
+                table: "UserAccountRoles",
+                column: "AccountRoleId",
+                principalTable: "AccountRoles",
+                principalColumn: "Id",
+                onDelete: ReferentialAction.Cascade);
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_AccountRoles_Accounts_AccountId",
+                table: "AccountRoles",
+                column: "AccountId",
+                principalTable: "Accounts",
+                principalColumn: "Id",
+                onDelete: ReferentialAction.Cascade);
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_AccountRoles_Users_AddedById",
+                table: "AccountRoles",
+                column: "AddedById",
+                principalTable: "Users",
+                principalColumn: "Id",
+                onDelete: ReferentialAction.Cascade);
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_AccountRoles_Users_UpdatedById",
+                table: "AccountRoles",
+                column: "UpdatedById",
+                principalTable: "Users",
+                principalColumn: "Id",
+                onDelete: ReferentialAction.Restrict);
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_AccountUsers_Accounts_AccountId",
+                table: "AccountUsers",
+                column: "AccountId",
+                principalTable: "Accounts",
+                principalColumn: "Id",
+                onDelete: ReferentialAction.Restrict);
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_AccountUsers_Users_UserId",
+                table: "AccountUsers",
+                column: "UserId",
+                principalTable: "Users",
+                principalColumn: "Id",
+                onDelete: ReferentialAction.Cascade);
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_Calendars_Accounts_AccountId",
+                table: "Calendars",
+                column: "AccountId",
+                principalTable: "Accounts",
+                principalColumn: "Id",
+                onDelete: ReferentialAction.Cascade);
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_Calendars_Users_AddedById",
+                table: "Calendars",
+                column: "AddedById",
+                principalTable: "Users",
+                principalColumn: "Id",
+                onDelete: ReferentialAction.Restrict);
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_Calendars_Users_UpdatedById",
+                table: "Calendars",
+                column: "UpdatedById",
+                principalTable: "Users",
+                principalColumn: "Id",
+                onDelete: ReferentialAction.Restrict);
+
+            migrationBuilder.AddForeignKey(
+                name: "FK_Users_Accounts_DefaultAccountId",
+                table: "Users",
+                column: "DefaultAccountId",
+                principalTable: "Accounts",
+                principalColumn: "Id",
+                onDelete: ReferentialAction.Restrict);
 
             PostDeploy(migrationBuilder);
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
         {
+            migrationBuilder.DropForeignKey(
+                name: "FK_Users_Accounts_DefaultAccountId",
+                table: "Users");
+
             migrationBuilder.DropTable(
                 name: "AccountUsers");
 
@@ -1288,7 +1344,7 @@ namespace Fosol.Schedule.DAL.Migrations
                 name: "ParticipantAttributes");
 
             migrationBuilder.DropTable(
-                name: "ParticipantContactInfos");
+                name: "ParticipantContactInfo");
 
             migrationBuilder.DropTable(
                 name: "UserAccountRoles");
@@ -1297,10 +1353,13 @@ namespace Fosol.Schedule.DAL.Migrations
                 name: "UserAddresses");
 
             migrationBuilder.DropTable(
-                name: "UserContactInfos");
+                name: "UserAttributes");
 
             migrationBuilder.DropTable(
-                name: "UserInfos");
+                name: "UserContactInfo");
+
+            migrationBuilder.DropTable(
+                name: "UserInfo");
 
             migrationBuilder.DropTable(
                 name: "Criteria");
@@ -1309,16 +1368,16 @@ namespace Fosol.Schedule.DAL.Migrations
                 name: "Openings");
 
             migrationBuilder.DropTable(
-                name: "Attributes");
-
-            migrationBuilder.DropTable(
                 name: "Participants");
 
             migrationBuilder.DropTable(
                 name: "AccountRoles");
 
             migrationBuilder.DropTable(
-                name: "ContactInfos");
+                name: "Attributes");
+
+            migrationBuilder.DropTable(
+                name: "ContactInfo");
 
             migrationBuilder.DropTable(
                 name: "Activities");

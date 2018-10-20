@@ -99,6 +99,16 @@ namespace Fosol.Core.Extensions.Principals
         {
             return (principal as ClaimsPrincipal)?.Claims.FirstOrDefault(c => c.Type == "Calendar");
         }
+
+        /// <summary>
+        /// Get the current principal claim account.
+        /// </summary>
+        /// <param name="principal"></param>
+        /// <returns></returns>
+        public static Claim GetAccount(this IPrincipal principal)
+        {
+            return (principal as ClaimsPrincipal)?.Claims.FirstOrDefault(c => c.Type == "Account");
+        }
         #endregion
     }
 }

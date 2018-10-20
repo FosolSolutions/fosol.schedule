@@ -1,14 +1,18 @@
 ﻿using Fosol.Core.Exceptions;
 using Fosol.Schedule.DAL.Interfaces;
+using Fosol.Schedule.Entities;
+using Microsoft.EntityFrameworkCore;
 using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 
 namespace Fosol.Schedule.DAL.Services
 {
     /// <summary>
     /// ParticipantService sealed class, provides a way to manage participants in the datasource.
     /// </summary>
-    public sealed class ParticipantService : UpdatableService<Entities.Participant, Models.Participant>, IParticipantService
+    public sealed class ParticipantService : UpdatableService<Participant, Models.Participant>, IParticipantService
     {
         #region Variables
         #endregion
@@ -49,6 +53,37 @@ namespace Fosol.Schedule.DAL.Services
         public Models.Participant Get(int id)
         {
             return this.Find(id);
+        }
+
+        /// <summary>
+        /// Get the claimed identity of the participant for the specified 'participantId'.
+        /// </summary>
+        /// <param name="participantId"></param>
+        /// <returns></returns>
+        public IEnumerable<Claim> GetClaims(int participantId)
+        {
+            var participant = this.Find((set) => set.Include(p => p.Attributes).ThenInclude(a => a.Attribute).Include(p => p.Calendar).ThenInclude(c => c.Account).SingleOrDefault(p => p.Id == participantId));
+            var email = this.Context.ContactInfo.FirstOrDefault(ci => ci.ParticipantContactInfos.Any(pci => pci.ParticipantId == participantId) && ci.Type == ContactInfoType.Email);
+
+            var claims = new List<Claim>(new[]
+            {
+                new Claim(ClaimTypes.NameIdentifier, $"{participant.Id}"),
+                new Claim(ClaimTypes.Email, email?.Value ?? ""),
+                new Claim(ClaimTypes.Name, $"{participant.FirstName} {participant.LastName}"),
+                new Claim(ClaimTypes.Surname, participant.LastName),
+                new Claim(ClaimTypes.Gender, $"{participant.Gender}"),
+                new Claim("Key", $"{participant.Key}", typeof(Guid).FullName, "Fosol.Schedule"), // TODO: Namespace constant
+                new Claim("Participant", $"{participant.Id}", typeof(int).FullName, "Fosol.Schedule"),
+                new Claim("Calendar", $"{participant.CalendarId}", typeof(int).FullName, "Fosol.Schedule"),
+                new Claim("Account", $"{participant.Calendar.AccountId}", typeof(int).FullName, "Fosol.Schedule")
+            });
+
+            foreach (var attr in participant.Attributes)
+            {
+                claims.Add(new Claim(attr.Attribute.Key, attr.Attribute.Value, attr.Attribute.ValueType, "Fosol.Schedule"));
+            }
+
+            return claims;
         }
         #endregion
     }

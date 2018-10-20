@@ -70,7 +70,7 @@ namespace Fosol.Schedule.DAL.Services
             if (this.IsPrincipalAParticipant) throw new NotAuthorizedException();
 
             var userId = this.Source.Principal.GetNameIdentifier().Value.ConvertTo<int>();
-            var user = this.Context.Users.Find(userId) ?? throw new NotAuthorizedException();
+            var user = this.Context.Users.Include(u => u.Info).SingleOrDefault(u => u.Id == userId) ?? throw new NotAuthorizedException();
 
             var account = this.Context.Accounts.First(a => a.OwnerId == userId);
             var events = new List<Event>(365);
@@ -145,12 +145,20 @@ namespace Fosol.Schedule.DAL.Services
                 sunday = sunday.AddDays(7);
             }
 
+            // Create a participant record for the user.
+            var participant = new Participant(calendar, user) { AddedById = userId };
+
             using (var transaction = this.Context.Database.BeginTransaction())
             {
                 try
                 {
                     this.Context.Criteria.AddRange(criteria);
+                    this.Context.SaveChanges();
+
                     this.Context.Calendars.Add(calendar);
+                    this.Context.SaveChanges();
+
+                    this.Context.Participants.Add(participant);
                     this.Context.SaveChanges();
 
                     transaction.Commit();

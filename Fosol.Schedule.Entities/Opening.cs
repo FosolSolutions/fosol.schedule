@@ -110,6 +110,7 @@ namespace Fosol.Schedule.Entities
             this.MaxParticipants = maxParticipants;
             this.OpeningType = type;
             this.ApplicationProcess = process;
+            this.Key = Guid.NewGuid();
         }
         #endregion
     }

@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Security.Claims;
 
 namespace Fosol.Schedule.DAL.Interfaces
 {
@@ -17,5 +19,12 @@ namespace Fosol.Schedule.DAL.Interfaces
         /// <param name="key"></param>
         /// <returns></returns>
         Models.User Get(Guid key);
+
+        /// <summary>
+        /// Get the claimed identity of the user for the specified 'userId'.
+        /// </summary>
+        /// <param name="userId"></param>
+        /// <returns></returns>
+        IEnumerable<Claim> GetClaims(int userId);
     }
 }

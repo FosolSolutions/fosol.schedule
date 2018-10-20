@@ -2,7 +2,9 @@
 using Fosol.Core.Extensions.Principals;
 using Fosol.Core.Extensions.Strings;
 using Fosol.Schedule.DAL.Interfaces;
+using Fosol.Schedule.Entities;
 using System;
+using System.Linq;
 
 namespace Fosol.Schedule.DAL.Map
 {
@@ -37,7 +39,17 @@ namespace Fosol.Schedule.DAL.Map
                 .ReverseMap()
                 .ForMember(dest => dest.Key, opt => opt.MapFrom(src => (src.Key != Guid.Empty) ? src.Key : Guid.NewGuid()));
             CreateMap<Entities.User, Models.User>()
+                .ForPath(dest => dest.Gender, opt => opt.MapFrom(src => src.Info.Gender))
+                .ForPath(dest => dest.FirstName, opt => opt.MapFrom(src => src.Info.FirstName))
+                .ForPath(dest => dest.MiddleName, opt => opt.MapFrom(src => src.Info.MiddleName))
+                .ForPath(dest => dest.LastName, opt => opt.MapFrom(src => src.Info.LastName))
+                .ForPath(dest => dest.Birthdate, opt => opt.MapFrom(src => src.Info.Birthdate))
                 .ReverseMap()
+                .ForPath(dest => dest.Info.Gender, opt => opt.MapFrom(src => src.Gender))
+                .ForPath(dest => dest.Info.FirstName, opt => opt.MapFrom(src => src.FirstName))
+                .ForPath(dest => dest.Info.MiddleName, opt => opt.MapFrom(src => src.MiddleName))
+                .ForPath(dest => dest.Info.LastName, opt => opt.MapFrom(src => src.LastName))
+                .ForPath(dest => dest.Info.Birthdate, opt => opt.MapFrom(src => src.Birthdate))
                 .ForMember(dest => dest.Key, opt => opt.MapFrom(src => (src.Key != Guid.Empty) ? src.Key : Guid.NewGuid()));
             CreateMap<Entities.Account, Models.Account>()
                 .ReverseMap()
@@ -49,12 +61,15 @@ namespace Fosol.Schedule.DAL.Map
                 .ReverseMap()
                 .ForMember(dest => dest.Key, opt => opt.MapFrom(src => (src.Key != Guid.Empty) ? src.Key : Guid.NewGuid()));
             CreateMap<Entities.Event, Models.Event>()
+                .ForPath(dest => dest.Criteria, opt => opt.MapFrom(src => src.Criteria.Select(c => c.Criteria)))
                 .ReverseMap()
                 .ForMember(dest => dest.Key, opt => opt.MapFrom(src => (src.Key != Guid.Empty) ? src.Key : Guid.NewGuid()));
             CreateMap<Entities.Activity, Models.Activity>()
+                .ForPath(dest => dest.Criteria, opt => opt.MapFrom(src => src.Criteria.Select(c => c.Criteria)))
                 .ReverseMap()
                 .ForMember(dest => dest.Key, opt => opt.MapFrom(src => (src.Key != Guid.Empty) ? src.Key : Guid.NewGuid()));
             CreateMap<Entities.Opening, Models.Opening>()
+                .ForPath(dest => dest.Criteria, opt => opt.MapFrom(src => src.Criteria.Select(c => c.Criteria)))
                 .ReverseMap()
                 .ForMember(dest => dest.Key, opt => opt.MapFrom(src => (src.Key != Guid.Empty) ? src.Key : Guid.NewGuid()));
             CreateMap<Entities.CriteriaObject, Models.Criteria>()

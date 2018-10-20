@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Fosol.Schedule.DAL.Migrations
 {
     [DbContext(typeof(ScheduleContext))]
-    [Migration("20181019230759_v01.00.00")]
+    [Migration("20181020160434_v01.00.00")]
     partial class v010000
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -153,6 +153,8 @@ namespace Fosol.Schedule.DAL.Migrations
                         .IsConcurrencyToken()
                         .ValueGeneratedOnAddOrUpdate();
 
+                    b.Property<int>("Sequence");
+
                     b.Property<DateTime?>("StartOn");
 
                     b.Property<int?>("UpdatedById");
@@ -257,8 +259,6 @@ namespace Fosol.Schedule.DAL.Migrations
                         .HasColumnType("DATETIME2")
                         .HasDefaultValueSql("GETUTCDATE()");
 
-                    b.Property<int>("DataType");
-
                     b.Property<string>("Key")
                         .IsRequired()
                         .HasMaxLength(100);
@@ -271,19 +271,19 @@ namespace Fosol.Schedule.DAL.Migrations
 
                     b.Property<DateTime?>("UpdatedOn");
 
-                    b.Property<int?>("UserId");
-
                     b.Property<string>("Value")
                         .IsRequired()
                         .HasMaxLength(100);
+
+                    b.Property<string>("ValueType")
+                        .IsRequired()
+                        .HasMaxLength(200);
 
                     b.HasKey("Id");
 
                     b.HasIndex("AddedById");
 
                     b.HasIndex("UpdatedById");
-
-                    b.HasIndex("UserId");
 
                     b.ToTable("Attributes");
                 });
@@ -396,7 +396,7 @@ namespace Fosol.Schedule.DAL.Migrations
 
                     b.HasIndex("UpdatedById");
 
-                    b.ToTable("ContactInfos");
+                    b.ToTable("ContactInfo");
                 });
 
             modelBuilder.Entity("Fosol.Schedule.Entities.CriteriaObject", b =>
@@ -711,7 +711,7 @@ namespace Fosol.Schedule.DAL.Migrations
 
                     b.HasIndex("ContactInfoId");
 
-                    b.ToTable("ParticipantContactInfos");
+                    b.ToTable("ParticipantContactInfo");
                 });
 
             modelBuilder.Entity("Fosol.Schedule.Entities.Subscription", b =>
@@ -798,6 +798,8 @@ namespace Fosol.Schedule.DAL.Migrations
                         .HasColumnType("DATETIME2")
                         .HasDefaultValueSql("GETUTCDATE()");
 
+                    b.Property<int?>("DefaultAccountId");
+
                     b.Property<string>("Email")
                         .IsRequired()
                         .HasMaxLength(250);
@@ -817,6 +819,8 @@ namespace Fosol.Schedule.DAL.Migrations
                     b.HasKey("Id");
 
                     b.HasIndex("AddedById");
+
+                    b.HasIndex("DefaultAccountId");
 
                     b.HasIndex("UpdatedById");
 
@@ -849,6 +853,19 @@ namespace Fosol.Schedule.DAL.Migrations
                     b.ToTable("UserAddresses");
                 });
 
+            modelBuilder.Entity("Fosol.Schedule.Entities.UserAttribute", b =>
+                {
+                    b.Property<int>("UserId");
+
+                    b.Property<int>("AttributeId");
+
+                    b.HasKey("UserId", "AttributeId");
+
+                    b.HasIndex("AttributeId");
+
+                    b.ToTable("UserAttributes");
+                });
+
             modelBuilder.Entity("Fosol.Schedule.Entities.UserContactInfo", b =>
                 {
                     b.Property<int>("UserId");
@@ -859,7 +876,7 @@ namespace Fosol.Schedule.DAL.Migrations
 
                     b.HasIndex("ContactInfoId");
 
-                    b.ToTable("UserContactInfos");
+                    b.ToTable("UserContactInfo");
                 });
 
             modelBuilder.Entity("Fosol.Schedule.Entities.UserInfo", b =>
@@ -901,7 +918,7 @@ namespace Fosol.Schedule.DAL.Migrations
 
                     b.HasIndex("UpdatedById");
 
-                    b.ToTable("UserInfos");
+                    b.ToTable("UserInfo");
                 });
 
             modelBuilder.Entity("Fosol.Schedule.Entities.Account", b =>
@@ -999,10 +1016,6 @@ namespace Fosol.Schedule.DAL.Migrations
                     b.HasOne("Fosol.Schedule.Entities.User", "UpdatedBy")
                         .WithMany()
                         .HasForeignKey("UpdatedById");
-
-                    b.HasOne("Fosol.Schedule.Entities.User")
-                        .WithMany("Attributes")
-                        .HasForeignKey("UserId");
                 });
 
             modelBuilder.Entity("Fosol.Schedule.Entities.Calendar", b =>
@@ -1217,7 +1230,7 @@ namespace Fosol.Schedule.DAL.Migrations
                         .OnDelete(DeleteBehavior.Cascade);
 
                     b.HasOne("Fosol.Schedule.Entities.Participant", "Participant")
-                        .WithMany("ContactInfos")
+                        .WithMany("ContactInfo")
                         .HasForeignKey("ParticipantId");
                 });
 
@@ -1249,6 +1262,10 @@ namespace Fosol.Schedule.DAL.Migrations
                         .WithMany()
                         .HasForeignKey("AddedById");
 
+                    b.HasOne("Fosol.Schedule.Entities.Account", "DefaultAccount")
+                        .WithMany()
+                        .HasForeignKey("DefaultAccountId");
+
                     b.HasOne("Fosol.Schedule.Entities.User", "UpdatedBy")
                         .WithMany()
                         .HasForeignKey("UpdatedById");
@@ -1276,6 +1293,19 @@ namespace Fosol.Schedule.DAL.Migrations
                     b.HasOne("Fosol.Schedule.Entities.User", "User")
                         .WithMany("Addresses")
                         .HasForeignKey("UserId");
+                });
+
+            modelBuilder.Entity("Fosol.Schedule.Entities.UserAttribute", b =>
+                {
+                    b.HasOne("Fosol.Schedule.Entities.Attribute", "Attribute")
+                        .WithMany()
+                        .HasForeignKey("AttributeId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("Fosol.Schedule.Entities.User", "User")
+                        .WithMany("Attributes")
+                        .HasForeignKey("UserId")
+                        .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("Fosol.Schedule.Entities.UserContactInfo", b =>

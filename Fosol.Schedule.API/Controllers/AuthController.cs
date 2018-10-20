@@ -73,6 +73,22 @@ namespace Fosol.Schedule.API.Controllers
         }
 
         /// <summary>
+        /// Makes the specified calendar the active calendar for the currently signed in user.
+        /// Updates the users claims.
+        /// </summary>
+        /// <param name="calendarId"></param>
+        /// <returns></returns>
+        [HttpPut("calendar/{calendarId}")]
+        public async Task<IActionResult> SelectCalendar(int calendarId)
+        {
+            _datasource.Calendars.SelectCalendar(User, calendarId);
+            var principal = new ClaimsPrincipal(User);
+            await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal);
+
+            return Ok();
+        }
+
+        /// <summary>
         /// Signoff the application, clear cookies and session.
         /// </summary>
         /// <returns></returns>

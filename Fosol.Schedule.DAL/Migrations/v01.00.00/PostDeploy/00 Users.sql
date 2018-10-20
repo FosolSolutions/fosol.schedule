@@ -2,7 +2,7 @@
 
 SET IDENTITY_INSERT dbo.[Users] ON
 
-INSERT INTO dbo.Users (
+INSERT INTO dbo.[Users] (
 	[Id]
 	, [Key]
 	, [Email]
@@ -11,6 +11,18 @@ INSERT INTO dbo.Users (
 	1
 	, NEWID()
 	, 'admin@fosol.ca'
+	, 1
+)
+
+INSERT INTO dbo.[UserInfo] (
+	[UserId]
+	, [FirstName]
+	, [LastName]
+	, [AddedById]
+) VALUES (
+	1
+	, 'Administrator'
+	, 'Administrator'
 	, 1
 )
 

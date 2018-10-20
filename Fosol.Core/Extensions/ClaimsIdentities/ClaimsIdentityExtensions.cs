@@ -63,6 +63,16 @@ namespace Fosol.Core.Extensions.ClaimsIdentities
         {
             return identity.Claims.FirstOrDefault(c => c.Type == "Calendar");
         }
+
+        /// <summary>
+        /// Get the identity claim account.
+        /// </summary>
+        /// <param name="identity"></param>
+        /// <returns></returns>
+        public static Claim GetAccount(this ClaimsIdentity identity)
+        {
+            return identity.Claims.FirstOrDefault(c => c.Type == "Account");
+        }
         #endregion
     }
 }

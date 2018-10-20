@@ -14,7 +14,11 @@ namespace Fosol.Schedule.DAL
         #endregion
 
         #region Properties
+        public DbSet<Subscription> Subscriptions { get; set; }
+
         public DbSet<User> Users { get; set; }
+
+        public DbSet<UserInfo> UserInfo { get; set; }
 
         public DbSet<Account> Accounts { get; set; }
 
@@ -26,21 +30,17 @@ namespace Fosol.Schedule.DAL
 
         public DbSet<Activity> Activities { get; set; }
 
-        public DbSet<UserInfo> UserInfos { get; set; }
+        public DbSet<Opening> Openings { get; set; }
 
-        public DbSet<Address> Addresses { get; set; }
+        public DbSet<Participant> Participants { get; set; }
 
         public DbSet<CriteriaObject> Criteria { get; set; }
 
         public DbSet<Entities.Attribute> Attributes { get; set; }
 
-        public DbSet<Opening> Openings { get; set; }
+        public DbSet<ContactInfo> ContactInfo { get; set; }
 
-        public DbSet<Participant> Participants { get; set; }
-
-        public DbSet<ContactInfo> ContactInfos { get; set; }
-
-        public DbSet<Subscription> Subscriptions { get; set; }
+        public DbSet<Address> Addresses { get; set; }
         #endregion
 
         #region Constructors
@@ -213,10 +213,25 @@ namespace Fosol.Schedule.DAL
                 .HasKey(m => new { m.UserId, m.AddressId });
 
             modelBuilder.Entity<UserContactInfo>()
-                .ToTable("UserContactInfos");
+                .ToTable("UserContactInfo");
 
             modelBuilder.Entity<UserContactInfo>()
                 .HasKey(m => new { m.UserId, m.ContactInfoId });
+
+            modelBuilder.Entity<UserAttribute>()
+                .ToTable("UserAttributes");
+
+            modelBuilder.Entity<UserAttribute>()
+                .HasKey(m => new { m.UserId, m.AttributeId });
+            #endregion
+
+            #region UserInfo
+            modelBuilder.Entity<UserInfo>()
+                .ToTable("UserInfo");
+
+            modelBuilder.Entity<UserInfo>()
+                .Property(m => m.UserId)
+                .ValueGeneratedNever();
             #endregion
 
             #region Participant
@@ -259,7 +274,7 @@ namespace Fosol.Schedule.DAL
                 .OnDelete(DeleteBehavior.ClientSetNull);
 
             modelBuilder.Entity<Participant>()
-                .HasMany(m => m.ContactInfos)
+                .HasMany(m => m.ContactInfo)
                 .WithOne(m => m.Participant)
                 .OnDelete(DeleteBehavior.ClientSetNull);
 
@@ -276,7 +291,7 @@ namespace Fosol.Schedule.DAL
                 .HasKey(m => new { m.ParticipantId, m.AttributeId });
 
             modelBuilder.Entity<ParticipantContactInfo>()
-                .ToTable("ParticipantContactInfos");
+                .ToTable("ParticipantContactInfo");
 
             modelBuilder.Entity<ParticipantContactInfo>()
                 .HasKey(m => new { m.ParticipantId, m.ContactInfoId });
@@ -525,7 +540,7 @@ namespace Fosol.Schedule.DAL
 
             #region ContactInfo
             modelBuilder.Entity<ContactInfo>()
-                .ToTable("ContactInfos");
+                .ToTable("ContactInfo");
 
             modelBuilder.Entity<ContactInfo>()
                 .Property(m => m.Id)

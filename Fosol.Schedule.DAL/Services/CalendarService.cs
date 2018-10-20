@@ -1,9 +1,11 @@
 ﻿using Fosol.Core.Exceptions;
 using Fosol.Schedule.DAL.Interfaces;
 using Fosol.Schedule.Entities;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 
 namespace Fosol.Schedule.DAL.Services
 {
@@ -50,7 +52,7 @@ namespace Fosol.Schedule.DAL.Services
         /// <returns></returns>
         public Models.Calendar Get(int id)
         {
-            return this.Find(id);
+            return this.Map(this.Find((set) => set.Include(c => c.Criteria).SingleOrDefault(c => c.Id == id)));
         }
 
         /// <summary>
@@ -136,6 +138,28 @@ namespace Fosol.Schedule.DAL.Services
             model.Events = null;
 
             base.Remove(model);
+        }
+
+        /// <summary>
+        /// Get the claims associated with this calendar.
+        /// Validates whether the current user  is authorized to view the calendar.
+        /// </summary>
+        /// <param name="calendarId"></param>
+        /// <returns></returns>
+        public IEnumerable<Claim> GetClaims(int calendarId)
+        {
+            var userId = this.GetPrincipalId();
+            var isParticipant = this.IsPrincipalAParticipant;
+            var calendar = this.Context.Calendars.SingleOrDefault(c => c.Id == calendarId && (isParticipant && c.Participants.Any(p => p.Id == userId) || c.Account.Users.Any(u => u.UserId == userId))) ?? throw new NotAuthorizedException();
+            var participant = this.Context.Participants.SingleOrDefault(p => isParticipant && p.Id == userId || (p.CalendarId == calendarId && p.UserId == userId)) ?? throw new InvalidOperationException($"User must first become a participant in this calendar.");
+            var claims = new List<Claim>(new[]
+            {
+                new Claim("Calendar", $"{calendarId}", typeof(int).FullName, "Fosol.Schedule"),
+                new Claim("Account", $"{calendar.AccountId}", typeof(int).FullName, "Fosol.Schedule"),
+                new Claim("Participant", $"{participant.Id}", typeof(int).FullName, "Fosol.Schedule")
+            });
+
+            return claims;
         }
         #endregion
     }

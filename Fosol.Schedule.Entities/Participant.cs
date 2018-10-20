@@ -97,9 +97,9 @@ namespace Fosol.Schedule.Entities
         public DateTime? Birthdate { get; set; }
 
         /// <summary>
-        /// get - A collection of information about the participant.
+        /// get - A collection of contact information about the participant.
         /// </summary>
-        public ICollection<ParticipantContactInfo> ContactInfos { get; set; } = new List<ParticipantContactInfo>();
+        public ICollection<ParticipantContactInfo> ContactInfo { get; set; } = new List<ParticipantContactInfo>();
 
         /// <summary>
         /// get - A collection of addresses for the participant.
@@ -129,10 +129,11 @@ namespace Fosol.Schedule.Entities
             this.CalendarId = calendar?.Id ?? throw new ArgumentNullException(nameof(calendar));
             this.Calendar = calendar;
             this.UserId = user?.Id ?? throw new ArgumentNullException(nameof(user));
+            this.User = user;
             this.FirstName = user.Info?.FirstName;
             this.MiddleName = user.Info?.MiddleName;
             this.LastName = user.Info?.LastName;
-            this.DisplayName = $"{user.Info?.FirstName} {user.Info?.LastName}";
+            this.DisplayName = $"{user.Info?.FirstName} {user.Info?.LastName}"; // TODO: Configure default display name options.
             this.Title = user.Info?.Title;
             this.Gender = user.Info?.Gender;
             this.Birthdate = user.Info?.Birthdate;

@@ -11,6 +11,8 @@ using System.Security.Principal;
 
 namespace Fosol.Schedule.DAL
 {
+    // TODO: Controll Tracking
+    // TODO: Controll size of models (read and write models)
     /// <summary>
     /// DataSource sealed class, provides a way to interact with the datasource.
     /// </summary>

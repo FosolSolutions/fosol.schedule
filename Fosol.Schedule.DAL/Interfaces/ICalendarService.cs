@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Security.Claims;
 
 namespace Fosol.Schedule.DAL.Interfaces
 {
@@ -23,7 +24,7 @@ namespace Fosol.Schedule.DAL.Interfaces
 
         /// <summary>
         /// Get the calendar for the specified 'id'.
-        /// Valdiates whether the current user is authorized to view the calendar.
+        /// Validates whether the current user is authorized to view the calendar.
         /// Includes events for the specified timeframe.
         /// </summary>
         /// <param name="id"></param>
@@ -31,5 +32,13 @@ namespace Fosol.Schedule.DAL.Interfaces
         /// <param name="endDate"></param>
         /// <returns></returns>
         Models.Calendar Get(int id, DateTime startOn, DateTime endOn);
+
+        /// <summary>
+        /// Get the claims associated with this calendar.
+        /// Validates whether the current user  is authorized to view the calendar.
+        /// </summary>
+        /// <param name="calendarId"></param>
+        /// <returns></returns>
+        IEnumerable<Claim> GetClaims(int calendarId);
     }
 }
