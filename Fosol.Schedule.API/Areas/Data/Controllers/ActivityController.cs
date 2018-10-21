@@ -34,7 +34,7 @@ namespace Fosol.Schedule.API.Areas.Data.Controllers
         /// </summary>
         /// <param name="id">The primary key for the activity.</param>
         /// <returns>The activity JSON data object from the datasource.</returns>
-        [HttpGet("{id}")]
+        [HttpGet("{id}", Name = "GetActivity")]
         public IActionResult GetActivity(int id)
         {
             var activity = _datasource.Activities.Get(id);

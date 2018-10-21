@@ -12,6 +12,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Serialization;
 
 namespace Fosol.Schedule.API
@@ -99,6 +100,8 @@ namespace Fosol.Schedule.API
                 {
                     options.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
                     options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
+                    options.SerializerSettings.Converters.Add(new StringEnumConverter());
+                    options.SerializerSettings.NullValueHandling = NullValueHandling.Ignore;
                 });
 
             services.AddResponseHeaders(options =>
@@ -167,7 +170,7 @@ namespace Fosol.Schedule.API
             //app.UseJsonExceptionMiddleware();
             app.UseStatusCodePagesWithReExecute("/Error/{0}");
             app.UseAuthentication();
-            app.UseStaticFiles();
+            //app.UseStaticFiles();
             app.UseCookiePolicy();
             app.UseMvc(options =>
             {

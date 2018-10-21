@@ -62,23 +62,28 @@ namespace Fosol.Schedule.DAL.Services
         /// <summary>
         /// Creates and adds a new ecclesial calendar with default events, activities, openings and criteria.
         /// </summary>
-        /// <param name="name"></param>
-        /// <param name="description"></param>
+        /// <param name="calendarId"></param>
+        /// <param name="startOn"></param>
+        /// <param name="endOn"></param>
         /// <returns></returns>
-        public Models.Calendar AddEcclesialCalendar(string name = "Victoria Christadelphian Ecclesia", string description = "The Victoria Christadelphian ecclesial calendar")
+        public Models.Calendar GenerateEcclesialSchedule(int calendarId, DateTime? startOn = null, DateTime? endOn = null)
         {
             if (this.IsPrincipalAParticipant) throw new NotAuthorizedException();
 
             var userId = this.Source.Principal.GetNameIdentifier().Value.ConvertTo<int>();
             var user = this.Context.Users.Include(u => u.Info).SingleOrDefault(u => u.Id == userId) ?? throw new NotAuthorizedException();
+            var calendar = this.Context.Calendars.SingleOrDefault(c => c.Id == calendarId) ?? throw new NoContentException(typeof(Calendar));
 
-            var account = this.Context.Accounts.First(a => a.OwnerId == userId);
-            var events = new List<Event>(365);
-            var calendar = new Calendar(account, name)
-            {
-                Description = description,
-                AddedById = userId
-            };
+            // TODO: Need generic fucntion to test permission to allow editing calendar.
+            var ownsAccount = this.Context.Accounts.Any(a => a.Id == calendar.AccountId && a.OwnerId == userId);
+            if (!ownsAccount) throw new NotAuthorizedException();
+
+            // Determine date range.
+            var start = startOn ?? DateTime.UtcNow.Date;
+            var end = endOn ?? start.AddDays(365);
+            var days = (end - start).Days;
+
+            var events = new List<Event>(days);
 
             var member = new CriteriaObject("Member", true) { AddedById = userId };
             var brother = new CriteriaObject("Brother", true) { AddedById = userId };
@@ -91,58 +96,105 @@ namespace Fosol.Schedule.DAL.Services
             var prayer = new CriteriaObject(new CriteriaValue("Skill", "Pray"), (Criteria)brother, (Criteria)member) { AddedById = userId };
             var door = new CriteriaObject(new CriteriaValue("Skill", "Doorman"), (Criteria)brother, (Criteria)member) { AddedById = userId };
             var emblems = new CriteriaObject(new CriteriaValue("Skill", "Emblems"), (Criteria)member) { AddedById = userId };
-            var criteria = new List<CriteriaObject>() { member, brother, sister, pianist, presider, exhorter, reader, server, prayer, door, emblems };
+            var lecturer = new CriteriaObject(new CriteriaValue("Skill", "Lecturer"), (Criteria)brother, (Criteria)member) { AddedById = userId };
+            var study = new CriteriaObject(new CriteriaValue("Skill", "Bible Class"), (Criteria)brother, (Criteria)member) { AddedById = userId };
+            var criteria = new List<CriteriaObject>() { member, brother, sister, pianist, presider, exhorter, reader, server, prayer, door, emblems, lecturer };
 
             // Sunday Memorial
-            var jan1st = new DateTime(DateTime.Now.Year, 1, 1);
-            var sunday = jan1st.DayOfWeek == DayOfWeek.Sunday ? jan1st : jan1st.AddDays(7 - (int)jan1st.DayOfWeek);
-            while (sunday.Year == DateTime.Now.Year)
+            var sunday = start.DayOfWeek == DayOfWeek.Sunday ? start : start.AddDays(7 - (int)start.DayOfWeek);
+            while (sunday <= end)
             {
-                var cevent = new Event(calendar, "Memorial Meeting", sunday.AddHours(11), sunday.AddHours(13))
+                // Memorial
+
+                var memorial = new Event(calendar, "Memorial Meeting", sunday.AddHours(11), sunday.AddHours(13))
                 {
                     Description = "Sunday memorial meeting.",
                     AddedById = userId
                 };
-                var aPreside = new Activity(cevent, "Preside") { AddedById = userId };
+                var aPreside = new Activity(memorial, "Preside") { AddedById = userId };
                 aPreside.Openings.Add(new Opening(aPreside, "Presider", 1, 1, OpeningType.Application, ApplicationProcess.Accept) { AddedById = userId });
                 aPreside.Criteria.Add(new ActivityCriteria(aPreside, presider));
-                cevent.Activities.Add(aPreside);
+                memorial.Activities.Add(aPreside);
 
-                var aExhort = new Activity(cevent, "Exhortation") { AddedById = userId };
+                var aExhort = new Activity(memorial, "Exhortation") { AddedById = userId };
                 aExhort.Openings.Add(new Opening(aExhort, "Exhort", 1, 1, OpeningType.Application, ApplicationProcess.Accept) { AddedById = userId });
                 aExhort.Criteria.Add(new ActivityCriteria(aExhort, exhorter));
-                cevent.Activities.Add(aExhort);
+                memorial.Activities.Add(aExhort);
 
-                var aDoor = new Activity(cevent, "Door") { AddedById = userId };
+                var aDoor = new Activity(memorial, "Door") { AddedById = userId };
                 aDoor.Openings.Add(new Opening(aDoor, "Door", 1, 1, OpeningType.Application, ApplicationProcess.Accept) { AddedById = userId });
                 aDoor.Criteria.Add(new ActivityCriteria(aDoor, door));
-                cevent.Activities.Add(aDoor);
+                memorial.Activities.Add(aDoor);
 
-                var aReadings = new Activity(cevent, "Readings") { AddedById = userId };
+                var aReadings = new Activity(memorial, "Readings") { AddedById = userId };
                 aReadings.Openings.Add(new Opening(aReadings, "1st Reading", 1, 1, OpeningType.Application, ApplicationProcess.Accept) { AddedById = userId });
                 aReadings.Openings.Add(new Opening(aReadings, "2nd Reading", 1, 1, OpeningType.Application, ApplicationProcess.Accept) { AddedById = userId });
                 aReadings.Criteria.Add(new ActivityCriteria(aReadings, reader));
-                cevent.Activities.Add(aReadings);
+                memorial.Activities.Add(aReadings);
 
-                var aPrayers = new Activity(cevent, "Prayers") { AddedById = userId };
+                var aPrayers = new Activity(memorial, "Prayers") { AddedById = userId };
                 aPrayers.Openings.Add(new Opening(aPrayers, "Bread", 1, 1, OpeningType.Application, ApplicationProcess.Accept) { AddedById = userId });
                 aPrayers.Openings.Add(new Opening(aPrayers, "Wine", 1, 1, OpeningType.Application, ApplicationProcess.Accept) { AddedById = userId });
                 aPrayers.Openings.Add(new Opening(aPrayers, "Close", 1, 1, OpeningType.Application, ApplicationProcess.Accept) { AddedById = userId });
                 aPrayers.Criteria.Add(new ActivityCriteria(aPrayers, prayer));
-                cevent.Activities.Add(aPrayers);
+                memorial.Activities.Add(aPrayers);
 
-                var aPianist = new Activity(cevent, "Pianist") { AddedById = userId };
+                var aPianist = new Activity(memorial, "Pianist") { AddedById = userId };
                 aPianist.Openings.Add(new Opening(aPianist, "Pianist", 1, 1, OpeningType.Application, ApplicationProcess.Accept) { AddedById = userId });
                 aPianist.Criteria.Add(new ActivityCriteria(aPianist, pianist));
-                cevent.Activities.Add(aPianist);
+                memorial.Activities.Add(aPianist);
 
-                var aServe = new Activity(cevent, "Serve") { AddedById = userId };
+                var aServe = new Activity(memorial, "Serve") { AddedById = userId };
                 aServe.Openings.Add(new Opening(aServe, "Servers", 4, 4, OpeningType.Application, ApplicationProcess.Accept) { AddedById = userId });
                 aServe.Criteria.Add(new ActivityCriteria(aServe, server));
-                cevent.Activities.Add(aServe);
+                memorial.Activities.Add(aServe);
 
-                calendar.Events.Add(cevent);
+                calendar.Events.Add(memorial);
+
+                // Lecture
+                var lecture = new Event(calendar, "Bible Talk", sunday.AddHours(19), sunday.AddHours(20))
+                {
+                    Description = "Sunday night Bible talk.",
+                    AddedById = userId
+                };
+                var aPreside2 = new Activity(lecture, "Preside") { AddedById = userId };
+                aPreside2.Openings.Add(new Opening(aPreside2, "Presider", 1, 1, OpeningType.Application, ApplicationProcess.Accept) { AddedById = userId });
+                aPreside2.Criteria.Add(new ActivityCriteria(aPreside2, presider));
+                lecture.Activities.Add(aPreside2);
+
+                var aLecture = new Activity(lecture, "Lecture") { AddedById = userId };
+                aLecture.Openings.Add(new Opening(aLecture, "Speaker", 1, 1, OpeningType.Application, ApplicationProcess.Accept) { AddedById = userId });
+                aLecture.Criteria.Add(new ActivityCriteria(aLecture, lecturer));
+                lecture.Activities.Add(aLecture);
+
+                calendar.Events.Add(lecture);
+
                 sunday = sunday.AddDays(7);
+            }
+
+            // Bible Class
+            var thursday = start.DayOfWeek <= DayOfWeek.Thursday ? start.AddDays(4 - (int)start.DayOfWeek) : start.AddDays(7 + (int)start.DayOfWeek - 4);
+            while (thursday <= end)
+            {
+                // Lecture
+                var bibleClass = new Event(calendar, "Bible Class", thursday.AddHours(19), thursday.AddHours(20))
+                {
+                    Description = "Sunday night Bible talk.",
+                    AddedById = userId
+                };
+                var aPreside = new Activity(bibleClass, "Preside") { AddedById = userId };
+                aPreside.Openings.Add(new Opening(aPreside, "Presider", 1, 1, OpeningType.Application, ApplicationProcess.Accept) { AddedById = userId });
+                aPreside.Criteria.Add(new ActivityCriteria(aPreside, presider));
+                bibleClass.Activities.Add(aPreside);
+
+                var aSpeak = new Activity(bibleClass, "Speak") { AddedById = userId };
+                aSpeak.Openings.Add(new Opening(aSpeak, "Speaker", 1, 1, OpeningType.Application, ApplicationProcess.Accept) { AddedById = userId });
+                aSpeak.Criteria.Add(new ActivityCriteria(aSpeak, study));
+                bibleClass.Activities.Add(aSpeak);
+
+                calendar.Events.Add(bibleClass);
+
+                thursday = thursday.AddDays(7);
             }
 
             // Create a participant record for the user.
@@ -155,7 +207,7 @@ namespace Fosol.Schedule.DAL.Services
                     this.Context.Criteria.AddRange(criteria);
                     this.Context.SaveChanges();
 
-                    this.Context.Calendars.Add(calendar);
+                    this.Context.Calendars.Update(calendar);
                     this.Context.SaveChanges();
 
                     this.Context.Participants.Add(participant);

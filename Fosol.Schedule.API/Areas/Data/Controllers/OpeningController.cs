@@ -35,7 +35,7 @@ namespace Fosol.Schedule.API.Areas.Data.Controllers
         /// </summary>
         /// <param name="id">The primary key for the opening.</param>
         /// <returns></returns>
-        [HttpGet("{id}")]
+        [HttpGet("{id}", Name = "GetOpening")]
         public IActionResult GetOpening(int id)
         {
             var opening = _datasource.Openings.Get(id);

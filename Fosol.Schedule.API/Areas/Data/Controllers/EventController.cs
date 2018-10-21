@@ -36,7 +36,7 @@ namespace Fosol.Schedule.API.Areas.Data.Controllers
         /// </summary>
         /// <param name="id">The primary key for the event.</param>
         /// <returns>An event for the specified 'id'.</returns>
-        [HttpGet("{id}")]
+        [HttpGet("{id}", Name = "GetEvent")]
         public IActionResult GetEvent(int id)
         {
             var cevent = _datasource.Events.Get(id);

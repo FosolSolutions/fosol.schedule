@@ -53,7 +53,7 @@ namespace Fosol.Schedule.API.Areas.Data.Controllers
         /// <param name="startOn">The start date for the calendar to return.  Defaults to now.</param>
         /// <param name="endOn">The end date for the calendar to return.</param>
         /// <returns>A calendar JSON data object with all events within the specified date range.</returns>
-        [HttpGet("{id}")]
+        [HttpGet("{id}", Name = "GetCalendar")]
         public IActionResult GetCalendar(int id, DateTime? startOn = null, DateTime? endOn = null)
         {
             var start = startOn ?? DateTime.UtcNow;
@@ -111,12 +111,14 @@ namespace Fosol.Schedule.API.Areas.Data.Controllers
         /// <summary>
         /// Creates and adds a new calendar for the specified ecclesia.
         /// </summary>
-        /// <param name="calendar">The calendar to add to the datasource. JSON data object in the body of the request.</param>
+        /// <param name="calendar">The calendar the will be updated in the datasource. JSON data object in the body of the request.</param>
+        /// <param name="startOn"></param>
+        /// <param name="endOn"></param>
         /// <returns>The calendar that was added to the datasource.</returns>
         [HttpPost("ecclesia")]
-        public IActionResult AddEcclesialCalendar([FromBody] Models.Calendar calendar)
+        public IActionResult AddEcclesialSchedule([FromBody] Models.Calendar calendar, [FromQuery] DateTime? startOn, [FromQuery] DateTime? endOn)
         {
-            var result = _dataSource.Helper.AddEcclesialCalendar(calendar.Name, calendar.Description);
+            var result = _dataSource.Helper.GenerateEcclesialSchedule(calendar.Id, startOn, endOn);
 
             return Ok(result);
         }

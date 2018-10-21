@@ -2,6 +2,7 @@
 using Fosol.Core.Extensions.Principals;
 using Fosol.Core.Extensions.Strings;
 using Fosol.Schedule.DAL.Interfaces;
+using Fosol.Schedule.Entities;
 using System;
 using System.Linq;
 

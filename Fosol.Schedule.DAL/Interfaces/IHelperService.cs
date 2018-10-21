@@ -1,9 +1,18 @@
-﻿namespace Fosol.Schedule.DAL.Interfaces
+﻿using System;
+
+namespace Fosol.Schedule.DAL.Interfaces
 {
     public interface IHelperService
     {
         #region Methods
-        Models.Calendar AddEcclesialCalendar(string name, string description);
+        /// <summary>
+        /// Creates and adds a new ecclesial calendar with default events, activities, openings and criteria.
+        /// </summary>
+        /// <param name="calendarId"></param>
+        /// <param name="startOn"></param>
+        /// <param name="endOn"></param>
+        /// <returns></returns>
+        Models.Calendar GenerateEcclesialSchedule(int calendarId, DateTime? startOn = null, DateTime? endOn = null);
         #endregion
     }
 }
