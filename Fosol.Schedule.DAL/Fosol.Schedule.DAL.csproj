@@ -8,7 +8,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Remove="connectionstrings.json" />
     <None Remove="Migrations\v01.00.00\PostDeploy\00 Subscriptions.sql" />
     <None Remove="Migrations\v01.00.00\PostDeploy\00 Users.sql" />
     <None Remove="Migrations\v01.00.00\PostDeploy\01 Accounts.sql" />
@@ -18,9 +17,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Content Include="connectionstrings.json">
-      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
-    </Content>
     <Content Include="Migrations\v01.00.00\PostDeploy\02 UserAccountRoles.sql">
       <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </Content>
@@ -67,6 +63,11 @@
   <ItemGroup>
     <Folder Include="Exceptions\" />
     <Folder Include="Migrations\v01.00.00\PreDeploy\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Update="connectionstrings.json">
+    </None>
   </ItemGroup>
 
 </Project>
