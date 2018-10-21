@@ -72,10 +72,17 @@ namespace Fosol.Schedule.API
                 options.MinimumSameSitePolicy = SameSiteMode.None;
             });
 
-            services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
-                .AddCookie(options =>
+            services.AddAuthentication(options =>
+            {
+                options.DefaultAuthenticateScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+                options.DefaultSignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+            })
+                .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme, options =>
                 {
+                    options.Cookie.Name = "fosol.schedule";
                     options.LoginPath = "/auth/signin";
+                    options.Cookie.SecurePolicy = CookieSecurePolicy.SameAsRequest;
+                    options.Cookie.SameSite = SameSiteMode.None;
                 });
 
             services.ConfigureApplicationCookie(options =>
@@ -94,21 +101,29 @@ namespace Fosol.Schedule.API
                     options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
                 });
 
+            services.AddResponseHeaders(options =>
+            {
+                options.AddDefaultSecurePolicy();
+                options.AddCustomHeader("Environment", this.Environment.EnvironmentName);
+                options.AddCustomHeader("Content-Language", "en-US");
+            });
+
             services.AddCors(options =>
             {
-                options.AddPolicy("development", builder =>
+                options.AddPolicy(EnvironmentName.Development, builder =>
                 {
                     builder.AllowAnyOrigin()
                         .AllowAnyHeader()
                         .AllowAnyMethod()
                         .AllowCredentials();
                 });
-            });
-
-            services.AddResponseHeaders(options =>
-            {
-                options.AddDefaultSecurePolicy();
-                options.AddCustomHeader("Content-Language", "en-US");
+                options.AddPolicy(EnvironmentName.Staging, builder =>
+                {
+                    builder.WithOrigins("https://localhost:44374", "https://localhost:5001")
+                        .AllowAnyHeader()
+                        .AllowAnyMethod()
+                        .AllowCredentials();
+                });
             });
 
             services.AddHttpContextAccessor();
@@ -147,7 +162,7 @@ namespace Fosol.Schedule.API
             
             app.UseDataSource();
             app.UseResponseHeaders();
-            app.UseCors("development");
+            app.UseCors(env.EnvironmentName);
             app.UseHttpsRedirection();
             //app.UseJsonExceptionMiddleware();
             app.UseStatusCodePagesWithReExecute("/Error/{0}");

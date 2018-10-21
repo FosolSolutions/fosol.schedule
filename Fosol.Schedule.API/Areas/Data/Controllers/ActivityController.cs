@@ -33,7 +33,7 @@ namespace Fosol.Schedule.API.Areas.Data.Controllers
         /// Returns an event activity for the specified 'id'.
         /// </summary>
         /// <param name="id">The primary key for the activity.</param>
-        /// <returns></returns>
+        /// <returns>The activity JSON data object from the datasource.</returns>
         [HttpGet("{id}")]
         public IActionResult GetActivity(int id)
         {
@@ -44,8 +44,8 @@ namespace Fosol.Schedule.API.Areas.Data.Controllers
         /// <summary>
         /// Add the new activity to the datasource.
         /// </summary>
-        /// <param name="activity"></param>
-        /// <returns></returns>
+        /// <param name="activity">The activity to add to the datasource. JSON data object in the body of the request.</param>
+        /// <returns>The activity that was added to the datasource.</returns>
         [HttpPost]
         public IActionResult AddActivity([FromBody] Models.Activity activity)
         {
@@ -58,8 +58,8 @@ namespace Fosol.Schedule.API.Areas.Data.Controllers
         /// <summary>
         /// Update the specified activity in the datasource.
         /// </summary>
-        /// <param name="activity"></param>
-        /// <returns></returns>
+        /// <param name="activity">The activity to update in the datasource. JSON data object in the body of the request.</param>
+        /// <returns>The activity that was updated in the datasource.</returns>
         [HttpPut]
         public IActionResult UpdateActivity([FromBody] Models.Activity activity)
         {
@@ -72,15 +72,15 @@ namespace Fosol.Schedule.API.Areas.Data.Controllers
         /// <summary>
         /// Delete the specified activity from the datasource.
         /// </summary>
-        /// <param name="activity"></param>
-        /// <returns></returns>
+        /// <param name="activity">The activity to delete from the datasource. JSON data object in the body of the request.</param>
+        /// <returns>true if successful, or an error JSON object.</returns>
         [HttpDelete]
         public IActionResult DeleteActivity([FromBody] Models.Activity activity)
         {
             _datasource.Activities.Remove(activity);
             _datasource.CommitTransaction();
 
-            return Ok();
+            return Ok(true);
         }
         #endregion
     }

@@ -3,11 +3,7 @@ using Fosol.Core.Extensions.Enumerable;
 using Fosol.Schedule.DAL.Interfaces;
 using Fosol.Schedule.Entities;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.ChangeTracking;
-using Microsoft.EntityFrameworkCore.ChangeTracking.Internal;
-using Microsoft.EntityFrameworkCore.Update;
 using System;
-using System.Collections.ObjectModel;
 using System.Linq;
 
 namespace Fosol.Schedule.DAL.Services
@@ -43,7 +39,9 @@ namespace Fosol.Schedule.DAL.Services
         /// <returns></returns>
         public Models.Opening Get(int id)
         {
-            return this.Find(id);
+            this.VerifyPrincipal();
+            var accountId = this.GetAccountId();
+            return this.Map(this.Find((set) => set.SingleOrDefault(o => o.Id == id && o.Activity.Event.Calendar.AccountId == accountId)));
         }
 
         /// <summary>

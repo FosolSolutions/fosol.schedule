@@ -33,8 +33,9 @@ namespace Fosol.Schedule.API.Areas.Data.Controllers
         /// <summary>
         /// Returns an array of all the calendars for the current user.
         /// </summary>
-        /// <returns>An array calendar.</returns>
-        [HttpGet("/[area]/calendars/{page}")]
+        /// <param name="page">The page number (default: 1).</param>
+        /// <returns>An array calendar JSON data objects.</returns>
+        [HttpGet("/[area]/calendars")]
         public IActionResult GetCalendars(int page)
         {
             var skip = page <= 0 ? 0 : page - 1;
@@ -51,7 +52,7 @@ namespace Fosol.Schedule.API.Areas.Data.Controllers
         /// <param name="id">The primary key to identify the calendar.</param>
         /// <param name="startOn">The start date for the calendar to return.  Defaults to now.</param>
         /// <param name="endOn">The end date for the calendar to return.</param>
-        /// <returns>A calendar with all events within the specified date range.</returns>
+        /// <returns>A calendar JSON data object with all events within the specified date range.</returns>
         [HttpGet("{id}")]
         public IActionResult GetCalendar(int id, DateTime? startOn = null, DateTime? endOn = null)
         {
@@ -110,8 +111,8 @@ namespace Fosol.Schedule.API.Areas.Data.Controllers
         /// <summary>
         /// Creates and adds a new calendar for the specified ecclesia.
         /// </summary>
-        /// <param name="calendar"></param>
-        /// <returns></returns>
+        /// <param name="calendar">The calendar to add to the datasource. JSON data object in the body of the request.</param>
+        /// <returns>The calendar that was added to the datasource.</returns>
         [HttpPost("ecclesia")]
         public IActionResult AddEcclesialCalendar([FromBody] Models.Calendar calendar)
         {
