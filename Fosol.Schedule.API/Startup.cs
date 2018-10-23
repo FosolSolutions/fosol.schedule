@@ -80,23 +80,26 @@ namespace Fosol.Schedule.API
             {
                 options.DefaultAuthenticateScheme = CookieAuthenticationDefaults.AuthenticationScheme;
                 options.DefaultSignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
-            })
-                .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme, options =>
-                {
-                    options.Cookie.Name = "fosol.schedule";
-                    options.LoginPath = "/auth/signin";
-                    options.Cookie.SecurePolicy = CookieSecurePolicy.SameAsRequest;
-                    options.Cookie.SameSite = SameSiteMode.None;
-                });
+            });
+                //.AddCookie(CookieAuthenticationDefaults.AuthenticationScheme, options =>
+                //{
+                //    options.Cookie.Name = "fosol.schedule";
+                //    options.LoginPath = "/auth/signin";
+                //    options.Cookie.SecurePolicy = CookieSecurePolicy.SameAsRequest;
+                //    options.Cookie.SameSite = SameSiteMode.None;
+                //});
 
             services.ConfigureApplicationCookie(options =>
             {
+                options.Cookie.Name = "fosol.schedule";
                 options.LoginPath = "/auth/signin";
+                options.LogoutPath = "/auth/signoff";
+                options.Cookie.SecurePolicy = CookieSecurePolicy.SameAsRequest;
+                options.Cookie.SameSite = SameSiteMode.None;
             });
 
             services.AddMvc(options =>
             {
-
             })
                 .SetCompatibilityVersion(CompatibilityVersion.Version_2_1)
                 .AddJsonOptions(options =>
@@ -156,6 +159,12 @@ namespace Fosol.Schedule.API
             services.Configure<MailOptions>(o =>
             {
                 o.AccountPassword = this.Configuration["Mail:AccountPassword"];
+            });
+
+            services.AddHttpsRedirection(options =>
+            {
+                options.RedirectStatusCode = StatusCodes.Status307TemporaryRedirect;
+                //options.HttpsPort = 443;
             });
 
             services.AddMailClient();
