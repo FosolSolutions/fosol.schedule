@@ -41,7 +41,7 @@ namespace Fosol.Schedule.API
                     builder
                         .AddJsonFile("appSettings.json", optional: false, reloadOnChange: true)
                         .AddJsonFile($"appSettings.{env.EnvironmentName}.json", optional: true, reloadOnChange: true)
-                        .AddJsonFile("connectionStrings.json", optional: false, reloadOnChange: true)
+                        .AddJsonFile("connectionStrings.json", optional: true, reloadOnChange: true)
                         .AddJsonFile($"connectionStrings.{env.EnvironmentName}.json", optional: true, reloadOnChange: true)
                         .AddJsonFile("mailSettings.json", optional: true, reloadOnChange: true)
                         .AddJsonFile($"mailSettings.{env.EnvironmentName}.json", optional: true, reloadOnChange: true)
