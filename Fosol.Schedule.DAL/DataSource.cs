@@ -28,6 +28,7 @@ namespace Fosol.Schedule.DAL
         private readonly Lazy<IEventService> _eventService;
         private readonly Lazy<IActivityService> _activityService;
         private readonly Lazy<IOpeningService> _openingService;
+        private readonly Lazy<IScheduleService> _scheduleService;
         #endregion
 
         #region Properties
@@ -95,6 +96,11 @@ namespace Fosol.Schedule.DAL
         /// get - The service to manage openings.
         /// </summary>
         public IOpeningService Openings { get { return _openingService.Value; } }
+
+        /// <summary>
+        /// get - The service to manage schedules.
+        /// </summary>
+        public IScheduleService Schedules { get { return _scheduleService.Value; } }
         #endregion
 
         #region Constructors
@@ -124,6 +130,7 @@ namespace Fosol.Schedule.DAL
             _eventService = new Lazy<IEventService>(() => new EventService(this));
             _activityService = new Lazy<IActivityService>(() => new ActivityService(this));
             _openingService = new Lazy<IOpeningService>(() => new OpeningService(this));
+            _scheduleService = new Lazy<IScheduleService>(() => new ScheduleService(this));
         }
 
         /// <summary>

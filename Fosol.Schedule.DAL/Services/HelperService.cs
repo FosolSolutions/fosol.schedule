@@ -66,7 +66,7 @@ namespace Fosol.Schedule.DAL.Services
         /// <param name="startOn"></param>
         /// <param name="endOn"></param>
         /// <returns></returns>
-        public Models.Calendar GenerateEcclesialSchedule(int calendarId, DateTime? startOn = null, DateTime? endOn = null)
+        public Models.Calendar AddEcclesialEvents(int calendarId, DateTime? startOn = null, DateTime? endOn = null)
         {
             if (this.IsPrincipalAParticipant) throw new NotAuthorizedException();
 

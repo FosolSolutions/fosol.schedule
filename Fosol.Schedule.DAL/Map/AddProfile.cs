@@ -2,7 +2,6 @@
 using Fosol.Core.Extensions.Principals;
 using Fosol.Core.Extensions.Strings;
 using Fosol.Schedule.DAL.Interfaces;
-using Fosol.Schedule.Entities;
 using System;
 using System.Linq;
 
@@ -59,6 +58,7 @@ namespace Fosol.Schedule.DAL.Map
                 .ReverseMap()
                 .ForMember(dest => dest.Key, opt => opt.MapFrom(src => (src.Key != Guid.Empty) ? src.Key : Guid.NewGuid()));
             CreateMap<Entities.Participant, Models.Participant>()
+                .ForPath(dest => dest.ContactInfo, opt => opt.MapFrom(src => src.ContactInfo.Select(a => a.ContactInfo)))
                 .ReverseMap()
                 .ForMember(dest => dest.Key, opt => opt.MapFrom(src => (src.Key != Guid.Empty) ? src.Key : Guid.NewGuid()));
             CreateMap<Entities.Event, Models.Event>()

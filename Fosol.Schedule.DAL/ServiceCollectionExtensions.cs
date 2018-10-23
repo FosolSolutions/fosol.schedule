@@ -13,10 +13,10 @@ namespace Fosol.Schedule.DAL
         /// <param name="services"></param>
         /// <param name="optionsBuilder"></param>
         /// <returns></returns>
-        public static IServiceCollection AddDataSource(this IServiceCollection services, Action<DbContextOptionsBuilder> optionsBuilder)
+        public static IServiceCollection AddDataSource(this IServiceCollection services, Action<DbContextOptionsBuilder> setupAction)
         {
             var builder = new DbContextOptionsBuilder<ScheduleContext>();
-            optionsBuilder(builder);
+            setupAction?.Invoke(builder);
             services.AddSingleton<DbContextOptions>(builder.Options);
             services.AddSingleton(builder.Options);
             services.AddScoped<IDataSource, DataSource>();

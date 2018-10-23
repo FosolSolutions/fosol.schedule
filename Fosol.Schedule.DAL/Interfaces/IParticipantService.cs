@@ -26,5 +26,12 @@ namespace Fosol.Schedule.DAL.Interfaces
         /// <param name="participantId"></param>
         /// <returns></returns>
         IEnumerable<Claim> GetClaims(int participantId);
+
+        /// <summary>
+        /// Get all the participants in the specified calendar.
+        /// </summary>
+        /// <param name="calendarId"></param>
+        /// <returns></returns>
+        IEnumerable<Models.Participant> GetForCalendar(int calendarId);
     }
 }

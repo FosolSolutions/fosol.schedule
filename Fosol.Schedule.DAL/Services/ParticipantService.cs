@@ -56,6 +56,19 @@ namespace Fosol.Schedule.DAL.Services
         }
 
         /// <summary>
+        /// Get all the participants in the specified calendar.
+        /// </summary>
+        /// <param name="calendarId"></param>
+        /// <returns></returns>
+        public IEnumerable<Models.Participant> GetForCalendar(int calendarId)
+        {
+            // TODO: verify access to calendar.
+            var participants = this.Context.Participants.Where(p => p.CalendarId == calendarId).Select(p => this.Map(p)).ToArray();
+
+            return participants;
+        }
+
+        /// <summary>
         /// Get the claimed identity of the participant for the specified 'participantId'.
         /// </summary>
         /// <param name="participantId"></param>

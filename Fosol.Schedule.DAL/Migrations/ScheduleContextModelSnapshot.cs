@@ -628,6 +628,9 @@ namespace Fosol.Schedule.DAL.Migrations
                         .IsRequired()
                         .HasMaxLength(100);
 
+                    b.Property<string>("Email")
+                        .HasMaxLength(250);
+
                     b.Property<string>("FirstName")
                         .IsRequired()
                         .HasMaxLength(100);
@@ -1223,7 +1226,7 @@ namespace Fosol.Schedule.DAL.Migrations
             modelBuilder.Entity("Fosol.Schedule.Entities.ParticipantContactInfo", b =>
                 {
                     b.HasOne("Fosol.Schedule.Entities.ContactInfo", "ContactInfo")
-                        .WithMany("ParticipantContactInfos")
+                        .WithMany("ParticipantContactInfo")
                         .HasForeignKey("ContactInfoId")
                         .OnDelete(DeleteBehavior.Cascade);
 
@@ -1309,7 +1312,7 @@ namespace Fosol.Schedule.DAL.Migrations
             modelBuilder.Entity("Fosol.Schedule.Entities.UserContactInfo", b =>
                 {
                     b.HasOne("Fosol.Schedule.Entities.ContactInfo", "ContactInfo")
-                        .WithMany("UserContactInfos")
+                        .WithMany("UserContactInfo")
                         .HasForeignKey("ContactInfoId")
                         .OnDelete(DeleteBehavior.Cascade);
 

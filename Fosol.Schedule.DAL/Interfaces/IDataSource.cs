@@ -68,6 +68,11 @@ namespace Fosol.Schedule.DAL.Interfaces
         /// get - The service to manage openings.
         /// </summary>
         IOpeningService Openings { get; }
+
+        /// <summary>
+        /// get - The service to manage schedules.
+        /// </summary>
+        IScheduleService Schedules { get; }
         #endregion
 
         #region Methods

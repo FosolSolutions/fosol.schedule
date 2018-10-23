@@ -1,5 +1,6 @@
 ﻿using Fosol.Core.Extensions.ApplicationBuilders;
 using Fosol.Core.Extensions.ServiceCollections;
+using Fosol.Schedule.API.Helpers.Mail;
 using Fosol.Schedule.DAL;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
@@ -14,6 +15,8 @@ using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Serialization;
+using System;
+using System.Runtime;
 
 namespace Fosol.Schedule.API
 {
@@ -36,7 +39,7 @@ namespace Fosol.Schedule.API
         /// <summary>
         /// get - The hosting environment.
         /// </summary>
-        public IHostingEnvironment Environment { get; }
+        public IHostingEnvironment HostingEnvironment { get; }
         #endregion
 
         #region Constructors
@@ -49,7 +52,7 @@ namespace Fosol.Schedule.API
         public Startup(IHostingEnvironment env, IConfiguration configuration, ILoggerFactory loggerFactory)
         {
             this.Configuration = configuration;
-            this.Environment = env;
+            this.HostingEnvironment = env;
             _loggerFactory = loggerFactory;
             _logger = loggerFactory.CreateLogger<Startup>();
 
@@ -107,7 +110,7 @@ namespace Fosol.Schedule.API
             services.AddResponseHeaders(options =>
             {
                 options.AddDefaultSecurePolicy();
-                options.AddCustomHeader("Environment", this.Environment.EnvironmentName);
+                options.AddCustomHeader("Environment", this.HostingEnvironment.EnvironmentName);
                 options.AddCustomHeader("Content-Language", "en-US");
             });
 
@@ -122,8 +125,9 @@ namespace Fosol.Schedule.API
                 });
                 options.AddPolicy(EnvironmentName.Staging, builder =>
                 {
-                    builder.WithOrigins("https://localhost:44374", "https://localhost:5001")
-                        .AllowAnyHeader()
+                    var origins = Environment.GetEnvironmentVariable("CORS_ORIGINS")?.Split(" ");
+                    if (origins != null) builder.WithOrigins(origins);
+                    builder.AllowAnyHeader()
                         .AllowAnyMethod()
                         .AllowCredentials();
                 });
@@ -138,12 +142,23 @@ namespace Fosol.Schedule.API
                 optionsBuilder.UseApplicationServiceProvider(services.BuildServiceProvider());
                 optionsBuilder.UseLoggerFactory(_loggerFactory);
                 optionsBuilder.UseSqlServer(connectionString);
-                if (this.Environment.IsDevelopment())
+                if (this.HostingEnvironment.IsDevelopment())
                 {
                     optionsBuilder.EnableSensitiveDataLogging();
                 }
                 //optionsBuilder.UseInMemoryDatabase("Schedule", options => { });
             });
+
+            var mailOptions = new MailOptions();
+            var mailConfig = this.Configuration.GetSection("Mail");
+            mailConfig.Bind(mailOptions);
+            services.Configure<MailOptions>(mailConfig);
+            services.Configure<MailOptions>(o =>
+            {
+                o.AccountPassword = this.Configuration["Mail:AccountPassword"];
+            });
+
+            services.AddMailClient();
         }
 
         /// <summary>

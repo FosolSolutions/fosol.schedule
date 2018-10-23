@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Fosol.Schedule.DAL.Migrations
 {
     [DbContext(typeof(ScheduleContext))]
-    [Migration("20181020160434_v01.00.00")]
+    [Migration("20181022210750_v01.00.00")]
     partial class v010000
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -630,6 +630,9 @@ namespace Fosol.Schedule.DAL.Migrations
                         .IsRequired()
                         .HasMaxLength(100);
 
+                    b.Property<string>("Email")
+                        .HasMaxLength(250);
+
                     b.Property<string>("FirstName")
                         .IsRequired()
                         .HasMaxLength(100);
@@ -1225,7 +1228,7 @@ namespace Fosol.Schedule.DAL.Migrations
             modelBuilder.Entity("Fosol.Schedule.Entities.ParticipantContactInfo", b =>
                 {
                     b.HasOne("Fosol.Schedule.Entities.ContactInfo", "ContactInfo")
-                        .WithMany("ParticipantContactInfos")
+                        .WithMany("ParticipantContactInfo")
                         .HasForeignKey("ContactInfoId")
                         .OnDelete(DeleteBehavior.Cascade);
 
@@ -1311,7 +1314,7 @@ namespace Fosol.Schedule.DAL.Migrations
             modelBuilder.Entity("Fosol.Schedule.Entities.UserContactInfo", b =>
                 {
                     b.HasOne("Fosol.Schedule.Entities.ContactInfo", "ContactInfo")
-                        .WithMany("UserContactInfos")
+                        .WithMany("UserContactInfo")
                         .HasForeignKey("ContactInfoId")
                         .OnDelete(DeleteBehavior.Cascade);
 

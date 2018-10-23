@@ -363,6 +363,7 @@ namespace Fosol.Schedule.DAL.Migrations
                     UserId = table.Column<int>(nullable: true),
                     CalendarId = table.Column<int>(nullable: false),
                     DisplayName = table.Column<string>(maxLength: 100, nullable: false),
+                    Email = table.Column<string>(maxLength: 250, nullable: true),
                     Title = table.Column<string>(maxLength: 100, nullable: true),
                     FirstName = table.Column<string>(maxLength: 100, nullable: false),
                     MiddleName = table.Column<string>(maxLength: 100, nullable: true),

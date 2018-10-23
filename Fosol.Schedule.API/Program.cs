@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Reflection;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
@@ -12,6 +13,9 @@ namespace Fosol.Schedule.API
     /// </summary>
     public class Program
     {
+        #region Variables
+        #endregion
+
         #region Methods
         /// <summary>
         /// 
@@ -19,7 +23,8 @@ namespace Fosol.Schedule.API
         /// <param name="args"></param>
         public static void Main(string[] args)
         {
-            CreateWebHostBuilder(args).Build().Run();
+            var build = CreateWebHostBuilder(args).Build();
+            build.Run();
         }
 
         /// <summary>
@@ -30,30 +35,35 @@ namespace Fosol.Schedule.API
         private static IWebHostBuilder CreateWebHostBuilder(string[] args) =>
             WebHost.CreateDefaultBuilder(args)
                 .UseContentRoot(Directory.GetCurrentDirectory())
-                .ConfigureAppConfiguration((builderContext, config) =>
+                .ConfigureAppConfiguration((builderContext, builder) =>
                 {
                     var env = builderContext.HostingEnvironment;
-                    config.AddJsonFile("appSettings.json", false, true)
-                    .AddJsonFile($"appSettings.{env.EnvironmentName}.json", true, true)
-                    .AddJsonFile("connectionStrings.json", false, true)
-                    .AddJsonFile($"connectionStrings.{env.EnvironmentName}.json", true, true)
-                    .AddJsonFile("mailSettings.json", true, true)
-                    .AddJsonFile($"mailSettings.{env.EnvironmentName}.json", true, true);
+                    builder
+                        .AddJsonFile("appSettings.json", optional: false, reloadOnChange: true)
+                        .AddJsonFile($"appSettings.{env.EnvironmentName}.json", optional: true, reloadOnChange: true)
+                        .AddJsonFile("connectionStrings.json", optional: false, reloadOnChange: true)
+                        .AddJsonFile($"connectionStrings.{env.EnvironmentName}.json", optional: true, reloadOnChange: true)
+                        .AddJsonFile("mailSettings.json", optional: true, reloadOnChange: true)
+                        .AddJsonFile($"mailSettings.{env.EnvironmentName}.json", optional: true, reloadOnChange: true)
+                        .AddEnvironmentVariables();
 
                     if (env.IsDevelopment())
                     {
                         var appAssembly = Assembly.Load(new AssemblyName(env.ApplicationName));
                         if (appAssembly != null)
                         {
-                            config.AddUserSecrets(appAssembly, optional: true);
+                            builder.AddUserSecrets(appAssembly, optional: true);
                         }
                     }
-
-                    config.AddEnvironmentVariables();
+                    else
+                    {
+                        var config = builder.Build();
+                        builder.AddAzureKeyVault(config["KeyVault:Endpoint"], config["KeyVault:ClientId"], config["KeyVault:ClientSecret"]);
+                    }
 
                     if (args != null)
                     {
-                        config.AddCommandLine(args);
+                        builder.AddCommandLine(args);
                     }
                 })
                 .ConfigureLogging((hostingContext, logging) =>

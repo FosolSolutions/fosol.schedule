@@ -12,7 +12,7 @@ namespace Fosol.Schedule.DAL.Interfaces
         /// <param name="startOn"></param>
         /// <param name="endOn"></param>
         /// <returns></returns>
-        Models.Calendar GenerateEcclesialSchedule(int calendarId, DateTime? startOn = null, DateTime? endOn = null);
+        Models.Calendar AddEcclesialEvents(int calendarId, DateTime? startOn = null, DateTime? endOn = null);
         #endregion
     }
 }

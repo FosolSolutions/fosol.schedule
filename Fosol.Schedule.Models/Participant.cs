@@ -1,5 +1,4 @@
-﻿using Fosol.Schedule.Entities;
-using System;
+﻿using System;
 using System.Collections.Generic;
 
 namespace Fosol.Schedule.Models
@@ -20,7 +19,7 @@ namespace Fosol.Schedule.Models
         /// <summary>
         /// get/set - The state of this participant.
         /// </summary>
-        public ParticipantState State { get; set; }
+        public Entities.ParticipantState State { get; set; }
 
         /// <summary>
         /// get/set - The foreign key to the user account for this participant.
@@ -36,6 +35,11 @@ namespace Fosol.Schedule.Models
         /// get/set - A participants name to display for others to see.  This should be unique within each Calendar.
         /// </summary>
         public string DisplayName { get; set; }
+
+        /// <summary>
+        /// get/set - The participants default email address.
+        /// </summary>
+        public string Email { get; set; }
 
         /// <summary>
         /// get/set - The persons title.
@@ -60,7 +64,7 @@ namespace Fosol.Schedule.Models
         /// <summary>
         /// get/set - The participants gender.
         /// </summary>
-        public Gender? Gender { get; set; }
+        public Entities.Gender? Gender { get; set; }
 
         /// <summary>
         /// get/set - The participants birthdate.
@@ -70,7 +74,7 @@ namespace Fosol.Schedule.Models
         /// <summary>
         /// get - A collection of information about the participant.
         /// </summary>
-        //public ICollection<ParticipantContactInfo> ContactInfos { get; set; } = new List<ParticipantContactInfo>();
+        public ICollection<ContactInfo> ContactInfo { get; set; } = new List<ContactInfo>();
 
         /// <summary>
         /// get - A collection of addresses for the participant.

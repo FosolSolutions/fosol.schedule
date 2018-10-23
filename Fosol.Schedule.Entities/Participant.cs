@@ -63,6 +63,12 @@ namespace Fosol.Schedule.Entities
         public string DisplayName { get; set; }
 
         /// <summary>
+        /// get/set - An email address that identifies this participant.
+        /// </summary>
+        [MaxLength(250)]
+        public string Email { get; set; }
+
+        /// <summary>
         /// get/set - The persons title.
         /// </summary>
         [MaxLength(100)]
@@ -137,7 +143,8 @@ namespace Fosol.Schedule.Entities
             this.Title = user.Info?.Title;
             this.Gender = user.Info?.Gender;
             this.Birthdate = user.Info?.Birthdate;
-            this.Key = Guid.NewGuid();
+            this.Key = user.Key;
+            this.Email = user.Email;
         }
 
         /// <summary>
@@ -147,7 +154,8 @@ namespace Fosol.Schedule.Entities
         /// <param name="displayName"></param>
         /// <param name="firstName"></param>
         /// <param name="lastName"></param>
-        public Participant(Calendar calendar, string displayName, string firstName = null, string lastName = null)
+        /// <param name="email"></param>
+        public Participant(Calendar calendar, string displayName, string firstName = null, string lastName = null, string email = null)
         {
             if (String.IsNullOrWhiteSpace(displayName))
                 throw new ArgumentException($"The argument '{nameof(displayName)}' is required and cannot be null or empty.");
@@ -158,6 +166,7 @@ namespace Fosol.Schedule.Entities
             this.FirstName = firstName;
             this.LastName = lastName;
             this.Key = Guid.NewGuid();
+            this.Email = email;
         }
         #endregion
     }

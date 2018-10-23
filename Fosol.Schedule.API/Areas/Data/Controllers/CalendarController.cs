@@ -1,8 +1,11 @@
 ﻿using Fosol.Core.Mvc;
+using Fosol.Schedule.API.Helpers.Mail;
 using Fosol.Schedule.DAL.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using System;
+using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 
 namespace Fosol.Schedule.API.Areas.Data.Controllers
 {
@@ -16,6 +19,7 @@ namespace Fosol.Schedule.API.Areas.Data.Controllers
     {
         #region Variables
         private readonly IDataSource _dataSource;
+        private readonly MailClient _mailClient;
         #endregion
 
         #region Constructors
@@ -23,9 +27,11 @@ namespace Fosol.Schedule.API.Areas.Data.Controllers
         /// Creates a new instance of a CalendarController object.
         /// </summary>
         /// <param name="dataSource"></param>
-        public CalendarController(IDataSource dataSource)
+        /// <param name="mailClient"></param>
+        public CalendarController(IDataSource dataSource, MailClient mailClient)
         {
             _dataSource = dataSource;
+            _mailClient = mailClient;
         }
         #endregion
 
@@ -109,18 +115,60 @@ namespace Fosol.Schedule.API.Areas.Data.Controllers
         }
 
         /// <summary>
-        /// Creates and adds a new calendar for the specified ecclesia.
+        /// Creates and adds all events for the specified ecclesia.
         /// </summary>
         /// <param name="calendar">The calendar the will be updated in the datasource. JSON data object in the body of the request.</param>
         /// <param name="startOn"></param>
         /// <param name="endOn"></param>
-        /// <returns>The calendar that was added to the datasource.</returns>
+        /// <returns>The calendar that was updated and all the newly added events in the datasource.</returns>
         [HttpPost("ecclesia")]
-        public IActionResult AddEcclesialSchedule([FromBody] Models.Calendar calendar, [FromQuery] DateTime? startOn, [FromQuery] DateTime? endOn)
+        public IActionResult AddEcclesialEvents([FromBody] Models.Calendar calendar, [FromQuery] DateTime? startOn, [FromQuery] DateTime? endOn)
         {
-            var result = _dataSource.Helper.GenerateEcclesialSchedule(calendar.Id, startOn, endOn);
+            var result = _dataSource.Helper.AddEcclesialEvents(calendar.Id, startOn, endOn);
 
             return Ok(result);
+        }
+
+        /// <summary>
+        /// Send emails out to all the participants in the specified calendar.
+        /// </summary>
+        /// <param name="calendarId"></param>
+        /// <returns>Either 'true' for full success, or a collection of errors that occured when sending emails.</returns>
+        [HttpPut("{calendarId}/invite/participants")]
+        public IActionResult InviteParticipants(int calendarId)
+        {
+            var participants = _dataSource.Participants.GetForCalendar(calendarId);
+            var errors = new List<Exception>();
+
+            foreach (var participant in participants)
+            {
+                if (!String.IsNullOrWhiteSpace(participant.Email))
+                {
+                    var t = Task.Run(async delegate
+                    {
+                        await Task.Delay(1000);
+
+                        try
+                        {
+                            _mailClient.Send(participant);
+                        }
+                        catch (Exception ex)
+                        {
+                            errors.Add(new Exception($"Mail failed for {participant.DisplayName} - {participant.Email}", ex));
+                        }
+                    });
+
+                    t.Wait();
+                }
+            }
+
+            if (errors.Count() == 0)
+            {
+                return new JsonResult(true);
+            }
+
+            return new JsonResult(errors.Select(e => new { e.Message, InnerException = e.InnerException.Message }));
+
         }
         #endregion
     }
