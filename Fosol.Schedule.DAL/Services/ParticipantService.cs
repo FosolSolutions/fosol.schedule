@@ -59,11 +59,13 @@ namespace Fosol.Schedule.DAL.Services
         /// Get all the participants in the specified calendar.
         /// </summary>
         /// <param name="calendarId"></param>
+        /// <param name="skip"></param>
+        /// <param name="take"></param>
         /// <returns></returns>
-        public IEnumerable<Models.Participant> GetForCalendar(int calendarId)
+        public IEnumerable<Models.Participant> GetForCalendar(int calendarId, int skip = 0, int take = 20)
         {
             // TODO: verify access to calendar.
-            var participants = this.Context.Participants.Where(p => p.CalendarId == calendarId).Select(p => this.Map(p)).ToArray();
+            var participants = this.Context.Participants.Where(p => p.CalendarId == calendarId).OrderBy(p => p.DisplayName).Skip(skip).Take(take).Select(p => this.Map(p)).ToArray();
 
             return participants;
         }

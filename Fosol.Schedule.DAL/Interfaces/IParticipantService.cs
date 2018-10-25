@@ -31,7 +31,9 @@ namespace Fosol.Schedule.DAL.Interfaces
         /// Get all the participants in the specified calendar.
         /// </summary>
         /// <param name="calendarId"></param>
+        /// <param name="skip"></param>
+        /// <param name="take"></param>
         /// <returns></returns>
-        IEnumerable<Models.Participant> GetForCalendar(int calendarId);
+        IEnumerable<Models.Participant> GetForCalendar(int calendarId, int skip = 0, int take = 20);
     }
 }

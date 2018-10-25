@@ -1,7 +1,4 @@
-﻿using Fosol.Schedule.Entities;
-using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System;
 
 namespace Fosol.Schedule.Models
 {
@@ -19,10 +16,7 @@ namespace Fosol.Schedule.Models
 
         public string Description { get; set; }
 
-        /// <summary>
-        /// get/set - The current state of this subscription.
-        /// </summary>
-        public SubscriptionState State { get; set; } = SubscriptionState.Enabled;
+        public Entities.SubscriptionState State { get; set; }
         #endregion
     }
 }

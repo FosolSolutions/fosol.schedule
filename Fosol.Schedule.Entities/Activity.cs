@@ -58,6 +58,11 @@ namespace Fosol.Schedule.Entities
         public DateTime? EndOn { get; set; }
 
         /// <summary>
+        /// get/set - The state of the activity.
+        /// </summary>
+        public ActivityState State { get; set; } = ActivityState.Published;
+
+        /// <summary>
         /// get/set - The order the activities will be displayed.
         /// </summary>
         [DefaultValue(0)]
@@ -88,7 +93,8 @@ namespace Fosol.Schedule.Entities
         /// </summary>
         /// <param name="cevent"></param>
         /// <param name="name"></param>
-        public Activity(Event cevent, string name)
+        /// <param name="state"></param>
+        public Activity(Event cevent, string name, ActivityState state = ActivityState.Published)
         {
             if (String.IsNullOrWhiteSpace(name))
                 throw new ArgumentNullException(nameof(name));
@@ -107,7 +113,8 @@ namespace Fosol.Schedule.Entities
         /// <param name="name"></param>
         /// <param name="start">When the activity starts.</param>
         /// <param name="end">When the activity ends.</param>
-        public Activity(Event cevent, string name, DateTime start, DateTime? end = null) : this(cevent, name)
+        /// <param name="state"></param>
+        public Activity(Event cevent, string name, DateTime start, DateTime? end = null, ActivityState state = ActivityState.Published) : this(cevent, name, state)
         {
             this.StartOn = start;
             this.EndOn = end;

@@ -90,6 +90,11 @@ namespace Fosol.Schedule.Entities
         /// get - A collection of attributes for this user.
         /// </summary>
         public ICollection<UserAttribute> Attributes { get; set; } = new List<UserAttribute>();
+
+        /// <summary>
+        /// get - A collection of settings for this user.
+        /// </summary>
+        public ICollection<UserSetting> Settings { get; set; } = new List<UserSetting>();
         #endregion
 
         #region Constructors
@@ -103,13 +108,15 @@ namespace Fosol.Schedule.Entities
         /// Creates a new instance of a User object, and initializes it with the specified properties.
         /// </summary>
         /// <param name="email"></param>
-        public User(string email)
+        /// <param name="state"></param>
+        public User(string email, UserState state = UserState.Enabled)
         {
             if (String.IsNullOrWhiteSpace(email))
                 throw new ArgumentNullException(nameof(email));
 
             this.Key = Guid.NewGuid();
             this.Email = email;
+            this.State = state;
         }
 
         /// <summary>
@@ -117,7 +124,8 @@ namespace Fosol.Schedule.Entities
         /// </summary>
         /// <param name="email"></param>
         /// <param name="account"></param>
-        public User(string email, Account account) : this(email)
+        /// <param name="state"></param>
+        public User(string email, Account account, UserState state = UserState.Enabled) : this(email, state)
         {
             if (account == null) throw new ArgumentNullException(nameof(account));
 

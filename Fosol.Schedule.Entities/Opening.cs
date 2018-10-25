@@ -64,6 +64,11 @@ namespace Fosol.Schedule.Entities
         public ApplicationProcess ApplicationProcess { get; set; }
 
         /// <summary>
+        /// get/set - The state of the opening.
+        /// </summary>
+        public OpeningState State { get; set; } = OpeningState.Published;
+
+        /// <summary>
         /// get/set - A collection of participants that have been accepted to the opening.
         /// </summary>
         public ICollection<OpeningParticipant> Participants { get; set; } = new List<OpeningParticipant>();
@@ -97,7 +102,7 @@ namespace Fosol.Schedule.Entities
         /// <param name="maxParticipants"></param>
         /// <param name="type"></param>
         /// <param name="process"></param>
-        public Opening(Activity activity, string name, int minParticipants, int maxParticipants, OpeningType type, ApplicationProcess process)
+        public Opening(Activity activity, string name, int minParticipants, int maxParticipants, OpeningType type, ApplicationProcess process, OpeningState state = OpeningState.Published)
         {
             if (String.IsNullOrWhiteSpace(name)) throw new ArgumentException($"Argument 'name' cannot be null, empty or whitespace.");
             if (minParticipants <= 0) throw new ArgumentException($"Argument 'minParticipants' must be greater than 0.");
@@ -111,6 +116,7 @@ namespace Fosol.Schedule.Entities
             this.OpeningType = type;
             this.ApplicationProcess = process;
             this.Key = Guid.NewGuid();
+            this.State = state;
         }
         #endregion
     }

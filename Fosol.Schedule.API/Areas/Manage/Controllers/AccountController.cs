@@ -1,8 +1,6 @@
 ﻿using Fosol.Core.Mvc;
 using Fosol.Schedule.DAL.Interfaces;
 using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Linq;
 
 namespace Fosol.Schedule.API.Areas.Data.Controllers
 {
@@ -11,7 +9,7 @@ namespace Fosol.Schedule.API.Areas.Data.Controllers
     /// </summary>
     [Produces("application/json")]
     [Area("manage")]
-    [Route("[area]/account/[controller]")]
+    [Route("[area]/[controller]")]
     public sealed class AccountController : ApiController
     {
         #region Variables

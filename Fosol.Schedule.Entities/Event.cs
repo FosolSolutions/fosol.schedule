@@ -59,6 +59,11 @@ namespace Fosol.Schedule.Entities
         public DateTime EndOn { get; set; }
 
         /// <summary>
+        /// get/set - The current state of the event.
+        /// </summary>
+        public EventState State { get; set; } = EventState.Published;
+
+        /// <summary>
         /// get - A collection of criteria which are required to participate in the events.
         /// </summary>
         public ICollection<EventCriteria> Criteria { get; set; } = new List<EventCriteria>();
@@ -90,7 +95,8 @@ namespace Fosol.Schedule.Entities
         /// <param name="name"></param>
         /// <param name="start"></param>
         /// <param name="end"></param>
-        public Event(Calendar calendar, string name, DateTime start, DateTime end)
+        /// <param name="state"></param>
+        public Event(Calendar calendar, string name, DateTime start, DateTime end, EventState state = EventState.Published)
         {
             if (String.IsNullOrWhiteSpace(name))
                 throw new ArgumentNullException(nameof(name));
@@ -101,6 +107,7 @@ namespace Fosol.Schedule.Entities
             this.Key = Guid.NewGuid();
             this.StartOn = start;
             this.EndOn = end;
+            this.State = state;
         }
         #endregion
     }

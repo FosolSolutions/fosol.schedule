@@ -20,6 +20,8 @@ namespace Fosol.Schedule.DAL
 
         public DbSet<UserInfo> UserInfo { get; set; }
 
+        public DbSet<UserSetting> UserSettings { get; set; }
+
         public DbSet<Account> Accounts { get; set; }
 
         public DbSet<AccountRole> AccountRoles { get; set; }
@@ -104,6 +106,13 @@ namespace Fosol.Schedule.DAL
                 .ValueGeneratedOnAdd();
 
             modelBuilder.Entity<Subscription>()
+                .HasIndex(m => new { m.Key })
+                .IsUnique();
+
+            modelBuilder.Entity<Subscription>()
+                .HasIndex(m => new { m.Name, m.State });
+
+            modelBuilder.Entity<Subscription>()
                 .HasOne(m => m.AddedBy)
                 .WithMany()
                 .HasForeignKey(m => m.AddedById)
@@ -125,6 +134,13 @@ namespace Fosol.Schedule.DAL
             modelBuilder.Entity<Account>()
                 .Property(m => m.Id)
                 .ValueGeneratedOnAdd();
+
+            modelBuilder.Entity<Account>()
+                .HasIndex(m => new { m.Key })
+                .IsUnique();
+
+            modelBuilder.Entity<Account>()
+                .HasIndex(m => new { m.OwnerId, m.State });
 
             modelBuilder.Entity<Account>()
                 .HasOne(m => m.Owner)
@@ -171,6 +187,17 @@ namespace Fosol.Schedule.DAL
             modelBuilder.Entity<User>()
                 .Property(m => m.Id)
                 .ValueGeneratedOnAdd();
+
+            modelBuilder.Entity<User>()
+                .HasIndex(m => new { m.Key })
+                .IsUnique();
+
+            modelBuilder.Entity<User>()
+                .HasIndex(m => new { m.Email })
+                .IsUnique();
+
+            modelBuilder.Entity<User>()
+                .HasIndex(m => new { m.State });
 
             modelBuilder.Entity<User>()
                 .HasOne(m => m.AddedBy)
@@ -246,6 +273,37 @@ namespace Fosol.Schedule.DAL
                 .ValueGeneratedNever();
             #endregion
 
+            #region UserSetting
+            modelBuilder.Entity<UserSetting>()
+                .ToTable("UserSettings");
+
+            modelBuilder.Entity<UserSetting>()
+                .Property(m => m.UserId)
+                .ValueGeneratedNever();
+
+            modelBuilder.Entity<UserSetting>()
+                .HasIndex(m => new { m.UserId, m.Key })
+                .IsUnique(true);
+
+            modelBuilder.Entity<UserSetting>()
+                .HasOne(m => m.User)
+                .WithMany(m => m.Settings);
+
+            modelBuilder.Entity<UserSetting>()
+                .HasOne(m => m.AddedBy)
+                .WithMany()
+                .HasForeignKey(m => m.AddedById)
+                .HasPrincipalKey(m => m.Id)
+                .OnDelete(DeleteBehavior.ClientSetNull);
+
+            modelBuilder.Entity<UserSetting>()
+                .HasOne(m => m.UpdatedBy)
+                .WithMany()
+                .HasForeignKey(m => m.UpdatedById)
+                .HasPrincipalKey(m => m.Id)
+                .OnDelete(DeleteBehavior.ClientSetNull);
+            #endregion
+
             #region Participant
             modelBuilder.Entity<Participant>()
                 .ToTable("Participants");
@@ -253,6 +311,13 @@ namespace Fosol.Schedule.DAL
             modelBuilder.Entity<Participant>()
                 .Property(m => m.Id)
                 .ValueGeneratedOnAdd();
+
+            modelBuilder.Entity<Participant>()
+                .HasIndex(m => new { m.Key })
+                .IsUnique();
+
+            modelBuilder.Entity<Participant>()
+                .HasIndex(m => new { m.Email, m.State });
 
             modelBuilder.Entity<Participant>()
                 .HasOne(m => m.AddedBy)
@@ -318,6 +383,13 @@ namespace Fosol.Schedule.DAL
                 .ValueGeneratedOnAdd();
 
             modelBuilder.Entity<Calendar>()
+                .HasIndex(m => new { m.Key })
+                .IsUnique();
+
+            modelBuilder.Entity<Calendar>()
+                .HasIndex(m => new { m.Name, m.State });
+
+            modelBuilder.Entity<Calendar>()
                 .HasOne(m => m.AddedBy)
                 .WithMany()
                 .HasForeignKey(m => m.AddedById)
@@ -373,6 +445,13 @@ namespace Fosol.Schedule.DAL
                 .ValueGeneratedOnAdd();
 
             modelBuilder.Entity<Event>()
+                .HasIndex(m => new { m.Key })
+                .IsUnique();
+
+            modelBuilder.Entity<Event>()
+                .HasIndex(m => new { m.CalendarId, m.State, m.StartOn, m.EndOn, m.Name });
+
+            modelBuilder.Entity<Event>()
                 .HasOne(m => m.AddedBy)
                 .WithMany()
                 .HasForeignKey(m => m.AddedById)
@@ -423,6 +502,13 @@ namespace Fosol.Schedule.DAL
                 .ValueGeneratedOnAdd();
 
             modelBuilder.Entity<Activity>()
+                .HasIndex(m => new { m.Key })
+                .IsUnique();
+
+            modelBuilder.Entity<Activity>()
+                .HasIndex(m => new { m.EventId, m.State, m.StartOn, m.EndOn, m.Name });
+
+            modelBuilder.Entity<Activity>()
                 .HasOne(m => m.AddedBy)
                 .WithMany()
                 .HasForeignKey(m => m.AddedById)
@@ -455,6 +541,13 @@ namespace Fosol.Schedule.DAL
             modelBuilder.Entity<Opening>()
                 .Property(m => m.Id)
                 .ValueGeneratedOnAdd();
+
+            modelBuilder.Entity<Opening>()
+                .HasIndex(m => new { m.Key })
+                .IsUnique();
+
+            modelBuilder.Entity<Opening>()
+                .HasIndex(m => new { m.ActivityId, m.State, m.OpeningType, m.ApplicationProcess, m.Name });
 
             modelBuilder.Entity<Opening>()
                 .HasOne(m => m.AddedBy)
@@ -513,6 +606,9 @@ namespace Fosol.Schedule.DAL
                 .ValueGeneratedOnAdd();
 
             modelBuilder.Entity<Address>()
+                .HasIndex(m => new { m.Name, m.IsPrimary, m.Province, m.PostalCode, m.Country });
+
+            modelBuilder.Entity<Address>()
                 .HasOne(m => m.AddedBy)
                 .WithMany()
                 .HasForeignKey(m => m.AddedById)
@@ -536,6 +632,10 @@ namespace Fosol.Schedule.DAL
                 .ValueGeneratedOnAdd();
 
             modelBuilder.Entity<Entities.Attribute>()
+                .HasIndex(m => new { m.Key, m.Value })
+                .IsUnique(false);
+
+            modelBuilder.Entity<Entities.Attribute>()
                 .HasOne(m => m.AddedBy)
                 .WithMany()
                 .HasForeignKey(m => m.AddedById)
@@ -557,6 +657,9 @@ namespace Fosol.Schedule.DAL
             modelBuilder.Entity<ContactInfo>()
                 .Property(m => m.Id)
                 .ValueGeneratedOnAdd();
+
+            modelBuilder.Entity<ContactInfo>()
+                .HasIndex(m => new { m.Name, m.Category, m.Value });
 
             modelBuilder.Entity<ContactInfo>()
                 .HasOne(m => m.AddedBy)

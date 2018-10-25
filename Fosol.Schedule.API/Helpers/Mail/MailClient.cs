@@ -4,6 +4,9 @@ using System.Net.Mail;
 
 namespace Fosol.Schedule.API.Helpers.Mail
 {
+    /// <summary>
+    /// MailClient class, provides a way to send emails.
+    /// </summary>
     public class MailClient
     {
         #region Variables
@@ -12,6 +15,10 @@ namespace Fosol.Schedule.API.Helpers.Mail
         #endregion
 
         #region Constructors
+        /// <summary>
+        /// Creates a new instance of a MailClient object, and initializes it with the specified options.
+        /// </summary>
+        /// <param name="options"></param>
         public MailClient(MailOptions options)
         {
             _options = options;
@@ -26,12 +33,20 @@ namespace Fosol.Schedule.API.Helpers.Mail
             };
         }
 
+        /// <summary>
+        /// Creates a new instance of a MailClient object, and initializes it with the specified options.
+        /// </summary>
+        /// <param name="options"></param>
         public MailClient(IOptions<MailOptions> options) : this(options.Value)
         {
         }
         #endregion
 
         #region Methods
+        /// <summary>
+        /// Send an email to the specified participant.
+        /// </summary>
+        /// <param name="participant"></param>
         public void Send(Participant participant)
         {
             var message = new MailMessage
@@ -52,6 +67,10 @@ namespace Fosol.Schedule.API.Helpers.Mail
             Send(message);
         }
 
+        /// <summary>
+        /// Send the specified email message.
+        /// </summary>
+        /// <param name="message"></param>
         public void Send(MailMessage message)
         {
             _client.Send(message);

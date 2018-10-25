@@ -47,6 +47,11 @@ namespace Fosol.Schedule.Entities
         public string Description { get; set; }
 
         /// <summary>
+        /// get/set - The state of the calendar.
+        /// </summary>
+        public CalendarState State { get; set; } = CalendarState.Published;
+
+        /// <summary>
         /// get - A collection of events within this calendar.
         /// </summary>
         public ICollection<Event> Events { get; set; } = new List<Event>();
@@ -81,7 +86,8 @@ namespace Fosol.Schedule.Entities
         /// </summary>
         /// <param name="account"></param>
         /// <param name="name"></param>
-        public Calendar(Account account, string name)
+        /// <param name="state"></param>
+        public Calendar(Account account, string name, CalendarState state = CalendarState.Published)
         {
             if (String.IsNullOrWhiteSpace(name))
                 throw new ArgumentNullException(nameof(name));
@@ -90,6 +96,7 @@ namespace Fosol.Schedule.Entities
             this.Account = account;
             this.Name = name;
             this.Key = Guid.NewGuid();
+            this.State = state;
         }
         #endregion
     }

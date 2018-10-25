@@ -1,5 +1,4 @@
-﻿using Fosol.Schedule.Entities;
-using System;
+﻿using System;
 using System.Collections.Generic;
 
 namespace Fosol.Schedule.Models
@@ -30,12 +29,14 @@ namespace Fosol.Schedule.Models
         /// <summary>
         /// get/set - The type of opening.
         /// </summary>
-        public OpeningType OpeningType { get; set; }
+        public Entities.OpeningType OpeningType { get; set; }
 
         /// <summary>
         /// get/set - The process participants can apply for this opening.
         /// </summary>
-        public ApplicationProcess ApplicationProcess { get; set; }
+        public Entities.ApplicationProcess ApplicationProcess { get; set; }
+
+        public Entities.OpeningState State { get; set; }
 
         public IEnumerable<Participant> Participants { get; set; }
 

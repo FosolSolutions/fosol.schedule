@@ -9,7 +9,7 @@ namespace Fosol.Schedule.API.Areas.Data.Controllers
     /// </summary>
     [Produces("application/json")]
     [Area("manage")]
-    [Route("[area]/user/[controller]")]
+    [Route("[area]/[controller]")]
     public sealed class UserController : ApiController
     {
         #region Variables

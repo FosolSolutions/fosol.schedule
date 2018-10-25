@@ -1,14 +1,12 @@
 ﻿using Microsoft.AspNetCore.Diagnostics;
 using Microsoft.AspNetCore.Mvc;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 using System.Net;
-using System.Threading.Tasks;
 
 namespace Fosol.Schedule.API.Controllers
 {
-
+    /// <summary>
+    /// ErrorController class, provides endpoints to handle general HTTP request endpiont errors.
+    /// </summary>
     [Route("[controller]")]
     public class ErrorController : Controller
     {
@@ -16,12 +14,20 @@ namespace Fosol.Schedule.API.Controllers
         #endregion
 
         #region Constructors
+        /// <summary>
+        /// Creates a new instance of an ErrorController object.
+        /// </summary>
         public ErrorController()
         {
         }
         #endregion
 
         #region Endpoints
+        /// <summary>
+        /// A default page to view different types of errors.
+        /// </summary>
+        /// <param name="statusCode"></param>
+        /// <returns></returns>
         [HttpGet("{statusCode?}")]
         public IActionResult Index(int statusCode)
         {

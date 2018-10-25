@@ -20,6 +20,8 @@ namespace Fosol.Schedule.Models
 
         public DateTime EndOn { get; set; }
 
+        public Entities.EventState State { get; set; }
+
         public IEnumerable<Activity> Activities { get; set; }
 
         public IEnumerable<Criteria> Criteria { get; set; }
