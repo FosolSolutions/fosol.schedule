@@ -73,12 +73,12 @@ namespace Fosol.Schedule.Entities
         /// <summary>
         /// get - A collection of users who references this address.  It'll only ever be one.
         /// </summary>
-        public ICollection<UserAddress> UserAddresses { get; set; } = new List<UserAddress>();
+        public ICollection<UserAddress> Users { get; set; } = new List<UserAddress>();
 
         /// <summary>
         /// get - A collection of participants who references this address.  It'll only ever be one.
         /// </summary>
-        public ICollection<Participant> Participants { get; set; } = new List<Participant>();
+        public ICollection<ParticipantAddress> Participants { get; set; } = new List<ParticipantAddress>();
         #endregion
 
         #region Constructors
@@ -100,7 +100,28 @@ namespace Fosol.Schedule.Entities
         /// <param name="category"></param>
         public Address(User user, string address, string city, string province, string postal, string country, ContactInfoCategory category)
         {
-            this.UserAddresses.Add(new UserAddress(user, this) ?? throw new ArgumentNullException(nameof(user)));
+            this.Users.Add(new UserAddress(user, this) ?? throw new ArgumentNullException(nameof(user)));
+            this.Address1 = address;
+            this.City = city;
+            this.Province = province;
+            this.PostalCode = postal;
+            this.Country = country;
+            this.Category = category;
+        }
+
+        /// <summary>
+        /// Creates a new instance of a Address object, and initializes it with the specified properties.
+        /// </summary>
+        /// <param name="participant"></param>
+        /// <param name="address"></param>
+        /// <param name="city"></param>
+        /// <param name="province"></param>
+        /// <param name="postal"></param>
+        /// <param name="country"></param>
+        /// <param name="category"></param>
+        public Address(Participant participant, string address, string city, string province, string postal, string country, ContactInfoCategory category)
+        {
+            this.Participants.Add(new ParticipantAddress(participant, this) ?? throw new ArgumentNullException(nameof(participant)));
             this.Address1 = address;
             this.City = city;
             this.Province = province;

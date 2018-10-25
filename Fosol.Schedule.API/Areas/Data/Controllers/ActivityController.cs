@@ -1,6 +1,7 @@
 ﻿using Fosol.Core.Mvc;
 using Fosol.Schedule.DAL.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using System;
 
 namespace Fosol.Schedule.API.Areas.Data.Controllers
 {

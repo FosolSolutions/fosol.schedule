@@ -7,7 +7,6 @@ using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 
 namespace Fosol.Schedule.DAL.Services
 {
@@ -98,7 +97,8 @@ namespace Fosol.Schedule.DAL.Services
             var emblems = new CriteriaObject(new CriteriaValue("Skill", "Emblems"), (Criteria)member) { AddedById = userId };
             var lecturer = new CriteriaObject(new CriteriaValue("Skill", "Lecturer"), (Criteria)brother, (Criteria)member) { AddedById = userId };
             var study = new CriteriaObject(new CriteriaValue("Skill", "Bible Class"), (Criteria)brother, (Criteria)member) { AddedById = userId };
-            var criteria = new List<CriteriaObject>() { member, brother, sister, pianist, presider, exhorter, reader, server, prayer, door, emblems, lecturer };
+            var clean = new CriteriaObject(new CriteriaValue("Skill", "Clean"), (Criteria)member) { AddedById = userId };
+            var criteria = new List<CriteriaObject>() { member, brother, sister, pianist, presider, exhorter, reader, server, prayer, door, emblems, lecturer, clean };
 
             // Sunday Memorial
             var sunday = start.DayOfWeek == DayOfWeek.Sunday ? start : start.AddDays(7 - (int)start.DayOfWeek);
@@ -197,6 +197,25 @@ namespace Fosol.Schedule.DAL.Services
                 thursday = thursday.AddDays(7);
             }
 
+            // Hall Cleaning
+            var saturday = start.DayOfWeek == DayOfWeek.Saturday ? start : start.AddDays(DayOfWeek.Saturday - start.DayOfWeek);
+            while (saturday <= end)
+            {
+                var cleanHall = new Event(calendar, "Hall Cleaning", saturday.AddHours(8), saturday.AddHours(10))
+                {
+                    Description = "Hall cleaning and maintenance.",
+                    AddedById = userId
+                };
+                var cleaning = new Activity(cleanHall, "Cleaning") { AddedById = userId };
+                cleaning.Openings.Add(new Opening(cleaning, "Cleaner", 2, 6, OpeningType.Application, ApplicationProcess.Accept) { AddedById = userId });
+                cleaning.Criteria.Add(new ActivityCriteria(cleaning, clean));
+
+                calendar.Events.Add(cleanHall);
+
+                saturday = saturday.AddDays(7);
+            }
+
+            // TODO: Not sure this is required.
             // Create a participant record for the user.
             var participant = new Participant(calendar, user) { AddedById = userId };
 
@@ -223,6 +242,188 @@ namespace Fosol.Schedule.DAL.Services
             }
 
             return this.Source.UpdateMapper.Map<Models.Calendar>(calendar);
+        }
+
+        /// <summary>
+        /// Adds a predefined list of participants to the specified calendar.
+        /// </summary>
+        /// <param name="calendarId"></param>
+        /// <returns></returns>
+        public IEnumerable<Models.Participant> AddParticipants(int calendarId)
+        {
+            if (this.IsPrincipalAParticipant) throw new NotAuthorizedException();
+
+            var userId = this.Source.Principal.GetNameIdentifier().Value.ConvertTo<int>();
+            var user = this.Context.Users.Include(u => u.Info).SingleOrDefault(u => u.Id == userId) ?? throw new NotAuthorizedException();
+            var calendar = this.Context.Calendars.SingleOrDefault(c => c.Id == calendarId) ?? throw new NoContentException(typeof(Calendar));
+
+            // TODO: Need generic function to test permission to allow editing calendar.
+            var ownsAccount = this.Context.Accounts.Any(a => a.Id == calendar.AccountId && a.OwnerId == userId);
+            if (!ownsAccount) throw new NotAuthorizedException();
+
+            var participants = new List<Participant>();
+            using (var transaction = this.Context.Database.BeginTransaction())
+            {
+                try
+                {
+                    participants.Add(CreateParticipant(calendar, user, "L Alderson", "Lynette", "Alderson", "lynettealderson@shaw.ca", Gender.Female, "", "", "", "Member=true, Sister=true, Skill=Emblems, Skill=Clean"));
+                    participants.Add(CreateParticipant(calendar, user, "R Bailey", "Rosa", "Bailey", "rosabailey@shaw.ca", Gender.Female, "", "", "", "Member=true, Sister=true, Skill=Emblems, Skill=Clean"));
+                    participants.Add(CreateParticipant(calendar, user, "S Bennett", "Stephen", "Bennett", "stephen.bennett01@gmail.com", Gender.Male, "", "", "", "Member=true, Brother=true, Skill=Preside, Skill=Exhort, Skill=Serve, Skill=Read, Skill=Pray, Skill=Doorman, Skill=Lecturer, Skill=Bible Class, Skill=Emblems, Skill=Clean"));
+                    participants.Add(CreateParticipant(calendar, user, "J Bennett", "Joan", "Bennett", "joanimbennett@gmail.com", Gender.Female, "", "", "", "Member=true, Sister=true, Skill=Emblems, Skill=Clean"));
+                    participants.Add(CreateParticipant(calendar, user, "M Bennett", "Matthew", "Bennett", "mattsbennett@gmail.com", Gender.Male, "", "", "", "Member=true, Brother=true, Skill=Preside, Skill=Exhort, Skill=Serve, Skill=Read, Skill=Pray, Skill=Doorman, Skill=Lecturer, Skill=Bible Class, Skill=Emblems, Skill=Clean"));
+                    participants.Add(CreateParticipant(calendar, user, "R Cadieu", "Roberta", "Cadieu", "rjcadieu@shaw.ca", Gender.Female, "", "", "", "Member=true, Sister=true, Skill=Emblems, Skill=Clean"));
+                    participants.Add(CreateParticipant(calendar, user, "L Catchpole", "Larry", "Catchpole", "", Gender.Male, "", "", "", "Member=true, Brother=true, Skill=Preside, Skill=Serve, Skill=Read, Skill=Pray, Skill=Doorman, Skill=Bible Class, Skill=Emblems, Skill=Clean"));
+                    participants.Add(CreateParticipant(calendar, user, "D Catchpole", "Debbie", "Catchpole", "dcatch@telus.net", Gender.Female, "", "", "", "Member=true, Sister=true, Skill=Emblems, Skill=Clean"));
+                    participants.Add(CreateParticipant(calendar, user, "D Cawston", "Dan", "Cawston", "dancaw@shaw.ca", Gender.Male, "", "", "", "Member=true, Brother=true, Skill=Preside, Skill=Exhort, Skill=Serve, Skill=Read, Skill=Pray, Skill=Doorman, Skill=Lecturer, Skill=Bible Class, Skill=Emblems, Skill=Clean"));
+                    participants.Add(CreateParticipant(calendar, user, "T Cawston", "Tiana", "Cawston", "dancaw@shaw.ca", Gender.Female, "", "", "", "Member=true, Sister=true, Skill=Emblems, Skill=Clean"));
+                    participants.Add(CreateParticipant(calendar, user, "A Ceron", "Andrea", "Ceron", "1krisely@gmail.com", Gender.Female, "", "", "", "Member=true, Sister=true, Skill=Emblems, Skill=Clean"));
+                    participants.Add(CreateParticipant(calendar, user, "D Clover", "Daniel", "Clover", "danielclover@shaw.ca", Gender.Male, "", "", "", "Member=true, Brother=true, Skill=Preside, Skill=Serve, Skill=Read, Skill=Pray, Skill=Doorman, Skill=Emblems, Skill=Clean"));
+                    participants.Add(CreateParticipant(calendar, user, "C Clover", "Carita", "Clover", "danielclover@shaw.ca", Gender.Female, "", "", "", "Member=true, Sister=true, Skill=Emblems, Skill=Clean"));
+                    participants.Add(CreateParticipant(calendar, user, "J Clover", "Jack", "Clover", "jayclo@hotmail.com", Gender.Male, "", "", "", "Member=true, Brother=true, Skill=Preside, Skill=Exhort, Skill=Serve, Skill=Read, Skill=Pray, Skill=Doorman, Skill=Lecturer, Skill=Bible Class, Skill=Emblems, Skill=Clean"));
+                    participants.Add(CreateParticipant(calendar, user, "V Clover", "Valerie", "Clover", "", Gender.Female, "", "", "", "Member=true, Sister=true, Skill=Emblems, Skill=Clean"));
+                    participants.Add(CreateParticipant(calendar, user, "J Coupar", "Jeni", "Coupar", "jcoupar@shaw.ca", Gender.Female, "", "", "", "Member=true, Sister=true, Skill=Emblems, Skill=Clean"));
+                    participants.Add(CreateParticipant(calendar, user, "B Dangerfield", "Beth", "Dangerfield", "gdanger@shaw.ca", Gender.Female, "", "", "", "Member=true, Sister=true, Skill=Pianist, Skill=Emblems, Skill=Clean"));
+                    participants.Add(CreateParticipant(calendar, user, "C Daniel", "Clive", "Daniel", "clivedaniel@telus.net", Gender.Male, "", "", "", "Member=true, Brother=true, Skill=Preside, Skill=Exhort, Skill=Serve, Skill=Read, Skill=Pray, Skill=Doorman, Skill=Lecturer, Skill=Bible Class, Skill=Emblems, Skill=Clean"));
+                    participants.Add(CreateParticipant(calendar, user, "J Daniel", "Jennifer", "Daniel", "jenniferdaniel@telus.net", Gender.Female, "", "", "", "Member=true, Sister=true, Skill=Emblems, Skill=Clean"));
+                    participants.Add(CreateParticipant(calendar, user, "E Daniel", "Eileen", "Daniel", "", Gender.Female, "", "", "", "Member=true, Sister=true, Skill=Emblems, Skill=Clean"));
+                    participants.Add(CreateParticipant(calendar, user, "G Ferrie", "Gregg", "Ferrie", "gferrie@gmail.com", Gender.Male, "", "", "", "Member=true, Brother=true, Skill=Preside, Skill=Exhort, Skill=Serve, Skill=Read, Skill=Pray, Skill=Doorman, Skill=Lecturer, Skill=Bible Class, Skill=Emblems, Skill=Clean"));
+                    participants.Add(CreateParticipant(calendar, user, "V Ferrie", "Vikki", "Ferrie", "vferrie@gmail.com", Gender.Female, "", "", "", "Member=true, Sister=true, Skill=Emblems, Skill=Clean"));
+                    participants.Add(CreateParticipant(calendar, user, "D Foss", "Donna", "Foss", "dfoss@shaw.ca", Gender.Female, "", "", "", "Member=true, Sister=true, Skill=Emblems, Skill=Clean"));
+                    participants.Add(CreateParticipant(calendar, user, "J Foster", "Jeremy", "Foster", "jeremymfoster@hotmail.com", Gender.Male, "", "", "", "Member=true, Brother=true, Skill=Preside, Skill=Exhort, Skill=Serve, Skill=Read, Skill=Pray, Skill=Doorman, Skill=Lecturer, Skill=Bible Class, Skill=Emblems, Skill=Clean"));
+                    participants.Add(CreateParticipant(calendar, user, "E Foster", "Elizabeth", "Foster", "ejoyfoster@gmail.com", Gender.Female, "", "", "", "Member=true, Sister=true, Skill=Pianist, Skill=Emblems, Skill=Clean"));
+                    participants.Add(CreateParticipant(calendar, user, "L Gilmore", "Linda", "Gilmore", "linda.gilmour@telus.net", Gender.Female, "", "", "", "Member=true, Sister=true, Skill=Emblems, Skill=Clean"));
+                    participants.Add(CreateParticipant(calendar, user, "D Gorman", "Diana", "Gorman", "dianagorman@shaw.ca", Gender.Female, "", "", "", "Member=true, Sister=true, Skill=Emblems, Skill=Clean"));
+                    participants.Add(CreateParticipant(calendar, user, "A Hibbs", "Art", "Hibbs", "art.hibbs@gmail.com", Gender.Male, "", "", "", "Member=true, Brother=true, Skill=Preside, Skill=Exhort, Skill=Serve, Skill=Read, Skill=Pray, Skill=Doorman, Skill=Lecturer, Skill=Bible Class, Skill=Emblems, Skill=Clean"));
+                    participants.Add(CreateParticipant(calendar, user, "L Hibbs", "Linda", "Hibbs", "2hibbs@gmail.com", Gender.Female, "", "", "", "Member=true, Sister=true, Skill=Emblems, Skill=Clean"));
+                    participants.Add(CreateParticipant(calendar, user, "J Hibbs", "Jeff", "Hibbs", "jeffvictoria09@gmail.com", Gender.Male, "", "", "", "Member=true, Brother=true, Skill=Preside, Skill=Exhort, Skill=Serve, Skill=Read, Skill=Pray, Skill=Doorman, Skill=Lecturer, Skill=Bible Class, Skill=Pianist, Skill=Emblems, Skill=Clean"));
+                    participants.Add(CreateParticipant(calendar, user, "V Hibbs", "Victoria", "Hibbs", "jeffvictoria09@gmail.com", Gender.Female, "", "", "", "Member=true, Sister=true, Skill=Emblems, Skill=Clean"));
+                    participants.Add(CreateParticipant(calendar, user, "D Hills", "Diane", "Hills", "", Gender.Female, "", "", "", "Member=true, Sister=true, Skill=Emblems, Skill=Clean"));
+                    participants.Add(CreateParticipant(calendar, user, "C Hutchison", "Cheryalee", "Hutchison", "cheryalee@gmail.com", Gender.Female, "", "", "", "Member=true, Sister=true, Skill=Emblems, Skill=Clean"));
+                    participants.Add(CreateParticipant(calendar, user, "W Hutchison", "William", "Hutchison", "whutchis@shaw.ca", Gender.Male, "", "", "", "Member=true, Brother=true, Skill=Serve, Skill=Read, Skill=Pray, Skill=Doorman, Skill=Bible Class, Skill=Emblems, Skill=Clean"));
+                    participants.Add(CreateParticipant(calendar, user, "E Jennings", "Elaine", "Jennings", "institches56@gmail.com", Gender.Female, "", "", "", "Member=true, Sister=true, Skill=Emblems, Skill=Clean"));
+                    participants.Add(CreateParticipant(calendar, user, "R Johnston", "Rod", "Johnston", "rodrjohnston@outlook.com", Gender.Male, "", "", "", "Member=true, Brother=true, Skill=Preside, Skill=Exhort, Skill=Serve, Skill=Read, Skill=Pray, Skill=Doorman, Skill=Lecturer, Skill=Bible Class, Skill=Emblems, Skill=Clean"));
+                    participants.Add(CreateParticipant(calendar, user, "E Johnston", "Elizabeth", "Johnston", "elizabeth.johnston@shaw.ca", Gender.Female, "", "", "", "Member=true, Sister=true, Skill=Emblems, Skill=Clean"));
+                    participants.Add(CreateParticipant(calendar, user, "C Jones", "Carolyn", "Jones", "jonesbc@shaw.ca", Gender.Female, "", "", "", "Member=true, Sister=true, Skill=Emblems, Skill=Clean"));
+                    participants.Add(CreateParticipant(calendar, user, "L Kemp", "Lorraine", "Kemp", "lorrainekemp@shaw.ca", Gender.Female, "", "", "", "Member=true, Sister=true, Skill=Emblems, Skill=Clean"));
+                    participants.Add(CreateParticipant(calendar, user, "J Kirk", "Joanne", "Kirk", "tekjak@shaw.ca", Gender.Female, "", "", "", "Member=true, Sister=true, Skill=Emblems, Skill=Clean"));
+                    participants.Add(CreateParticipant(calendar, user, "D Knorr", "Denise", "Knorr", "denise00014@hotmail.com", Gender.Female, "", "", "", "Member=true, Sister=true, Skill=Emblems, Skill=Clean"));
+                    participants.Add(CreateParticipant(calendar, user, "P Lawrence", "Peter", "Lawrence", "joshua@joshualawrence.ca", Gender.Male, "", "", "", "Member=true, Brother=true, Skill=Preside, Skill=Exhort, Skill=Serve, Skill=Read, Skill=Pray, Skill=Doorman, Skill=Lecturer, Skill=Bible Class, Skill=Emblems, Skill=Clean"));
+                    participants.Add(CreateParticipant(calendar, user, "H Lawrence", "Hannah", "Lawrence", "hlawrence005@gmail.com", Gender.Female, "", "", "", "Member=true, Sister=true, Skill=Emblems, Skill=Clean"));
+                    participants.Add(CreateParticipant(calendar, user, "M Little", "Mark", "Little", "mwl@netzero.net", Gender.Male, "", "", "", "Member=true, Brother=true, Skill=Serve, Skill=Read, Skill=Pray, Skill=Doorman, Skill=Bible Class, Skill=Emblems, Skill=Clean"));
+                    participants.Add(CreateParticipant(calendar, user, "Z Little", "Zoe", "Little", "zhq.6987@gmail.com", Gender.Female, "", "", "", "Member=true, Sister=true, Skill=Emblems, Skill=Clean"));
+                    participants.Add(CreateParticipant(calendar, user, "M Lucke", "Myra", "Lucke", "myralucke1@gmail.com", Gender.Female, "", "", "", "Member=true, Sister=true, Skill=Emblems, Skill=Clean"));
+                    participants.Add(CreateParticipant(calendar, user, "M Macfarlane", "Mark", "Macfarlane", "macfarlane.9@hotmail.com", Gender.Male, "", "", "", "Member=true, Brother=true, Skill=Preside, Skill=Exhort, Skill=Serve, Skill=Read, Skill=Pray, Skill=Doorman, Skill=Lecturer, Skill=Bible Class, Skill=Emblems, Skill=Clean"));
+                    participants.Add(CreateParticipant(calendar, user, "C Macfarlane", "Caitlyn", "Macfarlane", "caitlyndaniel2@gmail.com", Gender.Female, "", "", "", "Member=true, Sister=true, Skill=Pianist, Skill=Emblems, Skill=Clean"));
+                    participants.Add(CreateParticipant(calendar, user, "H Macpherson", "Horace", "Macpherson", "smmacpherson4@shaw.ca", Gender.Male, "", "", "", "Member=true, Brother=true, Skill=Preside, Skill=Exhort, Skill=Serve, Skill=Read, Skill=Pray, Skill=Doorman, Skill=Lecturer, Skill=Bible Class, Skill=Emblems, Skill=Clean"));
+                    participants.Add(CreateParticipant(calendar, user, "S Macpherson", "Sylvia", "Macpherson", "smmacpherson4@shaw.ca", Gender.Female, "", "", "", "Member=true, Sister=true, Skill=Emblems, Skill=Clean"));
+                    participants.Add(CreateParticipant(calendar, user, "B McArthur", "Bertha", "McArthur", "", Gender.Female, "", "", "", "Member=true, Sister=true, Skill=Emblems, Skill=Clean"));
+                    participants.Add(CreateParticipant(calendar, user, "J McStravick", "Joshua", "McStravick", "joshmcstravick@gmail.com", Gender.Male, "", "", "", "Member=true, Brother=true, Skill=Preside, Skill=Exhort, Skill=Serve, Skill=Read, Skill=Pray, Skill=Doorman, Skill=Lecturer, Skill=Bible Class, Skill=Emblems, Skill=Clean"));
+                    participants.Add(CreateParticipant(calendar, user, "L McStravick", "Leah", "McStravick", "leah.mcstravick@gmail.com", Gender.Female, "", "", "", "Member=true, Sister=true, Skill=Pianist, Skill=Emblems, Skill=Clean"));
+                    participants.Add(CreateParticipant(calendar, user, "M McStravick", "Mike", "McStravick", "mtmcstravick@gmail.com", Gender.Male, "", "", "", "Member=true, Brother=true, Skill=Preside, Skill=Exhort, Skill=Serve, Skill=Read, Skill=Pray, Skill=Doorman, Skill=Lecturer, Skill=Bible Class, Skill=Emblems, Skill=Clean"));
+                    participants.Add(CreateParticipant(calendar, user, "S McStravick", "Sandra", "McStravick", "ssmcstravick@gmail.com", Gender.Female, "", "", "", "Member=true, Sister=true, Skill=Emblems, Skill=Clean"));
+                    participants.Add(CreateParticipant(calendar, user, "J Morrison", "Janis", "Morrison", "", Gender.Female, "", "", "", "Member=true, Sister=true, Skill=Emblems, Skill=Clean"));
+                    participants.Add(CreateParticipant(calendar, user, "Ja Myren", "Jamie", "Myren", "jamie_my@shaw.ca", Gender.Male, "", "", "", "Member=true, Brother=true, Skill=Preside, Skill=Serve, Skill=Read, Skill=Pray, Skill=Doorman, Skill=Bible Class, Skill=Emblems, Skill=Clean"));
+                    participants.Add(CreateParticipant(calendar, user, "Jo Myren", "Joe", "Myren", "joseph798185@gmail.com", Gender.Male, "", "", "", "Member=true, Brother=true, Skill=Preside, Skill=Exhort, Skill=Serve, Skill=Read, Skill=Pray, Skill=Doorman, Skill=Lecturer, Skill=Bible Class, Skill=Emblems, Skill=Clean"));
+                    participants.Add(CreateParticipant(calendar, user, "T Myren", "Trish", "Myren", "trishmyren@icloud.com", Gender.Female, "", "", "", "Member=true, Sister=true, Skill=Emblems, Skill=Clean"));
+                    participants.Add(CreateParticipant(calendar, user, "M Neville", "Matthew", "Neville", "matthew.n.sabrina@gmail.com", Gender.Male, "", "", "", "Member=true, Brother=true, Skill=Preside, Skill=Exhort, Skill=Serve, Skill=Read, Skill=Pray, Skill=Doorman, Skill=Lecturer, Skill=Bible Class, Skill=Emblems, Skill=Clean"));
+                    participants.Add(CreateParticipant(calendar, user, "S Neville", "Sabrina", "Neville", "matthew.n.sabrina@gmail.com", Gender.Female, "", "", "", "Member=true, Sister=true, Skill=Pianist, Skill=Emblems, Skill=Clean"));
+                    participants.Add(CreateParticipant(calendar, user, "A Ormerod", "Alan", "Ormerod", "aormerod@shaw.ca", Gender.Male, "", "", "", "Member=true, Brother=true, Skill=Read, Skill=Pray, Skill=Emblems, Skill=Clean"));
+                    participants.Add(CreateParticipant(calendar, user, "R Owens", "Rodney", "Owens", "rodowens@shaw.ca", Gender.Male, "", "", "", "Member=true, Brother=true, Skill=Preside, Skill=Exhort, Skill=Serve, Skill=Read, Skill=Pray, Skill=Doorman, Skill=Lecturer, Skill=Bible Class, Skill=Emblems, Skill=Clean"));
+                    participants.Add(CreateParticipant(calendar, user, "P Pearce", "Peggy", "Pearce", "", Gender.Female, "", "", "", "Member=true, Sister=true, Skill=Emblems, Skill=Clean"));
+                    participants.Add(CreateParticipant(calendar, user, "L Pengelly", "Laura", "Pengelly", "l_pengelly@hotmail.com", Gender.Female, "", "", "", "Member=true, Sister=true, Skill=Emblems, Skill=Clean"));
+                    participants.Add(CreateParticipant(calendar, user, "M Pilon", "Marianne", "Pilon", "mppilon@shaw.ca", Gender.Female, "", "", "", "Member=true, Sister=true, Skill=Emblems, Skill=Clean"));
+                    participants.Add(CreateParticipant(calendar, user, "M Quindazzi", "Micah", "Quindazzi", "", Gender.Male, "", "", "", "Member=true, Brother=true, Skill=Serve, Skill=Read, Skill=Pray, Skill=Doorman, Skill=Bible Class, Skill=Emblems, Skill=Clean"));
+                    participants.Add(CreateParticipant(calendar, user, "P Quindazzi", "Philip", "Quindazzi", "", Gender.Male, "", "", "", "Member=true, Brother=true"));
+                    participants.Add(CreateParticipant(calendar, user, "A Ralph", "Andrew", "Ralph", "drew.sherry@shaw.ca", Gender.Male, "", "", "", "Member=true, Brother=true, Skill=Serve, Skill=Read, Skill=Pray, Skill=Doorman, Skill=Bible Class, Skill=Emblems, Skill=Clean"));
+                    participants.Add(CreateParticipant(calendar, user, "S Ralph", "Sherry", "Ralph", "drew.sherry@shaw.ca", Gender.Female, "", "", "", "Member=true, Sister=true, Skill=Emblems, Skill=Clean"));
+                    participants.Add(CreateParticipant(calendar, user, "P Ratzka", "Paul", "Ratzka", "paulratzka@yahoo.ca", Gender.Male, "", "", "", "Member=true, Brother=true, Skill=Serve, Skill=Read, Skill=Pray, Skill=Doorman, Skill=Bible Class, Skill=Emblems, Skill=Clean"));
+                    participants.Add(CreateParticipant(calendar, user, "B Ratzka", "Bonny", "Ratzka", "sueme38@hotmail.com", Gender.Female, "", "", "", "Member=true, Sister=true, Skill=Emblems, Skill=Clean"));
+                    participants.Add(CreateParticipant(calendar, user, "J Rebman", "Joan", "Rebman", "", Gender.Female, "", "", "", "Member=true, Sister=true, Skill=Emblems, Skill=Clean"));
+                    participants.Add(CreateParticipant(calendar, user, "G Salisbury", "Grace", "Salisbury", "normgrace@live.ca", Gender.Female, "", "", "", "Member=true, Sister=true, Skill=Emblems, Skill=Clean"));
+                    participants.Add(CreateParticipant(calendar, user, "A Sandoval", "Anne", "Sandoval", "anneksandoval@gmail.com", Gender.Female, "", "", "", "Member=true, Sister=true, Skill=Emblems, Skill=Clean"));
+                    participants.Add(CreateParticipant(calendar, user, "G Shrimpton", "Grace", "Shrimpton", "gmcshrimp@shaw.ca", Gender.Female, "", "", "", "Member=true, Sister=true, Skill=Pianist, Skill=Emblems, Skill=Clean"));
+                    participants.Add(CreateParticipant(calendar, user, "W Shrimpton", "Wendy", "Shrimpton", "whitemore@shaw.ca", Gender.Female, "", "", "", "Member=true, Sister=true, Skill=Emblems, Skill=Clean"));
+                    participants.Add(CreateParticipant(calendar, user, "Cl Snobelen", "Clyde", "Snobelen", "csnobelen@csll.ca", Gender.Male, "", "", "", "Member=true, Brother=true, Skill=Preside, Skill=Exhort, Skill=Serve, Skill=Read, Skill=Pray, Skill=Doorman, Skill=Lecturer, Skill=Bible Class, Skill=Emblems, Skill=Clean"));
+                    participants.Add(CreateParticipant(calendar, user, "E Snobelen", "Evelyn", "Snobelen", "esnobelen@telus.net", Gender.Female, "", "", "", "Member=true, Sister=true, Skill=Emblems, Skill=Clean"));
+                    participants.Add(CreateParticipant(calendar, user, "Ch Snobelen", "Chase", "Snobelen", "chase.snobelen@gmail.com", Gender.Male, "", "", "", "Member=true, Brother=true, Skill=Preside, Skill=Exhort, Skill=Serve, Skill=Read, Skill=Pray, Skill=Doorman, Skill=Lecturer, Skill=Bible Class, Skill=Emblems, Skill=Clean"));
+                    participants.Add(CreateParticipant(calendar, user, "Me Snobelen", "Meagan", "Snobelen", "msmcstravick@gmail.com", Gender.Female, "", "", "", "Member=true, Sister=true, Skill=Emblems, Skill=Clean"));
+                    participants.Add(CreateParticipant(calendar, user, "M Snobelen", "Mark", "Snobelen", "snobelens@shaw.ca", Gender.Male, "", "", "", "Member=true, Brother=true, Skill=Preside, Skill=Exhort, Skill=Serve, Skill=Read, Skill=Pray, Skill=Doorman, Skill=Lecturer, Skill=Bible Class, Skill=Pianist, Skill=Emblems, Skill=Clean"));
+                    participants.Add(CreateParticipant(calendar, user, "Sh Snobelen", "Sherry", "Snobelen", "", Gender.Female, "", "", "", "Member=true, Sister=true, Skill=Clean"));
+                    participants.Add(CreateParticipant(calendar, user, "S Snobelen", "Shawn", "Snobelen", "snobelen@gmail.com", Gender.Male, "", "", "", "Member=true, Brother=true, Skill=Preside, Skill=Exhort, Skill=Serve, Skill=Read, Skill=Pray, Skill=Doorman, Skill=Lecturer, Skill=Bible Class, Skill=Emblems, Skill=Clean"));
+                    participants.Add(CreateParticipant(calendar, user, "Ma Snobelen", "Marnie", "Snobelen", "marnieleigh@gmail.com", Gender.Female, "", "", "", "Member=true, Sister=true, Skill=Pianist, Skill=Emblems, Skill=Clean"));
+                    participants.Add(CreateParticipant(calendar, user, "T Snobelen", "Taleigh", "Snobelen", "taleigh.rae@gmail.com", Gender.Female, "", "", "", "Member=true, Sister=true, Skill=Emblems, Skill=Clean"));
+                    participants.Add(CreateParticipant(calendar, user, "A Starcher", "Al", "Starcher", "", Gender.Male, "", "", "", "Member=true, Brother=true, Skill=Read, Skill=Pray, Skill=Clean"));
+                    participants.Add(CreateParticipant(calendar, user, "B Stodel", "Bob", "Stodel", "rwstodel@telus.net", Gender.Male, "", "", "", "Member=true, Brother=true, Skill=Preside, Skill=Exhort, Skill=Serve, Skill=Read, Skill=Pray, Skill=Doorman, Skill=Lecturer, Skill=Bible Class, Skill=Emblems, Skill=Clean"));
+                    participants.Add(CreateParticipant(calendar, user, "D Stodel", "Dianna", "Stodel", "dianastodel@gmail.com", Gender.Female, "", "", "", "Member=true, Sister=true, Skill=Emblems, Skill=Clean"));
+                    participants.Add(CreateParticipant(calendar, user, "V Stodel", "Vic", "Stodel", "marie-vics@shaw.ca", Gender.Male, "", "", "", "Member=true, Brother=true, Skill=Read, Skill=Pray, Skill=Clean"));
+                    participants.Add(CreateParticipant(calendar, user, "M Stodel", "Marie", "Stodel", "marie-vics@shaw.ca", Gender.Female, "", "", "", "Member=true, Sister=true, Skill=Emblems, Skill=Clean"));
+                    participants.Add(CreateParticipant(calendar, user, "R Wallace", "Rob", "Wallace", "", Gender.Male, "", "", "", "Member=true, Brother=true, Skill=Read, Skill=Pray, Skill=Clean"));
+                    participants.Add(CreateParticipant(calendar, user, "L Wallace", "Linda", "Wallace", "", Gender.Female, "", "", "", "Member=true, Sister=true, Skill=Emblems, Skill=Clean"));
+                    participants.Add(CreateParticipant(calendar, user, "P Williamson", "Pat", "Williamson", "pwilliamson369@gmail.com", Gender.Female, "", "", "", "Member=true, Sister=true, Skill=Emblems, Skill=Clean"));
+                    participants.Add(CreateParticipant(calendar, user, "P Willimont", "Pat", "Willimont", "", Gender.Female, "", "", "", "Member=true, Sister=true, Skill=Emblems, Skill=Clean"));
+                    participants.Add(CreateParticipant(calendar, user, "A Wood", "Arthur", "Wood", "arthurwood@outlook.com", Gender.Male, "", "", "", "Member=true, Brother=true, Skill=Read, Skill=Pray, Skill=Emblems, Skill=Clean"));
+                    participants.Add(CreateParticipant(calendar, user, "S Wood", "Sharon", "Wood", "arthurwood@outlook.com", Gender.Female, "", "", "", "Member=true, Sister=true, Skill=Emblems, Skill=Clean"));
+                    participants.Add(CreateParticipant(calendar, user, "J Woodcock", "Joan", "Woodcock", "", Gender.Female, "", "", "", "Member=true, Sister=true, Skill=Emblems, Skill=Clean"));
+                    participants.Add(CreateParticipant(calendar, user, "S Higgs", "Stephen", "Higgs", "stevehiggs@live.ca", Gender.Male, "", "", "", "Member=true, Brother=true, Skill=Preside, Skill=Serve, Skill=Read, Skill=Pray, Skill=Doorman, Skill=Bible Class, Skill=Emblems, Skill=Clean"));
+                    participants.Add(CreateParticipant(calendar, user, "L Higgs", "Linda", "Higgs", "lin.susan.lh@gmail.com", Gender.Female, "", "", "", "Member=true, Sister=true, Skill=Emblems, Skill=Clean"));
+                    participants.Add(CreateParticipant(calendar, user, "J Hewer", "Judy", "Hewer", "judyhewer@hotmail.ca", Gender.Female, "", "", "", "Member=true, Sister=true, Skill=Emblems, Skill=Clean"));
+                    participants.Add(CreateParticipant(calendar, user, "S Coleswebb", "Sandi", "Coleswebb", "s.coleswebb@gmail.com", Gender.Female, "", "", "", "Member=true, Sister=true, Skill=Emblems, Skill=Clean"));
+                    participants.Add(CreateParticipant(calendar, user, "R Coles", "Rylan", "Coles", "rylan1315@gmail.com", Gender.Male, "", "", "", "Member=true, Brother=true, Skill=Preside, Skill=Serve, Skill=Read, Skill=Pray, Skill=Doorman, Skill=Bible Class, Skill=Emblems, Skill=Clean"));
+                    participants.Add(CreateParticipant(calendar, user, "N Crawford", "Nathan", "Crawford", "nathanael.crawford@gmail.com", Gender.Male, "", "", "", "Member=true, Brother=true, Skill=Preside, Skill=Exhort, Skill=Serve, Skill=Read, Skill=Pray, Skill=Doorman, Skill=Lecturer, Skill=Bible Class, Skill=Emblems, Skill=Clean"));
+                    participants.Add(CreateParticipant(calendar, user, "S Crawford", "Sarah", "Crawford", "crawfordsarahm@gmail.com", Gender.Female, "", "", "", "Member=true, Sister=true, Skill=Pianist, Skill=Emblems, Skill=Clean"));
+                    this.Context.SaveChanges();
+
+                    transaction.Commit();
+                }
+                catch (DbUpdateException)
+                {
+                    transaction.Rollback();
+                    throw;
+                }
+            }
+
+            return participants.Select(p => this.Source.UpdateMapper.Map<Models.Participant>(p));
+        }
+
+        private Participant CreateParticipant(Calendar calendar, User user, string displayName, string firstName, string lastName, string email, Gender gender, string mobile, string phone, string address, string attributes)
+        {
+            if (calendar == null) throw new ArgumentNullException(nameof(calendar));
+            if (user == null) throw new ArgumentNullException(nameof(user));
+
+            var p = new Participant(calendar, displayName, firstName, lastName, email)
+            {
+                AddedById = user.Id,
+                Gender = gender
+            };
+            this.Context.Participants.Add(p);
+
+            if (!String.IsNullOrWhiteSpace(mobile))
+            {
+                var ci = new ContactInfo(p, "Mobile", ContactInfoType.Mobile, ContactInfoCategory.Personal, mobile) { AddedById = user.Id };
+                this.Context.ContactInfo.Add(ci);
+            }
+            if (!String.IsNullOrWhiteSpace(mobile))
+            {
+                var ci = new ContactInfo(p, "Home Phone", ContactInfoType.Phone, ContactInfoCategory.Personal, phone) { AddedById = user.Id };
+                this.Context.ContactInfo.Add(ci);
+            }
+            if (!String.IsNullOrWhiteSpace(address))
+            {
+                var parts = address.Split(',').Select(v => v.Trim()).ToArray();
+                var a = new Address(p, parts[0], parts[1], parts[2], parts[3], parts[4], ContactInfoCategory.Personal) { AddedById = user.Id };
+                this.Context.Addresses.Add(a);
+            }
+            if (!String.IsNullOrWhiteSpace(attributes))
+            {
+                var parts = attributes.Split(',').Select(v => v.Trim()).ToArray();
+                foreach (var part in parts)
+                {
+                    var kv = part.Split('=');
+                    var a = new Entities.Attribute(p, kv[0], kv[1], kv[1].Equals("true") ? typeof(bool) : typeof(string)) { AddedById = user.Id };
+                    this.Context.Attributes.Add(a);
+                }
+            }
+            return p;
         }
         #endregion
     }

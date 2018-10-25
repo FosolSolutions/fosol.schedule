@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace Fosol.Schedule.DAL.Interfaces
 {
@@ -13,6 +14,14 @@ namespace Fosol.Schedule.DAL.Interfaces
         /// <param name="endOn"></param>
         /// <returns></returns>
         Models.Calendar AddEcclesialEvents(int calendarId, DateTime? startOn = null, DateTime? endOn = null);
+
+
+        /// <summary>
+        /// Adds a predefined list of participants to the specified calendar.
+        /// </summary>
+        /// <param name="calendarId"></param>
+        /// <returns></returns>
+        IEnumerable<Models.Participant> AddParticipants(int calendarId);
         #endregion
     }
 }

@@ -86,6 +86,7 @@ namespace Fosol.Schedule.DAL.Services
         /// <param name="model"></param>
         public override void Add(Models.Calendar model)
         {
+            if (model == null) throw new ArgumentNullException(nameof(model));
             this.VerifyPrincipal(true);
 
             // Must own the account.
@@ -104,6 +105,7 @@ namespace Fosol.Schedule.DAL.Services
         /// <param name="model"></param>
         public override void Update(Models.Calendar model)
         {
+            if (model == null) throw new ArgumentNullException(nameof(model));
             this.VerifyPrincipal(true);
 
             // Must own the account.
@@ -126,6 +128,7 @@ namespace Fosol.Schedule.DAL.Services
         /// <param name="model"></param>
         public override void Remove(Models.Calendar model)
         {
+            if (model == null) throw new ArgumentNullException(nameof(model));
             this.VerifyPrincipal(true);
 
             // Must own the account.

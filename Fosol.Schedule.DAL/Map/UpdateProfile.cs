@@ -38,6 +38,7 @@ namespace Fosol.Schedule.DAL.Map
                 .ReverseMap()
                 .ForMember(dest => dest.Key, opt => opt.MapFrom(src => (src.Key != Guid.Empty) ? src.Key : Guid.NewGuid()));
             CreateMap<Entities.User, Models.User>()
+                .ForPath(dest => dest.Attributes, opt => opt.MapFrom(src => src.Attributes.Select(c => c.Attribute)))
                 .ForPath(dest => dest.Gender, opt => opt.MapFrom(src => src.Info.Gender))
                 .ForPath(dest => dest.FirstName, opt => opt.MapFrom(src => src.Info.FirstName))
                 .ForPath(dest => dest.MiddleName, opt => opt.MapFrom(src => src.Info.MiddleName))
@@ -58,6 +59,7 @@ namespace Fosol.Schedule.DAL.Map
                 .ReverseMap()
                 .ForMember(dest => dest.Key, opt => opt.MapFrom(src => (src.Key != Guid.Empty) ? src.Key : Guid.NewGuid()));
             CreateMap<Entities.Participant, Models.Participant>()
+                .ForPath(dest => dest.Attributes, opt => opt.MapFrom(src => src.Attributes.Select(c => c.Attribute)))
                 .ForPath(dest => dest.ContactInfo, opt => opt.MapFrom(src => src.ContactInfo.Select(a => a.ContactInfo)))
                 .ReverseMap()
                 .ForMember(dest => dest.Key, opt => opt.MapFrom(src => (src.Key != Guid.Empty) ? src.Key : Guid.NewGuid()));
