@@ -59,7 +59,7 @@ namespace Fosol.Schedule.API.Areas.Manage.Controllers
         /// <param name="startOn">The start date for the calendar to return.  Defaults to now.</param>
         /// <param name="endOn">The end date for the calendar to return.</param>
         /// <returns>A calendar JSON data object with all events within the specified date range.</returns>
-        [HttpGet("{id}", Name = "GetCalendar")]
+        [HttpGet("{id}", Name = nameof(GetCalendar))]
         public IActionResult GetCalendar(int id, DateTime? startOn = null, DateTime? endOn = null)
         {
             var start = startOn ?? DateTime.UtcNow;

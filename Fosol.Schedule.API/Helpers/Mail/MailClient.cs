@@ -1,6 +1,7 @@
 ﻿using Fosol.Schedule.Models;
 using Microsoft.Extensions.Options;
 using System.Net.Mail;
+using System.Threading.Tasks;
 
 namespace Fosol.Schedule.API.Helpers.Mail
 {
@@ -47,7 +48,7 @@ namespace Fosol.Schedule.API.Helpers.Mail
         /// Send an email to the specified participant.
         /// </summary>
         /// <param name="participant"></param>
-        public void Send(Participant participant)
+        public async Task Send(Participant participant)
         {
             var message = new MailMessage
             {
@@ -62,9 +63,9 @@ namespace Fosol.Schedule.API.Helpers.Mail
                 </p>
                 Love in Christ, Jeremy"
             };
-            message.To.Add(new MailAddress(participant.Email));
 
-            Send(message);
+            message.To.Add(new MailAddress(participant.Email));
+            await Task.Run(() => Send(message));
         }
 
         /// <summary>

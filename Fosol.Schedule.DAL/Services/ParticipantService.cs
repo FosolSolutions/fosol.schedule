@@ -65,7 +65,7 @@ namespace Fosol.Schedule.DAL.Services
         public IEnumerable<Models.Participant> GetForCalendar(int calendarId, int skip = 0, int take = 20)
         {
             // TODO: verify access to calendar.
-            var participants = this.Context.Participants.Where(p => p.CalendarId == calendarId).OrderBy(p => p.DisplayName).Skip(skip).Take(take).Select(p => this.Map(p)).ToArray();
+            var participants = this.Context.Participants.Where(p => p.CalendarId == calendarId).OrderBy(p => p.LastName).ThenBy(p => p.FirstName).Skip(skip).Take(take).Select(p => this.Map(p)).ToArray();
 
             return participants;
         }
