@@ -45,7 +45,7 @@ namespace Fosol.Schedule.Entities
         /// <summary>
         /// get/set - The timestamp that identifies the current state of this entity.  Used for concurrency.
         /// </summary>
-        [Timestamp]
+        [Timestamp, ConcurrencyCheck]
         public byte[] RowVersion { get; set; }
         #endregion
     }

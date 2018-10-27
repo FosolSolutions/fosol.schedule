@@ -32,7 +32,7 @@ namespace Fosol.Schedule.Entities
         /// <summary>
         /// get/set - The state of this participant.
         /// </summary>
-        public ParticipantState State { get; set; }
+        public ParticipantState State { get; set; } = ParticipantState.Enabled;
 
         /// <summary>
         /// get/set - The foreign key to the user account for this participant.
@@ -105,17 +105,17 @@ namespace Fosol.Schedule.Entities
         /// <summary>
         /// get - A collection of contact information about the participant.
         /// </summary>
-        public ICollection<ParticipantContactInfo> ContactInfo { get; set; } = new List<ParticipantContactInfo>();
+        public ICollection<ParticipantContactInfo> ContactInfo { get; set; } = new List<ParticipantContactInfo>(); // TODO: Need to limit the number.
 
         /// <summary>
         /// get - A collection of addresses for the participant.
         /// </summary>
-        public ICollection<ParticipantAddress> Addresses { get; set; } = new List<ParticipantAddress>();
+        public ICollection<ParticipantAddress> Addresses { get; set; } = new List<ParticipantAddress>(); // TODO: Need to limit the number.
 
         /// <summary>
         /// get - A collection of attributes for the participant.
         /// </summary>
-        public ICollection<ParticipantAttribute> Attributes { get; set; } = new List<ParticipantAttribute>();
+        public ICollection<ParticipantAttribute> Attributes { get; set; } = new List<ParticipantAttribute>(); // TODO: Need to limit the number.
         #endregion
 
         #region Constructors

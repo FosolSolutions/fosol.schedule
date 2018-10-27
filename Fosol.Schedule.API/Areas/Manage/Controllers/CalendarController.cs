@@ -135,10 +135,12 @@ namespace Fosol.Schedule.API.Areas.Manage.Controllers
 
                         try
                         {
-                            _mailClient.Send(participant);
+                            var message = _mailClient.CreateInvitation(participant);
+                            await _mailClient.SendAsync(message);
                         }
                         catch (Exception ex)
                         {
+                            // TODO: Handle and log errors differently.
                             errors.Add(new Exception($"Mail failed for {participant.DisplayName} - {participant.Email}", ex));
                         }
                     });
@@ -152,6 +154,7 @@ namespace Fosol.Schedule.API.Areas.Manage.Controllers
                 return new JsonResult(true);
             }
 
+            // TODO: Don't include certain information in error message.
             return new JsonResult(errors.Select(e => new { e.Message, InnerException = e.InnerException.Message }));
 
         }

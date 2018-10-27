@@ -26,7 +26,7 @@ namespace Fosol.Schedule.Models
         /// <summary>
         /// get/set - The datatype of the attribute.
         /// </summary>
-        public DataType DataType { get; set; }
+        public string ValueType { get; set; }
         #endregion
     }
 }

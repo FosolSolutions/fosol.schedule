@@ -1,4 +1,5 @@
 ﻿using Fosol.Core.Extensions.Enumerable;
+using Fosol.Schedule.DAL.Helpers;
 using Fosol.Schedule.DAL.Interfaces;
 using System;
 using System.Collections;
@@ -71,7 +72,7 @@ namespace Fosol.Schedule.DAL.Services
         /// Add the specified entity to the in-memory collection, so that it can be saved to the datasource on commit.
         /// </summary>
         /// <param name="entity"></param>
-        protected void Add(EntityT entity)
+        protected virtual void Add(EntityT entity)
         {
             this.Context.Set<EntityT>().Add(entity);
         }
@@ -143,9 +144,20 @@ namespace Fosol.Schedule.DAL.Services
         /// </summary>
         /// <exception cref="NoContentException">If the entity could not be found in the datasource.</exception>
         /// <param name="entity"></param>
-        protected void Update(EntityT entity)
+        protected virtual void Update(EntityT entity)
         {
             this.Context.Set<EntityT>().Update(entity);
+
+            // This is required because EF is broken.
+            var baseEntity = entity as Entities.BaseEntity;
+            if (baseEntity != null)
+            {
+                this.Context.Entry(entity).Property(nameof(Entities.BaseEntity.RowVersion)).OriginalValue = (entity as Entities.BaseEntity).RowVersion;
+                var addedById = this.Context.Entry(entity).Property(nameof(Entities.BaseEntity.AddedById));
+                addedById.CurrentValue = addedById.OriginalValue;
+                var addedOn = this.Context.Entry(entity).Property(nameof(Entities.BaseEntity.AddedOn));
+                addedOn.CurrentValue = addedOn.OriginalValue;
+            }
         }
 
         /// <summary>

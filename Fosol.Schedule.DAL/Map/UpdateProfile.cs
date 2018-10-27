@@ -87,7 +87,23 @@ namespace Fosol.Schedule.DAL.Map
                 .ForMember(dest => dest.Criterion, opt => opt.MapFrom(src => src.ToString()))
                 .ReverseMap()
                 .ForMember(dest => dest.Criteria, opt => opt.MapFrom(src => src.Criterion));
+
+            // Attributes
             CreateMap<Entities.Attribute, Models.Attribute>().ReverseMap();
+            CreateMap<Entities.ParticipantAttribute, Models.Attribute>()
+                .ReverseMap()
+                .ConvertUsing(src =>
+                {
+                    var type = String.IsNullOrWhiteSpace(src.ValueType) ? typeof(string) : Type.GetType(src.ValueType) ?? typeof(string);
+                    var attribute = new Entities.Attribute(src.Key, src.Value, type)
+                    {
+                        AddedById = src.AddedById.Value,
+                        AddedOn = src.AddedOn,
+                        UpdatedById = datasource.Principal.GetNameIdentifier().Value.ConvertTo<int>(),
+                        UpdatedOn = DateTime.UtcNow
+                    };
+                    return new Entities.ParticipantAttribute() { AttributeId = src.Id, Attribute = attribute };
+                });
         }
     }
 }

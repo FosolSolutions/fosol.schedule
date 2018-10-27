@@ -32,7 +32,9 @@ namespace Fosol.Schedule.DAL.Map
                 .ReverseMap()
                 .ForMember(dest => dest.RowVersion, opt => opt.MapFrom(src => Convert.FromBase64String(src.RowVersion)))
                 .ForMember(dest => dest.AddedById, opt => opt.MapFrom(src => datasource.Principal.GetNameIdentifier().Value.ConvertTo<int>()))
-                .ForMember(dest => dest.AddedOn, opt => opt.UseValue(DateTime.UtcNow));
+                .ForMember(dest => dest.AddedOn, opt => opt.MapFrom(src => DateTime.UtcNow))
+                .ForMember(dest => dest.UpdatedById, opt => opt.MapFrom(src => (DateTime?)null))
+                .ForMember(dest => dest.UpdatedOn, opt => opt.MapFrom(src => (DateTime?)null));
 
             CreateMap<Entities.Subscription, Models.Subscription>()
                 .ReverseMap()
@@ -60,7 +62,7 @@ namespace Fosol.Schedule.DAL.Map
                 .ForMember(dest => dest.Key, opt => opt.MapFrom(src => (src.Key != Guid.Empty) ? src.Key : Guid.NewGuid()));
             CreateMap<Entities.Participant, Models.Participant>()
                 .ForPath(dest => dest.ContactInfo, opt => opt.MapFrom(src => src.ContactInfo.Select(a => a.ContactInfo)))
-                .ForPath(dest => dest.Attributes, opt => opt.MapFrom(src => src.Attributes.Select(c => c.Attribute)))
+                .ForPath(dest => dest.Attributes, opt => opt.MapFrom(src => src.Attributes.Select(a => a.Attribute)))
                 .ReverseMap()
                 .ForMember(dest => dest.Key, opt => opt.MapFrom(src => (src.Key != Guid.Empty) ? src.Key : Guid.NewGuid()));
             CreateMap<Entities.Event, Models.Event>()
@@ -85,7 +87,21 @@ namespace Fosol.Schedule.DAL.Map
                 .ForMember(dest => dest.Criterion, opt => opt.MapFrom(src => src.ToString()))
                 .ReverseMap()
                 .ForMember(dest => dest.Criteria, opt => opt.MapFrom(src => src.Criterion));
+
+            // Attributes
             CreateMap<Entities.Attribute, Models.Attribute>().ReverseMap();
+            CreateMap<Entities.ParticipantAttribute, Models.Attribute>()
+                .ReverseMap()
+                .ConvertUsing(src =>
+                {
+                    var type = String.IsNullOrWhiteSpace(src.ValueType) ? typeof(string) : Type.GetType(src.ValueType) ?? typeof(string);
+                    var attribute = src.Id == 0 ? new Entities.Attribute(src.Key, src.Value, type)
+                    {
+                        AddedById = datasource.Principal.GetNameIdentifier().Value.ConvertTo<int>(),
+                        AddedOn = DateTime.UtcNow
+                    } : null;
+                    return new Entities.ParticipantAttribute() { AttributeId = src.Id, Attribute = attribute };
+                });
         }
     }
 }

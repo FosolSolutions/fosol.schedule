@@ -694,14 +694,15 @@ namespace Fosol.Schedule.DAL.Migrations
 
                     b.HasIndex("AddedById");
 
-                    b.HasIndex("CalendarId");
-
                     b.HasIndex("Key")
                         .IsUnique();
 
                     b.HasIndex("UpdatedById");
 
                     b.HasIndex("UserId");
+
+                    b.HasIndex("CalendarId", "DisplayName")
+                        .IsUnique();
 
                     b.HasIndex("Email", "State");
 

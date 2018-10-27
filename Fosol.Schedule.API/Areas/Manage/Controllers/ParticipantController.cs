@@ -146,7 +146,8 @@ namespace Fosol.Schedule.API.Areas.Manage.Controllers
 
             if (!String.IsNullOrWhiteSpace(participant.Email))
             {
-                await _mailClient.Send(participant);
+                var message = _mailClient.CreateInvitation(participant);
+                await _mailClient.SendAsync(message);
 
                 return Ok(true);
             }

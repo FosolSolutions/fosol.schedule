@@ -1,4 +1,5 @@
-﻿using Fosol.Schedule.Entities;
+﻿using Fosol.Schedule.DAL.Helpers;
+using Fosol.Schedule.Entities;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Linq;
@@ -87,6 +88,8 @@ namespace Fosol.Schedule.DAL
                 optionsBuilder.EnableSensitiveDataLogging();
                 //optionsBuilder.UseInMemoryDatabase("Schedule", options => { });
             }
+
+            // var map = ScheduleMapper.Map; // Initialize mapping.
 
             base.OnConfiguring(optionsBuilder);
         }
@@ -317,6 +320,10 @@ namespace Fosol.Schedule.DAL
                 .IsUnique();
 
             modelBuilder.Entity<Participant>()
+                .HasIndex(m => new { m.CalendarId, m.DisplayName })
+                .IsUnique();
+
+            modelBuilder.Entity<Participant>()
                 .HasIndex(m => new { m.Email, m.State });
 
             modelBuilder.Entity<Participant>()
@@ -332,6 +339,10 @@ namespace Fosol.Schedule.DAL
                 .HasForeignKey(m => m.UpdatedById)
                 .HasPrincipalKey(m => m.Id)
                 .OnDelete(DeleteBehavior.ClientSetNull);
+
+            modelBuilder.Entity<Participant>()
+                .Property(m => m.RowVersion)
+                .IsRowVersion().IsConcurrencyToken();
 
             modelBuilder.Entity<Participant>()
                 .HasOne(m => m.User)

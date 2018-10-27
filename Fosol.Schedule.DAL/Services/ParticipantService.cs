@@ -1,4 +1,6 @@
 ﻿using Fosol.Core.Exceptions;
+using Fosol.Core.Extensions.Enumerable;
+using Fosol.Schedule.DAL.Helpers;
 using Fosol.Schedule.DAL.Interfaces;
 using Fosol.Schedule.Entities;
 using Microsoft.EntityFrameworkCore;
@@ -52,7 +54,7 @@ namespace Fosol.Schedule.DAL.Services
         /// <returns></returns>
         public Models.Participant Get(int id)
         {
-            return this.Find(id);
+            return this.Map(this.Find((set) => set.Include(p => p.Attributes).ThenInclude(p => p.Attribute).SingleOrDefault(p => p.Id == id)));
         }
 
         /// <summary>
@@ -68,6 +70,24 @@ namespace Fosol.Schedule.DAL.Services
             var participants = this.Context.Participants.Where(p => p.CalendarId == calendarId).OrderBy(p => p.LastName).ThenBy(p => p.FirstName).Skip(skip).Take(take).Select(p => this.Map(p)).ToArray();
 
             return participants;
+        }
+
+        /// <summary>
+        /// Update the specified participant in the datasource.
+        /// </summary>
+        /// <param name="model"></param>
+        public override void Update(Models.Participant model)
+        {
+            // Strip out collections, they must be saved independently.
+            model.Attributes = null;
+            model.ContactInfo = null;
+            model.Addresses = null;
+
+            base.Update(model);
+        }
+
+        public void AddAttribute(Models.Participant participant, Models.Attribute attribute)
+        {
         }
 
         /// <summary>

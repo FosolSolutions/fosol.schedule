@@ -1214,11 +1214,6 @@ namespace Fosol.Schedule.DAL.Migrations
                 column: "AddedById");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Participants_CalendarId",
-                table: "Participants",
-                column: "CalendarId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Participants_Key",
                 table: "Participants",
                 column: "Key",
@@ -1233,6 +1228,12 @@ namespace Fosol.Schedule.DAL.Migrations
                 name: "IX_Participants_UserId",
                 table: "Participants",
                 column: "UserId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Participants_CalendarId_DisplayName",
+                table: "Participants",
+                columns: new[] { "CalendarId", "DisplayName" },
+                unique: true);
 
             migrationBuilder.CreateIndex(
                 name: "IX_Participants_Email_State",

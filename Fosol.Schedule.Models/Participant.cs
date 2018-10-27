@@ -74,17 +74,17 @@ namespace Fosol.Schedule.Models
         /// <summary>
         /// get - A collection of information about the participant.
         /// </summary>
-        public ICollection<ContactInfo> ContactInfo { get; set; } = new List<ContactInfo>();
+        public IList<ContactInfo> ContactInfo { get; set; } = new List<ContactInfo>();
 
         /// <summary>
         /// get - A collection of addresses for the participant.
         /// </summary>
-        //public ICollection<ParticipantAddress> Addresses { get; set; } = new List<ParticipantAddress>();
+        public IList<Address> Addresses { get; set; } = new List<Address>();
 
         /// <summary>
         /// get - A collection of attributes for the participant.
         /// </summary>
-        public ICollection<Attribute> Attributes { get; set; } = new List<Attribute>();
+        public IList<Attribute> Attributes { get; set; } = new List<Attribute>();
         #endregion
     }
 }

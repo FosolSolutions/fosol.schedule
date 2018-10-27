@@ -1,5 +1,6 @@
 ﻿using Fosol.Core.Exceptions;
 using Fosol.Core.Extensions.Principals;
+using Fosol.Schedule.DAL.Helpers;
 using Fosol.Schedule.DAL.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -191,9 +192,8 @@ namespace Fosol.Schedule.DAL.Services
         /// <returns></returns>
         protected virtual T Find<T>(ModelT model) where T : class
         {
-            // TODO: Need to rewrite to handle different primary key configurations.
-            var id = (int)typeof(ModelT).GetProperty("Id").GetValue(model);
-            return this.Find<T>(id);
+            var keys = ScheduleMapper.Map.GetMap<T>().GetPrimaryKeyValues(this.Source.UpdateMapper.Map<T>(model));
+            return this.Find<T>(keys);
         }
 
         /// <summary>
