@@ -23,7 +23,7 @@ namespace Fosol.Schedule.Entities
         /// <summary>
         /// get/set - A unique email address that identifies this user.
         /// </summary>
-        public EmailAddress Email { get; set; }
+        public string Email { get; set; }
 
         /// <summary>
         /// get/set - The current state of this user.
@@ -104,7 +104,7 @@ namespace Fosol.Schedule.Entities
                 throw new ArgumentNullException(nameof(email));
 
             this.Key = Guid.NewGuid();
-            this.Email = new EmailAddress(email);
+            this.Email = new EmailAddress(email).Address;
             this.State = state;
         }
 

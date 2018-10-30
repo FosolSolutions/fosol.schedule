@@ -13,6 +13,14 @@ namespace Fosol.Schedule.Entities.ValueObjects
         #endregion
 
         #region Constructors
+        /// <summary>
+        /// Creates a new instance of a EmailAddress object.
+        /// </summary>
+        public EmailAddress()
+        {
+
+        }
+
         public EmailAddress(string email)
         {
             this.Address = email;

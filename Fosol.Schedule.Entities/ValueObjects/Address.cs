@@ -47,6 +47,14 @@ namespace Fosol.Schedule.Entities.ValueObjects
 
         #region Constructors
         /// <summary>
+        /// Creates a new instance of a Address object.
+        /// </summary>
+        public Address()
+        {
+
+        }
+
+        /// <summary>
         /// Creates a new instance of a Address object, and initializes it with the specified properties.
         /// </summary>
         /// <param name="name"></param>

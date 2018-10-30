@@ -51,12 +51,15 @@ namespace Fosol.Schedule.DAL.Extensions
             if (assembly == null) throw new ArgumentNullException(nameof(assembly));
 
             var type = typeof(IEntityTypeConfiguration<>);
-            var configurations = assembly.GetTypes().Where(t => t.IsClass && type.IsAssignableFrom(t));
+            var configurations = assembly.GetTypes().Where(t => t.IsClass && t.GetInterfaces().Any(i => i.Name.Equals(type.Name)));
 
-            var method = typeof(ModelBuilder).GetMethod(nameof(ModelBuilder.ApplyConfiguration));
+            var method = typeof(ModelBuilder).GetMethods(BindingFlags.Instance | BindingFlags.Public).Where(m => m.Name.Equals(nameof(ModelBuilder.ApplyConfiguration)) && m.GetParameters()[0].ParameterType.GetGenericTypeDefinition() == type).First();
             foreach (var config in configurations)
             {
-                method.Invoke(modelBuilder, new[] { config });
+                var entityConfig = Activator.CreateInstance(config);
+                var entityType = config.GetInterfaces().FirstOrDefault().GetGenericArguments()[0];
+                var applyConfigurationMethod = method.MakeGenericMethod(entityType);
+                applyConfigurationMethod.Invoke(modelBuilder, new[] { entityConfig });
             }
 
             return modelBuilder;

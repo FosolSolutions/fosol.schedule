@@ -18,6 +18,14 @@ namespace Fosol.Schedule.Entities.ValueObjects
         #endregion
 
         #region Constructors
+        /// <summary>
+        /// Creates a new instance of a PhoneNumber object.
+        /// </summary>
+        public PhoneNumber()
+        {
+
+        }
+
         public PhoneNumber(string name, string number)
         {
             this.Name = name;

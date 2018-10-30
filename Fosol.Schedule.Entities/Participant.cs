@@ -59,7 +59,7 @@ namespace Fosol.Schedule.Entities
         /// <summary>
         /// get/set - An email address that identifies this participant.
         /// </summary>
-        public EmailAddress Email { get; set; }
+        public string Email { get; set; }
 
         /// <summary>
         /// get/set - The persons title.
@@ -189,7 +189,7 @@ namespace Fosol.Schedule.Entities
             this.FirstName = firstName;
             this.LastName = lastName;
             this.Key = Guid.NewGuid();
-            this.Email = new EmailAddress(email);
+            this.Email = new EmailAddress(email).Address;
             this.HomeAddress = home;
             this.WorkAddress = work;
         }

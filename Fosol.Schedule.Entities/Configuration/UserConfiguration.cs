@@ -14,7 +14,7 @@ namespace Fosol.Schedule.Entities.Configuration
 
             builder.Property(m => m.Id).ValueGeneratedOnAdd();
             builder.Property(m => m.Key).IsRequired();
-            builder.Property(m => m.Email).HasMaxLength(250);
+            builder.Property(m => m.Email).HasMaxLength(150).IsRequired();
             builder.Property(m => m.RowVersion).IsRowVersion();
 
             builder.HasOne(m => m.Info).WithOne(m => m.User).HasForeignKey<UserInfo>(m => m.UserId).OnDelete(DeleteBehavior.Cascade);

@@ -14,8 +14,8 @@ namespace Fosol.Schedule.Entities.Configuration
 
             builder.Property(m => m.Id).ValueGeneratedOnAdd();
             builder.Property(m => m.Key).IsRequired();
+            builder.Property(m => m.Email).HasMaxLength(150).IsRequired();
             builder.Property(m => m.DisplayName).HasMaxLength(100).IsRequired();
-            builder.Property(m => m.Email).HasMaxLength(250);
             builder.Property(m => m.Title).HasMaxLength(100);
             builder.Property(m => m.FirstName).HasMaxLength(100).IsRequired();
             builder.Property(m => m.MiddleName).HasMaxLength(100);

@@ -75,7 +75,7 @@ namespace Fosol.Schedule.Entities
         /// <summary>
         /// get/set - The account's email adddress.
         /// </summary>
-        public EmailAddress Email { get; set; }
+        public string Email { get; set; }
 
         /// <summary>
         /// get - A collection of users associated with this account.

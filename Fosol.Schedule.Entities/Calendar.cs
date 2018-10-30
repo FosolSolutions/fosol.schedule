@@ -55,11 +55,6 @@ namespace Fosol.Schedule.Entities
         public ICollection<Participant> Participants { get; private set; } = new List<Participant>();
 
         /// <summary>
-        /// get - A collection of attributes for this calendar.
-        /// </summary>
-        public ICollection<CalendarAttribute> Attributes { get; private set; } = new List<CalendarAttribute>();
-
-        /// <summary>
         /// get - A collection of criteria for this calendar.
         /// </summary>
         public ICollection<CalendarCriteria> Criteria { get; private set; } = new List<CalendarCriteria>();
