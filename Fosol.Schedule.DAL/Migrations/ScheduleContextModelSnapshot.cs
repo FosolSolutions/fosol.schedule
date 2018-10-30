@@ -191,69 +191,6 @@ namespace Fosol.Schedule.DAL.Migrations
                     b.ToTable("ActivityCriteria");
                 });
 
-            modelBuilder.Entity("Fosol.Schedule.Entities.Address", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
-
-                    b.Property<int>("AddedById");
-
-                    b.Property<DateTime>("AddedOn")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("DATETIME2")
-                        .HasDefaultValueSql("GETUTCDATE()");
-
-                    b.Property<string>("Address1")
-                        .IsRequired()
-                        .HasMaxLength(150);
-
-                    b.Property<string>("Address2")
-                        .HasMaxLength(150);
-
-                    b.Property<int>("Category");
-
-                    b.Property<string>("City")
-                        .IsRequired()
-                        .HasMaxLength(150);
-
-                    b.Property<string>("Country")
-                        .IsRequired()
-                        .HasMaxLength(100);
-
-                    b.Property<bool>("IsPrimary");
-
-                    b.Property<string>("Name")
-                        .IsRequired()
-                        .HasMaxLength(100);
-
-                    b.Property<string>("PostalCode")
-                        .IsRequired()
-                        .HasMaxLength(20);
-
-                    b.Property<string>("Province")
-                        .IsRequired()
-                        .HasMaxLength(150);
-
-                    b.Property<byte[]>("RowVersion")
-                        .IsConcurrencyToken()
-                        .ValueGeneratedOnAddOrUpdate();
-
-                    b.Property<int?>("UpdatedById");
-
-                    b.Property<DateTime?>("UpdatedOn");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("AddedById");
-
-                    b.HasIndex("UpdatedById");
-
-                    b.HasIndex("Name", "IsPrimary", "Province", "PostalCode", "Country");
-
-                    b.ToTable("Addresses");
-                });
-
             modelBuilder.Entity("Fosol.Schedule.Entities.Attribute", b =>
                 {
                     b.Property<int>("Id")
@@ -709,19 +646,6 @@ namespace Fosol.Schedule.DAL.Migrations
                     b.ToTable("Participants");
                 });
 
-            modelBuilder.Entity("Fosol.Schedule.Entities.ParticipantAddress", b =>
-                {
-                    b.Property<int>("ParticipantId");
-
-                    b.Property<int>("AddressId");
-
-                    b.HasKey("ParticipantId", "AddressId");
-
-                    b.HasIndex("AddressId");
-
-                    b.ToTable("ParticipantAddresses");
-                });
-
             modelBuilder.Entity("Fosol.Schedule.Entities.ParticipantAttribute", b =>
                 {
                     b.Property<int>("ParticipantId");
@@ -885,19 +809,6 @@ namespace Fosol.Schedule.DAL.Migrations
                     b.HasIndex("AccountRoleId");
 
                     b.ToTable("UserAccountRoles");
-                });
-
-            modelBuilder.Entity("Fosol.Schedule.Entities.UserAddress", b =>
-                {
-                    b.Property<int>("UserId");
-
-                    b.Property<int>("AddressId");
-
-                    b.HasKey("UserId", "AddressId");
-
-                    b.HasIndex("AddressId");
-
-                    b.ToTable("UserAddresses");
                 });
 
             modelBuilder.Entity("Fosol.Schedule.Entities.UserAttribute", b =>
@@ -1086,17 +997,6 @@ namespace Fosol.Schedule.DAL.Migrations
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
-            modelBuilder.Entity("Fosol.Schedule.Entities.Address", b =>
-                {
-                    b.HasOne("Fosol.Schedule.Entities.User", "AddedBy")
-                        .WithMany()
-                        .HasForeignKey("AddedById");
-
-                    b.HasOne("Fosol.Schedule.Entities.User", "UpdatedBy")
-                        .WithMany()
-                        .HasForeignKey("UpdatedById");
-                });
-
             modelBuilder.Entity("Fosol.Schedule.Entities.Attribute", b =>
                 {
                     b.HasOne("Fosol.Schedule.Entities.User", "AddedBy")
@@ -1282,18 +1182,90 @@ namespace Fosol.Schedule.DAL.Migrations
                     b.HasOne("Fosol.Schedule.Entities.User", "User")
                         .WithMany("Participants")
                         .HasForeignKey("UserId");
-                });
 
-            modelBuilder.Entity("Fosol.Schedule.Entities.ParticipantAddress", b =>
-                {
-                    b.HasOne("Fosol.Schedule.Entities.Address", "Address")
-                        .WithMany("Participants")
-                        .HasForeignKey("AddressId")
-                        .OnDelete(DeleteBehavior.Cascade);
+                    b.OwnsOne("Fosol.Schedule.Entities.Address", "HomeAddress", b1 =>
+                        {
+                            b1.Property<int>("ParticipantId")
+                                .ValueGeneratedOnAdd()
+                                .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
 
-                    b.HasOne("Fosol.Schedule.Entities.Participant", "Participant")
-                        .WithMany("Addresses")
-                        .HasForeignKey("ParticipantId");
+                            b1.Property<string>("Address1")
+                                .HasColumnName("HomeAddress1")
+                                .HasMaxLength(150);
+
+                            b1.Property<string>("Address2")
+                                .HasColumnName("HomeAddress2")
+                                .HasMaxLength(150);
+
+                            b1.Property<string>("City")
+                                .HasColumnName("HomeCity")
+                                .HasMaxLength(150);
+
+                            b1.Property<string>("Country")
+                                .HasColumnName("HomeCountry")
+                                .HasMaxLength(100);
+
+                            b1.Property<string>("Name")
+                                .HasColumnName("HomeName")
+                                .HasMaxLength(100);
+
+                            b1.Property<string>("PostalCode")
+                                .HasColumnName("HomePostalCode")
+                                .HasMaxLength(20);
+
+                            b1.Property<string>("Province")
+                                .HasColumnName("HomeProvince")
+                                .HasMaxLength(150);
+
+                            b1.ToTable("Participants");
+
+                            b1.HasOne("Fosol.Schedule.Entities.Participant")
+                                .WithOne("HomeAddress")
+                                .HasForeignKey("Fosol.Schedule.Entities.Address", "ParticipantId")
+                                .OnDelete(DeleteBehavior.Cascade);
+                        });
+
+                    b.OwnsOne("Fosol.Schedule.Entities.Address", "WorkAddress", b1 =>
+                        {
+                            b1.Property<int>("ParticipantId")
+                                .ValueGeneratedOnAdd()
+                                .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                            b1.Property<string>("Address1")
+                                .HasColumnName("WorkAddress1")
+                                .HasMaxLength(150);
+
+                            b1.Property<string>("Address2")
+                                .HasColumnName("WorkAddress2")
+                                .HasMaxLength(150);
+
+                            b1.Property<string>("City")
+                                .HasColumnName("WorkCity")
+                                .HasMaxLength(150);
+
+                            b1.Property<string>("Country")
+                                .HasColumnName("WorkCountry")
+                                .HasMaxLength(100);
+
+                            b1.Property<string>("Name")
+                                .HasColumnName("WorkName")
+                                .HasMaxLength(100);
+
+                            b1.Property<string>("PostalCode")
+                                .HasColumnName("WorkPostalCode")
+                                .HasMaxLength(20);
+
+                            b1.Property<string>("Province")
+                                .HasColumnName("WorkProvince")
+                                .HasMaxLength(150);
+
+                            b1.ToTable("Participants");
+
+                            b1.HasOne("Fosol.Schedule.Entities.Participant")
+                                .WithOne("WorkAddress")
+                                .HasForeignKey("Fosol.Schedule.Entities.Address", "ParticipantId")
+                                .OnDelete(DeleteBehavior.Cascade);
+                        });
                 });
 
             modelBuilder.Entity("Fosol.Schedule.Entities.ParticipantAttribute", b =>
@@ -1369,18 +1341,6 @@ namespace Fosol.Schedule.DAL.Migrations
                         .HasForeignKey("UserId");
                 });
 
-            modelBuilder.Entity("Fosol.Schedule.Entities.UserAddress", b =>
-                {
-                    b.HasOne("Fosol.Schedule.Entities.Address", "Address")
-                        .WithMany("Users")
-                        .HasForeignKey("AddressId")
-                        .OnDelete(DeleteBehavior.Cascade);
-
-                    b.HasOne("Fosol.Schedule.Entities.User", "User")
-                        .WithMany("Addresses")
-                        .HasForeignKey("UserId");
-                });
-
             modelBuilder.Entity("Fosol.Schedule.Entities.UserAttribute", b =>
                 {
                     b.HasOne("Fosol.Schedule.Entities.Attribute", "Attribute")
@@ -1420,6 +1380,86 @@ namespace Fosol.Schedule.DAL.Migrations
                     b.HasOne("Fosol.Schedule.Entities.User", "User")
                         .WithOne("Info")
                         .HasForeignKey("Fosol.Schedule.Entities.UserInfo", "UserId");
+
+                    b.OwnsOne("Fosol.Schedule.Entities.Address", "HomeAddress", b1 =>
+                        {
+                            b1.Property<int?>("UserInfoUserId");
+
+                            b1.Property<string>("Address1")
+                                .HasColumnName("HomeAddress1")
+                                .HasMaxLength(150);
+
+                            b1.Property<string>("Address2")
+                                .HasColumnName("HomeAddress2")
+                                .HasMaxLength(150);
+
+                            b1.Property<string>("City")
+                                .HasColumnName("HomeCity")
+                                .HasMaxLength(150);
+
+                            b1.Property<string>("Country")
+                                .HasColumnName("HomeCountry")
+                                .HasMaxLength(100);
+
+                            b1.Property<string>("Name")
+                                .HasColumnName("HomeName")
+                                .HasMaxLength(100);
+
+                            b1.Property<string>("PostalCode")
+                                .HasColumnName("HomePostalCode")
+                                .HasMaxLength(20);
+
+                            b1.Property<string>("Province")
+                                .HasColumnName("HomeProvince")
+                                .HasMaxLength(150);
+
+                            b1.ToTable("UserInfo");
+
+                            b1.HasOne("Fosol.Schedule.Entities.UserInfo")
+                                .WithOne("HomeAddress")
+                                .HasForeignKey("Fosol.Schedule.Entities.Address", "UserInfoUserId")
+                                .OnDelete(DeleteBehavior.Cascade);
+                        });
+
+                    b.OwnsOne("Fosol.Schedule.Entities.Address", "WorkAddress", b1 =>
+                        {
+                            b1.Property<int?>("UserInfoUserId");
+
+                            b1.Property<string>("Address1")
+                                .HasColumnName("WorkAddress1")
+                                .HasMaxLength(150);
+
+                            b1.Property<string>("Address2")
+                                .HasColumnName("WorkAddress2")
+                                .HasMaxLength(150);
+
+                            b1.Property<string>("City")
+                                .HasColumnName("WorkCity")
+                                .HasMaxLength(150);
+
+                            b1.Property<string>("Country")
+                                .HasColumnName("WorkCountry")
+                                .HasMaxLength(100);
+
+                            b1.Property<string>("Name")
+                                .HasColumnName("WorkName")
+                                .HasMaxLength(100);
+
+                            b1.Property<string>("PostalCode")
+                                .HasColumnName("WorkPostalCode")
+                                .HasMaxLength(20);
+
+                            b1.Property<string>("Province")
+                                .HasColumnName("WorkProvince")
+                                .HasMaxLength(150);
+
+                            b1.ToTable("UserInfo");
+
+                            b1.HasOne("Fosol.Schedule.Entities.UserInfo")
+                                .WithOne("WorkAddress")
+                                .HasForeignKey("Fosol.Schedule.Entities.Address", "UserInfoUserId")
+                                .OnDelete(DeleteBehavior.Cascade);
+                        });
                 });
 
             modelBuilder.Entity("Fosol.Schedule.Entities.UserSetting", b =>

@@ -1,7 +1,9 @@
-﻿using Fosol.Core.Extensions.ApplicationBuilders;
+﻿using FluentValidation.AspNetCore;
+using Fosol.Core.Extensions.ApplicationBuilders;
 using Fosol.Core.Extensions.ServiceCollections;
 using Fosol.Schedule.API.Helpers.Mail;
 using Fosol.Schedule.DAL;
+using Fosol.Schedule.Models.Validation;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -108,7 +110,7 @@ namespace Fosol.Schedule.API
                     options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
                     options.SerializerSettings.Converters.Add(new StringEnumConverter());
                     options.SerializerSettings.NullValueHandling = NullValueHandling.Ignore;
-                });
+                }).AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<AccountValidator>());
 
             services.AddResponseHeaders(options =>
             {

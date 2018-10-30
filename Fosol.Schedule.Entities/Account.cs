@@ -58,12 +58,12 @@ namespace Fosol.Schedule.Entities
         /// <summary>
         /// get - A collection of users associated with this account.
         /// </summary>
-        public ICollection<AccountUser> Users { get; set; } = new List<AccountUser>();
+        public ICollection<AccountUser> Users { get; private set; } = new List<AccountUser>();
 
         /// <summary>
         /// get - A collection of all the roles for this account.
         /// </summary>
-        public ICollection<AccountRole> Roles { get; set; } = new List<AccountRole>();
+        public ICollection<AccountRole> Roles { get; private set; } = new List<AccountRole>();
         #endregion
 
         #region Constructors

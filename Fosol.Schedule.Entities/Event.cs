@@ -66,17 +66,17 @@ namespace Fosol.Schedule.Entities
         /// <summary>
         /// get - A collection of criteria which are required to participate in the events.
         /// </summary>
-        public ICollection<EventCriteria> Criteria { get; set; } = new List<EventCriteria>();
+        public ICollection<EventCriteria> Criteria { get; private set; } = new List<EventCriteria>();
 
         /// <summary>
         /// get - A collection of activities within this event.
         /// </summary>
-        public ICollection<Activity> Activities { get; set; } = new List<Activity>();
+        public ICollection<Activity> Activities { get; private set; } = new List<Activity>();
 
         /// <summary>
         /// get - A collection of tags associated with this event.
         /// </summary>
-        public ICollection<EventTag> Tags { get; set; } = new List<EventTag>();
+        public ICollection<EventTag> Tags { get; private set; } = new List<EventTag>();
         #endregion
 
         #region Constructors

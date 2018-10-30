@@ -42,12 +42,12 @@ namespace Fosol.Schedule.Entities
         /// <summary>
         /// get - A collection of users who own this contact information.  It'll only ever be one.
         /// </summary>
-        public ICollection<UserContactInfo> UserContactInfo { get; set; } = new List<UserContactInfo>();
+        public ICollection<UserContactInfo> UserContactInfo { get; private set; } = new List<UserContactInfo>();
 
         /// <summary>
         /// get - A collection of participants who references this information.  It'll only ever be one.
         /// </summary>
-        public ICollection<ParticipantContactInfo> ParticipantContactInfo { get; set; } = new List<ParticipantContactInfo>();
+        public ICollection<ParticipantContactInfo> ParticipantContactInfo { get; private set; } = new List<ParticipantContactInfo>();
         #endregion
 
         #region Constructors

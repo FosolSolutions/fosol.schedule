@@ -59,42 +59,37 @@ namespace Fosol.Schedule.Entities
         /// <summary>
         /// get - A collection of all the acounts owned by this user.
         /// </summary>
-        public ICollection<Account> OwnedAccounts { get; set; } = new List<Account>();
+        public ICollection<Account> OwnedAccounts { get; private set; } = new List<Account>();
 
         /// <summary>
         /// get - A collection of all the accounts this user is associated with.
         /// </summary>
-        public ICollection<AccountUser> Accounts { get; set; } = new List<AccountUser>();
+        public ICollection<AccountUser> Accounts { get; private set; } = new List<AccountUser>();
 
         /// <summary>
         /// get - A collection of all the roles this user is part of.
         /// </summary>
-        public ICollection<UserAccountRole> Roles { get; set; } = new List<UserAccountRole>();
+        public ICollection<UserAccountRole> Roles { get; private set; } = new List<UserAccountRole>();
 
         /// <summary>
         /// get - A collection of all the participants associated with this user.
         /// </summary>
-        public ICollection<Participant> Participants { get; set; } = new List<Participant>();
+        public ICollection<Participant> Participants { get; private set; } = new List<Participant>();
 
         /// <summary>
         /// get - A collection of user contact information.
         /// </summary>
-        public ICollection<UserContactInfo> ContactInformation { get; set; } = new List<UserContactInfo>();
-
-        /// <summary>
-        /// get - A collection of addresses for this user.
-        /// </summary>
-        public ICollection<UserAddress> Addresses { get; set; } = new List<UserAddress>();
+        public ICollection<UserContactInfo> ContactInformation { get; private set; } = new List<UserContactInfo>();
 
         /// <summary>
         /// get - A collection of attributes for this user.
         /// </summary>
-        public ICollection<UserAttribute> Attributes { get; set; } = new List<UserAttribute>();
+        public ICollection<UserAttribute> Attributes { get; private set; } = new List<UserAttribute>();
 
         /// <summary>
         /// get - A collection of settings for this user.
         /// </summary>
-        public ICollection<UserSetting> Settings { get; set; } = new List<UserSetting>();
+        public ICollection<UserSetting> Settings { get; private set; } = new List<UserSetting>();
         #endregion
 
         #region Constructors

@@ -22,7 +22,7 @@ namespace Fosol.Schedule.Entities
         /// <summary>
         /// get - A collection of events this tag is associated with.
         /// </summary>
-        public ICollection<Event> Events { get; set; } = new List<Event>();
+        public ICollection<Event> Events { get; private set; } = new List<Event>();
         #endregion
 
         #region Constructors

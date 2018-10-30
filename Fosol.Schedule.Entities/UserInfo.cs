@@ -56,6 +56,16 @@ namespace Fosol.Schedule.Entities
         /// get/set - The perons gender.
         /// </summary>
         public Gender? Gender { get; set; }
+
+        /// <summary>
+        /// get/set - The user's home address.
+        /// </summary>
+        public Address HomeAddress { get; set; }
+
+        /// <summary>
+        /// get/set - The users' work address.
+        /// </summary>
+        public Address WorkAddress { get; set; }
         #endregion
 
         #region Constructors

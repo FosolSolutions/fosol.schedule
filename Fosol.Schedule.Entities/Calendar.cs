@@ -54,22 +54,22 @@ namespace Fosol.Schedule.Entities
         /// <summary>
         /// get - A collection of events within this calendar.
         /// </summary>
-        public ICollection<Event> Events { get; set; } = new List<Event>();
+        public ICollection<Event> Events { get; private set; } = new List<Event>();
 
         /// <summary>
         /// get - A collection of participants within this calendar.
         /// </summary>
-        public ICollection<Participant> Participants { get; set; } = new List<Participant>();
+        public ICollection<Participant> Participants { get; private set; } = new List<Participant>();
 
         /// <summary>
         /// get - A collection of attributes for this calendar.
         /// </summary>
-        public ICollection<CalendarAttribute> Attributes { get; set; } = new List<CalendarAttribute>();
+        public ICollection<CalendarAttribute> Attributes { get; private set; } = new List<CalendarAttribute>();
 
         /// <summary>
         /// get - A collection of criteria for this calendar.
         /// </summary>
-        public ICollection<CalendarCriteria> Criteria { get; set; } = new List<CalendarCriteria>();
+        public ICollection<CalendarCriteria> Criteria { get; private set; } = new List<CalendarCriteria>();
         #endregion
 
         #region Constructors

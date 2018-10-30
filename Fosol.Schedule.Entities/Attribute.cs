@@ -38,12 +38,12 @@ namespace Fosol.Schedule.Entities
         /// <summary>
         /// get - A collection of participants associated with this attribute.
         /// </summary>
-        public ICollection<ParticipantAttribute> Participants { get; set; } = new List<ParticipantAttribute>();
+        public ICollection<ParticipantAttribute> Participants { get; private set; } = new List<ParticipantAttribute>();
 
         /// <summary>
         /// get - A collection of users associated with this attribute.
         /// </summary>
-        public ICollection<UserAttribute> Users { get; set; } = new List<UserAttribute>();
+        public ICollection<UserAttribute> Users { get; private set; } = new List<UserAttribute>();
         #endregion
 
         #region Constructors

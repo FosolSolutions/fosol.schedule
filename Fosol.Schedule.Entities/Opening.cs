@@ -71,17 +71,17 @@ namespace Fosol.Schedule.Entities
         /// <summary>
         /// get/set - A collection of participants that have been accepted to the opening.
         /// </summary>
-        public ICollection<OpeningParticipant> Participants { get; set; } = new List<OpeningParticipant>();
+        public ICollection<OpeningParticipant> Participants { get; private set; } = new List<OpeningParticipant>();
 
         /// <summary>
         /// get/set - A collection of applications.  These are participants that are apply for the opening.
         /// </summary>
-        public ICollection<OpeningParticipantApplication> Applications { get; set; } = new List<OpeningParticipantApplication>();
+        public ICollection<OpeningParticipantApplication> Applications { get; private set; } = new List<OpeningParticipantApplication>();
 
         /// <summary>
         /// get/set - A collection of criteria.
         /// </summary>
-        public ICollection<OpeningCriteria> Criteria { get; set; } = new List<OpeningCriteria>();
+        public ICollection<OpeningCriteria> Criteria { get; private set; } = new List<OpeningCriteria>();
         #endregion
 
         #region Constructors

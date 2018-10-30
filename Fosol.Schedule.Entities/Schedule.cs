@@ -17,7 +17,7 @@ namespace Fosol.Schedule.Entities
         public string Description { get; set; }
         public DateTime StartDate { get; set; }
         public DateTime EndDate { get; set; }
-        public ICollection<Event> Events { get; set; } // TODO: Must use many-to-many table because events are linked to Calendar and not Schedule.  Or I need to instead create a filter which will pull in events from calendars.
+        public ICollection<Event> Events { get; private set; } // TODO: Must use many-to-many table because events are linked to Calendar and not Schedule.  Or I need to instead create a filter which will pull in events from calendars.
         #endregion
     }
 }

@@ -390,7 +390,13 @@ namespace Fosol.Schedule.DAL.Services
             if (calendar == null) throw new ArgumentNullException(nameof(calendar));
             if (user == null) throw new ArgumentNullException(nameof(user));
 
-            var p = new Participant(calendar, displayName, firstName, lastName, email)
+            Address home = null;
+            if (!String.IsNullOrWhiteSpace(address))
+            {
+                var parts = address.Split(',').Select(v => v.Trim()).ToArray();
+                home = new Address("Home", parts[0], parts[1], parts[2], parts[3], parts[4]);
+            }
+            var p = new Participant(calendar, displayName, firstName, lastName, email, home)
             {
                 AddedById = user.Id,
                 Gender = gender
@@ -406,12 +412,6 @@ namespace Fosol.Schedule.DAL.Services
             {
                 var ci = new ContactInfo(p, "Home Phone", ContactInfoType.Phone, ContactInfoCategory.Personal, phone) { AddedById = user.Id };
                 this.Context.ContactInfo.Add(ci);
-            }
-            if (!String.IsNullOrWhiteSpace(address))
-            {
-                var parts = address.Split(',').Select(v => v.Trim()).ToArray();
-                var a = new Address(p, parts[0], parts[1], parts[2], parts[3], parts[4], ContactInfoCategory.Personal) { AddedById = user.Id };
-                this.Context.Addresses.Add(a);
             }
             if (!String.IsNullOrWhiteSpace(attributes))
             {

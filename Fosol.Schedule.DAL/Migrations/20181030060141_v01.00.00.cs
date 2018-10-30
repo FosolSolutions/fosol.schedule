@@ -112,44 +112,6 @@ namespace Fosol.Schedule.DAL.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Addresses",
-                columns: table => new
-                {
-                    AddedById = table.Column<int>(nullable: false),
-                    AddedOn = table.Column<DateTime>(type: "DATETIME2", nullable: false, defaultValueSql: "GETUTCDATE()"),
-                    UpdatedById = table.Column<int>(nullable: true),
-                    UpdatedOn = table.Column<DateTime>(nullable: true),
-                    RowVersion = table.Column<byte[]>(rowVersion: true, nullable: true),
-                    Id = table.Column<int>(nullable: false)
-                        .Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
-                    Name = table.Column<string>(maxLength: 100, nullable: false),
-                    IsPrimary = table.Column<bool>(nullable: false),
-                    Address1 = table.Column<string>(maxLength: 150, nullable: false),
-                    Address2 = table.Column<string>(maxLength: 150, nullable: true),
-                    City = table.Column<string>(maxLength: 150, nullable: false),
-                    Province = table.Column<string>(maxLength: 150, nullable: false),
-                    PostalCode = table.Column<string>(maxLength: 20, nullable: false),
-                    Country = table.Column<string>(maxLength: 100, nullable: false),
-                    Category = table.Column<int>(nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Addresses", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Addresses_Users_AddedById",
-                        column: x => x.AddedById,
-                        principalTable: "Users",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                    table.ForeignKey(
-                        name: "FK_Addresses_Users_UpdatedById",
-                        column: x => x.UpdatedById,
-                        principalTable: "Users",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
-                });
-
-            migrationBuilder.CreateTable(
                 name: "Attributes",
                 columns: table => new
                 {
@@ -267,7 +229,21 @@ namespace Fosol.Schedule.DAL.Migrations
                     MiddleName = table.Column<string>(maxLength: 100, nullable: true),
                     LastName = table.Column<string>(maxLength: 100, nullable: false),
                     Gender = table.Column<int>(nullable: true),
-                    Birthdate = table.Column<DateTime>(nullable: true)
+                    Birthdate = table.Column<DateTime>(nullable: true),
+                    HomeName = table.Column<string>(maxLength: 100, nullable: true),
+                    HomeAddress1 = table.Column<string>(maxLength: 150, nullable: true),
+                    HomeAddress2 = table.Column<string>(maxLength: 150, nullable: true),
+                    HomeCity = table.Column<string>(maxLength: 150, nullable: true),
+                    HomeProvince = table.Column<string>(maxLength: 150, nullable: true),
+                    HomePostalCode = table.Column<string>(maxLength: 20, nullable: true),
+                    HomeCountry = table.Column<string>(maxLength: 100, nullable: true),
+                    WorkName = table.Column<string>(maxLength: 100, nullable: true),
+                    WorkAddress1 = table.Column<string>(maxLength: 150, nullable: true),
+                    WorkAddress2 = table.Column<string>(maxLength: 150, nullable: true),
+                    WorkCity = table.Column<string>(maxLength: 150, nullable: true),
+                    WorkProvince = table.Column<string>(maxLength: 150, nullable: true),
+                    WorkPostalCode = table.Column<string>(maxLength: 20, nullable: true),
+                    WorkCountry = table.Column<string>(maxLength: 100, nullable: true)
                 },
                 constraints: table =>
                 {
@@ -376,7 +352,21 @@ namespace Fosol.Schedule.DAL.Migrations
                     LastName = table.Column<string>(nullable: true),
                     Birthdate = table.Column<DateTime>(nullable: true),
                     Description = table.Column<string>(nullable: true),
-                    Gender = table.Column<int>(nullable: true)
+                    Gender = table.Column<int>(nullable: true),
+                    HomeName = table.Column<string>(maxLength: 100, nullable: true),
+                    HomeAddress1 = table.Column<string>(maxLength: 150, nullable: true),
+                    HomeAddress2 = table.Column<string>(maxLength: 150, nullable: true),
+                    HomeCity = table.Column<string>(maxLength: 150, nullable: true),
+                    HomeProvince = table.Column<string>(maxLength: 150, nullable: true),
+                    HomePostalCode = table.Column<string>(maxLength: 20, nullable: true),
+                    HomeCountry = table.Column<string>(maxLength: 100, nullable: true),
+                    WorkName = table.Column<string>(maxLength: 100, nullable: true),
+                    WorkAddress1 = table.Column<string>(maxLength: 150, nullable: true),
+                    WorkAddress2 = table.Column<string>(maxLength: 150, nullable: true),
+                    WorkCity = table.Column<string>(maxLength: 150, nullable: true),
+                    WorkProvince = table.Column<string>(maxLength: 150, nullable: true),
+                    WorkPostalCode = table.Column<string>(maxLength: 20, nullable: true),
+                    WorkCountry = table.Column<string>(maxLength: 100, nullable: true)
                 },
                 constraints: table =>
                 {
@@ -436,30 +426,6 @@ namespace Fosol.Schedule.DAL.Migrations
                         principalTable: "Users",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "UserAddresses",
-                columns: table => new
-                {
-                    UserId = table.Column<int>(nullable: false),
-                    AddressId = table.Column<int>(nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_UserAddresses", x => new { x.UserId, x.AddressId });
-                    table.ForeignKey(
-                        name: "FK_UserAddresses_Addresses_AddressId",
-                        column: x => x.AddressId,
-                        principalTable: "Addresses",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_UserAddresses_Users_UserId",
-                        column: x => x.UserId,
-                        principalTable: "Users",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -556,30 +522,6 @@ namespace Fosol.Schedule.DAL.Migrations
                         principalTable: "Criteria",
                         principalColumn: "Id",
                         onDelete: ReferentialAction.Cascade);
-                });
-
-            migrationBuilder.CreateTable(
-                name: "ParticipantAddresses",
-                columns: table => new
-                {
-                    ParticipantId = table.Column<int>(nullable: false),
-                    AddressId = table.Column<int>(nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_ParticipantAddresses", x => new { x.ParticipantId, x.AddressId });
-                    table.ForeignKey(
-                        name: "FK_ParticipantAddresses_Addresses_AddressId",
-                        column: x => x.AddressId,
-                        principalTable: "Addresses",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
-                    table.ForeignKey(
-                        name: "FK_ParticipantAddresses_Participants_ParticipantId",
-                        column: x => x.ParticipantId,
-                        principalTable: "Participants",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -1031,21 +973,6 @@ namespace Fosol.Schedule.DAL.Migrations
                 column: "CriteriaId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Addresses_AddedById",
-                table: "Addresses",
-                column: "AddedById");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Addresses_UpdatedById",
-                table: "Addresses",
-                column: "UpdatedById");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Addresses_Name_IsPrimary_Province_PostalCode_Country",
-                table: "Addresses",
-                columns: new[] { "Name", "IsPrimary", "Province", "PostalCode", "Country" });
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Attributes_AddedById",
                 table: "Attributes",
                 column: "AddedById");
@@ -1194,11 +1121,6 @@ namespace Fosol.Schedule.DAL.Migrations
                 columns: new[] { "ActivityId", "State", "OpeningType", "ApplicationProcess", "Name" });
 
             migrationBuilder.CreateIndex(
-                name: "IX_ParticipantAddresses_AddressId",
-                table: "ParticipantAddresses",
-                column: "AddressId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_ParticipantAttributes_AttributeId",
                 table: "ParticipantAttributes",
                 column: "AttributeId");
@@ -1275,11 +1197,6 @@ namespace Fosol.Schedule.DAL.Migrations
                 name: "IX_UserAccountRoles_AccountRoleId",
                 table: "UserAccountRoles",
                 column: "AccountRoleId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_UserAddresses_AddressId",
-                table: "UserAddresses",
-                column: "AddressId");
 
             migrationBuilder.CreateIndex(
                 name: "IX_UserAttributes_AttributeId",
@@ -1474,9 +1391,6 @@ namespace Fosol.Schedule.DAL.Migrations
                 name: "OpeningParticipants");
 
             migrationBuilder.DropTable(
-                name: "ParticipantAddresses");
-
-            migrationBuilder.DropTable(
                 name: "ParticipantAttributes");
 
             migrationBuilder.DropTable(
@@ -1484,9 +1398,6 @@ namespace Fosol.Schedule.DAL.Migrations
 
             migrationBuilder.DropTable(
                 name: "UserAccountRoles");
-
-            migrationBuilder.DropTable(
-                name: "UserAddresses");
 
             migrationBuilder.DropTable(
                 name: "UserAttributes");
@@ -1511,9 +1422,6 @@ namespace Fosol.Schedule.DAL.Migrations
 
             migrationBuilder.DropTable(
                 name: "AccountRoles");
-
-            migrationBuilder.DropTable(
-                name: "Addresses");
 
             migrationBuilder.DropTable(
                 name: "Attributes");

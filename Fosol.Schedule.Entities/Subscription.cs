@@ -48,7 +48,7 @@ namespace Fosol.Schedule.Entities
         /// <summary>
         /// get - A Collection of accounts using this subscription.
         /// </summary>
-        public ICollection<Account> Accounts { get; set; } = new List<Account>();
+        public ICollection<Account> Accounts { get; private set; } = new List<Account>();
         #endregion
 
         #region Constructors

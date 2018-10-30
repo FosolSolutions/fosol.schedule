@@ -103,19 +103,24 @@ namespace Fosol.Schedule.Entities
         public DateTime? Birthdate { get; set; }
 
         /// <summary>
-        /// get - A collection of contact information about the participant.
+        /// get/set - The participants home address.
         /// </summary>
-        public ICollection<ParticipantContactInfo> ContactInfo { get; set; } = new List<ParticipantContactInfo>(); // TODO: Need to limit the number.
+        public Address HomeAddress { get; set; }
 
         /// <summary>
-        /// get - A collection of addresses for the participant.
+        /// get/set - The participants work address.
         /// </summary>
-        public ICollection<ParticipantAddress> Addresses { get; set; } = new List<ParticipantAddress>(); // TODO: Need to limit the number.
+        public Address WorkAddress { get; set; }
+
+        /// <summary>
+        /// get - A collection of contact information about the participant.
+        /// </summary>
+        public ICollection<ParticipantContactInfo> ContactInfo { get; private set; } = new List<ParticipantContactInfo>(); // TODO: Need to limit the number.
 
         /// <summary>
         /// get - A collection of attributes for the participant.
         /// </summary>
-        public ICollection<ParticipantAttribute> Attributes { get; set; } = new List<ParticipantAttribute>(); // TODO: Need to limit the number.
+        public ICollection<ParticipantAttribute> Attributes { get; private set; } = new List<ParticipantAttribute>(); // TODO: Need to limit the number.
         #endregion
 
         #region Constructors
@@ -145,6 +150,8 @@ namespace Fosol.Schedule.Entities
             this.Birthdate = user.Info?.Birthdate;
             this.Key = user.Key;
             this.Email = user.Email;
+            this.HomeAddress = user.Info?.HomeAddress;
+            this.WorkAddress = user.Info?.WorkAddress;
         }
 
         /// <summary>
@@ -155,10 +162,12 @@ namespace Fosol.Schedule.Entities
         /// <param name="firstName"></param>
         /// <param name="lastName"></param>
         /// <param name="email"></param>
-        public Participant(Calendar calendar, string displayName, string firstName = null, string lastName = null, string email = null)
+        /// <param name="home"></param>
+        /// <param name="work"></param>
+        public Participant(Calendar calendar, string displayName, string firstName = null, string lastName = null, string email = null, Address home = null, Address work = null)
         {
             if (String.IsNullOrWhiteSpace(displayName))
-                throw new ArgumentException($"The argument '{nameof(displayName)}' is required and cannot be null or empty.");
+                throw new ArgumentException($"The argument '{nameof(displayName)}' is required and cannot be null or empty."); // TODO: Use string resource file.
 
             this.CalendarId = calendar?.Id ?? throw new ArgumentNullException(nameof(calendar));
             this.Calendar = calendar;
@@ -167,6 +176,8 @@ namespace Fosol.Schedule.Entities
             this.LastName = lastName;
             this.Key = Guid.NewGuid();
             this.Email = email;
+            this.HomeAddress = home;
+            this.WorkAddress = work;
         }
         #endregion
     }

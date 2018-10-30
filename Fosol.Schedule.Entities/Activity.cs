@@ -71,12 +71,12 @@ namespace Fosol.Schedule.Entities
         /// <summary>
         /// get/set - A collection of openings within this activity.
         /// </summary>
-        public ICollection<Opening> Openings { get; set; } = new List<Opening>();
+        public ICollection<Opening> Openings { get; private set; } = new List<Opening>();
 
         /// <summary>
         /// get/set - A collection of criteria within this activity.
         /// </summary>
-        public ICollection<ActivityCriteria> Criteria { get; set; } = new List<ActivityCriteria>();
+        public ICollection<ActivityCriteria> Criteria { get; private set; } = new List<ActivityCriteria>();
         #endregion
 
         #region Constructors
