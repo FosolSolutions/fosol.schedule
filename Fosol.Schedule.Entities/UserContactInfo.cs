@@ -1,5 +1,4 @@
 ﻿using System;
-using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Fosol.Schedule.Entities
 {
@@ -17,7 +16,6 @@ namespace Fosol.Schedule.Entities
         /// <summary>
         /// get/set - The user associated with the contact information.
         /// </summary>
-        [ForeignKey(nameof(UserId))]
         public User User { get; set; }
 
         /// <summary>
@@ -28,7 +26,6 @@ namespace Fosol.Schedule.Entities
         /// <summary>
         /// get/set - The contact information associated with the user.
         /// </summary>
-        [ForeignKey(nameof(ContactInfoId))]
         public ContactInfo ContactInfo { get; set; }
         #endregion
 

@@ -1,22 +1,12 @@
 ﻿namespace Fosol.Schedule.Models
 {
-    public class Address : BaseModel
+    public class Address
     {
         #region Properties
-        /// <summary>
-        /// get/set - Primary key uses IDENTITY.
-        /// </summary>
-        public int Id { get; set; }
-
         /// <summary>
         /// get/set - A unique name to identify this address.
         /// </summary>
         public string Name { get; set; }
-
-        /// <summary>
-        /// get/set - Whether this address is the primary address for the reference.
-        /// </summary>
-        public bool IsPrimary { get; set; }
 
         /// <summary>
         /// get/set - Address line 1.
@@ -47,11 +37,6 @@
         /// get/set - Country name.
         /// </summary>
         public string Country { get; set; }
-
-        /// <summary>
-        /// get/set - Category for this type of address.
-        /// </summary>
-        public Entities.ContactInfoCategory Category { get; set; }
         #endregion
     }
 }

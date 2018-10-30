@@ -17,7 +17,6 @@ namespace Fosol.Schedule.Entities
         /// <summary>
         /// get/set - The account associated with the user.
         /// </summary>
-        [ForeignKey(nameof(AccountId))]
         public Account Account { get; set; }
 
         /// <summary>
@@ -28,7 +27,6 @@ namespace Fosol.Schedule.Entities
         /// <summary>
         /// get/set - The user associated with the account.
         /// </summary>
-        [ForeignKey(nameof(UserId))]
         public User User { get; set; }
         #endregion
 

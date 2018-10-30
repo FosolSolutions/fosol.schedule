@@ -1,6 +1,5 @@
-﻿using System;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
+﻿using Fosol.Core.Data.ValueObjects;
+using System;
 
 namespace Fosol.Schedule.Entities
 {
@@ -13,13 +12,11 @@ namespace Fosol.Schedule.Entities
         /// <summary>
         /// get/set - Primary key and foreign key to the user.
         /// </summary>
-        [Key, DatabaseGenerated(DatabaseGeneratedOption.None)]
         public int UserId { get; set; }
 
         /// <summary>
         /// get/set - The user who this info belongs to.
         /// </summary>
-        [ForeignKey(nameof(UserId))]
         public User User { get; set; }
 
         /// <summary>
@@ -56,6 +53,41 @@ namespace Fosol.Schedule.Entities
         /// get/set - The perons gender.
         /// </summary>
         public Gender? Gender { get; set; }
+
+        /// <summary>
+        /// get/set - Foreign key to the home address.
+        /// </summary>
+        public int? HomeAddressId { get; set; }
+
+        /// <summary>
+        /// get/set - The user's home address.
+        /// </summary>
+        public Address HomeAddress { get; set; }
+
+        /// <summary>
+        /// get/set - Foreign key to the work address.
+        /// </summary>
+        public int? WorkAddressId { get; set; }
+
+        /// <summary>
+        /// get/set - The users' work address.
+        /// </summary>
+        public Address WorkAddress { get; set; }
+
+        /// <summary>
+        /// get/set - The participants home phone.
+        /// </summary>
+        public string HomePhone { get; set; }
+
+        /// <summary>
+        /// get/set - The participants mobile phone.
+        /// </summary>
+        public string MobilePhone { get; set; }
+
+        /// <summary>
+        /// get/set - The participants work phone.
+        /// </summary>
+        public string WorkPhone { get; set; }
         #endregion
 
         #region Constructors

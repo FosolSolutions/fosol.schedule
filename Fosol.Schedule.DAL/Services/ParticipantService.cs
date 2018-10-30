@@ -81,7 +81,6 @@ namespace Fosol.Schedule.DAL.Services
             // Strip out collections, they must be saved independently.
             model.Attributes = null;
             model.ContactInfo = null;
-            model.Addresses = null;
 
             base.Update(model);
         }
@@ -98,7 +97,7 @@ namespace Fosol.Schedule.DAL.Services
         public IEnumerable<Claim> GetClaims(int participantId)
         {
             var participant = this.Find((set) => set.Include(p => p.Attributes).ThenInclude(a => a.Attribute).Include(p => p.Calendar).ThenInclude(c => c.Account).SingleOrDefault(p => p.Id == participantId));
-            var email = this.Context.ContactInfo.FirstOrDefault(ci => ci.ParticipantContactInfo.Any(pci => pci.ParticipantId == participantId) && ci.Type == ContactInfoType.Email);
+            var email = this.Context.ContactInfo.FirstOrDefault(ci => ci.Participants.Any(pci => pci.ParticipantId == participantId) && ci.Type == ContactInfoType.Email);
 
             var claims = new List<Claim>(new[]
             {

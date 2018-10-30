@@ -1,8 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Fosol.Schedule.Entities
 {
@@ -15,7 +12,6 @@ namespace Fosol.Schedule.Entities
         /// <summary>
         /// get/set - Primary key uses IDENTITY.
         /// </summary>
-        [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
 
         /// <summary>
@@ -26,25 +22,21 @@ namespace Fosol.Schedule.Entities
         /// <summary>
         /// get/set - The parent event.
         /// </summary>
-        [ForeignKey(nameof(EventId))]
         public Event Event { get; set; }
 
         /// <summary>
         /// get/set - A unique key to identify this activity.
         /// </summary>
-        [Required]
         public Guid Key { get; set; }
 
         /// <summary>
         /// get/set - A unique name within an event to identify this activity.
         /// </summary>
-        [Required, MaxLength(250)]
         public string Name { get; set; }
 
         /// <summary>
         /// get/set - A description of this activity.
         /// </summary>
-        [MaxLength(2000)]
         public string Description { get; set; }
 
         /// <summary>
@@ -65,18 +57,23 @@ namespace Fosol.Schedule.Entities
         /// <summary>
         /// get/set - The order the activities will be displayed.
         /// </summary>
-        [DefaultValue(0)]
         public int Sequence { get; set; }
 
         /// <summary>
-        /// get/set - A collection of openings within this activity.
+        /// get - A collection of openings within this activity.
         /// </summary>
-        public ICollection<Opening> Openings { get; set; } = new List<Opening>();
+        public ICollection<Opening> Openings { get; private set; } = new List<Opening>();
 
         /// <summary>
-        /// get/set - A collection of criteria within this activity.
+        /// get - A collection of criteria within this activity.
         /// </summary>
-        public ICollection<ActivityCriteria> Criteria { get; set; } = new List<ActivityCriteria>();
+        public ICollection<ActivityCriteria> Criteria { get; private set; } = new List<ActivityCriteria>();
+
+        /// <summary>
+        /// get - A collection of tags for this activity.
+        /// </summary>
+        public ICollection<ActivityTag> Tags { get; private set; } = new List<ActivityTag>();
+
         #endregion
 
         #region Constructors

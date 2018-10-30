@@ -25,6 +25,31 @@ namespace Fosol.Schedule.Models
 
         public Account DefaultAccount { get; set; }
 
+        /// <summary>
+        /// get/set - The user's home address.
+        /// </summary>
+        public Address HomeAddress { get; set; }
+
+        /// <summary>
+        /// get/set - The users' work address.
+        /// </summary>
+        public Address WorkAddress { get; set; }
+
+        /// <summary>
+        /// get/set - The participants home phone.
+        /// </summary>
+        public PhoneNumber HomePhone { get; set; }
+
+        /// <summary>
+        /// get/set - The participants mobile phone.
+        /// </summary>
+        public PhoneNumber MobilePhone { get; set; }
+
+        /// <summary>
+        /// get/set - The participants work phone.
+        /// </summary>
+        public PhoneNumber WorkPhone { get; set; }
+
         public IList<Account> OwnedAccounts { get; set; }
 
         public IList<Account> Accounts { get; set; }

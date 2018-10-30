@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Fosol.Schedule.Entities
 {
@@ -11,7 +9,6 @@ namespace Fosol.Schedule.Entities
         /// <summary>
         /// get/set - The primary key uses IDENTITY.
         /// </summary>
-        [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
 
         /// <summary>
@@ -22,25 +19,21 @@ namespace Fosol.Schedule.Entities
         /// <summary>
         /// get/set - The parent activity.
         /// </summary>
-        [ForeignKey(nameof(ActivityId))]
         public Activity Activity { get; set; }
 
         /// <summary>
         /// get/set - A unique key to identify this opening.
         /// </summary>
-        [Required]
         public Guid Key { get; set; }
 
         /// <summary>
         /// get/set - A name to identify this opening.
         /// </summary>
-        [Required, MaxLength(250)]
         public string Name { get; set; }
 
         /// <summary>
         /// get/set - A description about this opening.
         /// </summary>
-        [MaxLength(2000)]
         public string Description { get; set; }
 
         /// <summary>
@@ -71,17 +64,22 @@ namespace Fosol.Schedule.Entities
         /// <summary>
         /// get/set - A collection of participants that have been accepted to the opening.
         /// </summary>
-        public ICollection<OpeningParticipant> Participants { get; set; } = new List<OpeningParticipant>();
+        public ICollection<OpeningParticipant> Participants { get; private set; } = new List<OpeningParticipant>();
 
         /// <summary>
         /// get/set - A collection of applications.  These are participants that are apply for the opening.
         /// </summary>
-        public ICollection<OpeningParticipantApplication> Applications { get; set; } = new List<OpeningParticipantApplication>();
+        public ICollection<OpeningParticipantApplication> Applications { get; private set; } = new List<OpeningParticipantApplication>();
 
         /// <summary>
-        /// get/set - A collection of criteria.
+        /// get/set - A collection of criteria for this opening.
         /// </summary>
-        public ICollection<OpeningCriteria> Criteria { get; set; } = new List<OpeningCriteria>();
+        public ICollection<OpeningCriteria> Criteria { get; private set; } = new List<OpeningCriteria>();
+
+        /// <summary>
+        /// get - A collection of tags for this opening.
+        /// </summary>
+        public ICollection<OpeningTag> Tags { get; private set; } = new List<OpeningTag>();
         #endregion
 
         #region Constructors

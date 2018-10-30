@@ -20,9 +20,24 @@ namespace Fosol.Schedule.Entities
         public string Value { get; set; }
 
         /// <summary>
+        /// get - A collection of calendars this tag is associated with.
+        /// </summary>
+        public ICollection<CalendarTag> Calendars { get; private set; } = new List<CalendarTag>();
+
+        /// <summary>
         /// get - A collection of events this tag is associated with.
         /// </summary>
-        public ICollection<Event> Events { get; set; } = new List<Event>();
+        public ICollection<EventTag> Events { get; private set; } = new List<EventTag>();
+
+        /// <summary>
+        /// get - A collection of activities this tag is associated with.
+        /// </summary>
+        public ICollection<ActivityTag> Activities { get; private set; } = new List<ActivityTag>();
+
+        /// <summary>
+        /// get - A collection of openings this tag is associated with.
+        /// </summary>
+        public ICollection<OpeningTag> Openings { get; private set; } = new List<OpeningTag>();
         #endregion
 
         #region Constructors

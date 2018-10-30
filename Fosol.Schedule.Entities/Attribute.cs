@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Fosol.Schedule.Entities
 {
@@ -14,36 +12,32 @@ namespace Fosol.Schedule.Entities
         /// <summary>
         /// get/set - The primary key uses IDENTITY.
         /// </summary>
-        [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
 
         /// <summary>
         /// get/set - Primary key.  A unique way to identify a attribute.
         /// </summary>
-        [Required, MaxLength(100)]
         public string Key { get; set; }
 
         /// <summary>
         /// get/set - Primary key.  A value to specify the attribute.
         /// </summary>
-        [Required, MaxLength(100)]
         public string Value { get; set; }
 
         /// <summary>
         /// get/set - The datatype of the attribute.
         /// </summary>
-        [Required, MaxLength(200)]
         public string ValueType { get; set; }
 
         /// <summary>
         /// get - A collection of participants associated with this attribute.
         /// </summary>
-        public ICollection<ParticipantAttribute> Participants { get; set; } = new List<ParticipantAttribute>();
+        public ICollection<ParticipantAttribute> Participants { get; private set; } = new List<ParticipantAttribute>();
 
         /// <summary>
         /// get - A collection of users associated with this attribute.
         /// </summary>
-        public ICollection<UserAttribute> Users { get; set; } = new List<UserAttribute>();
+        public ICollection<UserAttribute> Users { get; private set; } = new List<UserAttribute>();
         #endregion
 
         #region Constructors

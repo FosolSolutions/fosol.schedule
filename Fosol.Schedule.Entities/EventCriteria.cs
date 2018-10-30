@@ -1,5 +1,4 @@
 ﻿using System;
-using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Fosol.Schedule.Entities
 {
@@ -17,7 +16,6 @@ namespace Fosol.Schedule.Entities
         /// <summary>
         /// get/set - The event associated with the criteria.
         /// </summary>
-        [ForeignKey(nameof(EventId))]
         public Event Event { get; set; }
 
         /// <summary>
@@ -28,7 +26,6 @@ namespace Fosol.Schedule.Entities
         /// <summary>
         /// get/set - The criteria associated with the event.
         /// </summary>
-        [ForeignKey(nameof(CriteriaId))]
         public CriteriaObject Criteria { get; set; }
         #endregion
 

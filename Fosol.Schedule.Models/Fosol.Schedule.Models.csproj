@@ -5,6 +5,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="FluentValidation.AspNetCore" Version="8.0.100" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\Fosol.Schedule.Entities\Fosol.Schedule.Entities.csproj" />
   </ItemGroup>
 
