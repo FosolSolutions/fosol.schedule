@@ -81,7 +81,6 @@ namespace Fosol.Schedule.DAL.Services
             // Strip out collections, they must be saved independently.
             model.Attributes = null;
             model.ContactInfo = null;
-            model.Addresses = null;
 
             base.Update(model);
         }

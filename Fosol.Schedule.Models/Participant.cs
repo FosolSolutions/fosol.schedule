@@ -72,14 +72,34 @@ namespace Fosol.Schedule.Models
         public DateTime? Birthdate { get; set; }
 
         /// <summary>
+        /// get/set - The participants home address.
+        /// </summary>
+        public Address HomeAddress { get; set; }
+
+        /// <summary>
+        /// get/set - The participants work address.
+        /// </summary>
+        public Address WorkAddress { get; set; }
+
+        /// <summary>
+        /// get/set - The participants home phone.
+        /// </summary>
+        public PhoneNumber HomePhone { get; set; }
+
+        /// <summary>
+        /// get/set - The participants mobile phone.
+        /// </summary>
+        public PhoneNumber MobilePhone { get; set; }
+
+        /// <summary>
+        /// get/set - The participants work phone.
+        /// </summary>
+        public PhoneNumber WorkPhone { get; set; }
+
+        /// <summary>
         /// get - A collection of information about the participant.
         /// </summary>
         public IList<ContactInfo> ContactInfo { get; set; } = new List<ContactInfo>();
-
-        /// <summary>
-        /// get - A collection of addresses for the participant.
-        /// </summary>
-        public IList<Address> Addresses { get; set; } = new List<Address>();
 
         /// <summary>
         /// get - A collection of attributes for the participant.

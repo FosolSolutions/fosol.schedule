@@ -1,14 +1,13 @@
-﻿using Fosol.Core.Data;
-using System.Collections.Generic;
-
-namespace Fosol.Schedule.Entities.ValueObjects
+﻿namespace Fosol.Schedule.Entities
 {
-    /// <summary>
-    /// Address class, provides a way to manage address information in the datasource.
-    /// </summary>
-    public class Address : ValueObject
+    public class Address : BaseEntity
     {
         #region Properties
+        /// <summary>
+        /// get/set - Primary key uses IDENTITY.
+        /// </summary>
+        public int Id { get; set; }
+
         /// <summary>
         /// get/set - A unique name to identify this address.
         /// </summary>
@@ -72,23 +71,6 @@ namespace Fosol.Schedule.Entities.ValueObjects
             this.Province = province;
             this.PostalCode = postal;
             this.Country = country;
-        }
-        #endregion
-
-        #region Methods
-        /// <summary>
-        /// The properties of this address.
-        /// </summary>
-        /// <returns></returns>
-        protected override IEnumerable<object> GetAtomicValues()
-        {
-            yield return this.Name;
-            yield return this.Address1;
-            yield return this.Address2;
-            yield return this.City;
-            yield return this.Province;
-            yield return this.Country;
-            yield return this.PostalCode;
         }
         #endregion
     }

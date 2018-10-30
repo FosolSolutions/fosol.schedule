@@ -1,4 +1,4 @@
-﻿using Fosol.Schedule.Entities.ValueObjects;
+﻿using Fosol.Core.Data.ValueObjects;
 using System;
 using System.Collections.Generic;
 

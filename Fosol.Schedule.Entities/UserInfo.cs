@@ -1,4 +1,4 @@
-﻿using Fosol.Schedule.Entities.ValueObjects;
+﻿using Fosol.Core.Data.ValueObjects;
 using System;
 
 namespace Fosol.Schedule.Entities
@@ -55,9 +55,19 @@ namespace Fosol.Schedule.Entities
         public Gender? Gender { get; set; }
 
         /// <summary>
+        /// get/set - Foreign key to the home address.
+        /// </summary>
+        public int? HomeAddressId { get; set; }
+
+        /// <summary>
         /// get/set - The user's home address.
         /// </summary>
         public Address HomeAddress { get; set; }
+
+        /// <summary>
+        /// get/set - Foreign key to the work address.
+        /// </summary>
+        public int? WorkAddressId { get; set; }
 
         /// <summary>
         /// get/set - The users' work address.
@@ -67,17 +77,17 @@ namespace Fosol.Schedule.Entities
         /// <summary>
         /// get/set - The participants home phone.
         /// </summary>
-        public PhoneNumber HomePhone { get; set; }
+        public string HomePhone { get; set; }
 
         /// <summary>
         /// get/set - The participants mobile phone.
         /// </summary>
-        public PhoneNumber MobilePhone { get; set; }
+        public string MobilePhone { get; set; }
 
         /// <summary>
         /// get/set - The participants work phone.
         /// </summary>
-        public PhoneNumber WorkPhone { get; set; }
+        public string WorkPhone { get; set; }
         #endregion
 
         #region Constructors

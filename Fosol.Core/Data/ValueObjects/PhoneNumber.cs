@@ -1,7 +1,6 @@
-﻿using Fosol.Core.Data;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
-namespace Fosol.Schedule.Entities.ValueObjects
+namespace Fosol.Core.Data.ValueObjects
 {
     public class PhoneNumber : ValueObject
     {

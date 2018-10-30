@@ -1,4 +1,4 @@
-﻿using Fosol.Schedule.Entities.ValueObjects;
+﻿using Fosol.Core.Data.ValueObjects;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -53,6 +53,11 @@ namespace Fosol.Schedule.Entities
         public Subscription Subscription { get; set; }
 
         /// <summary>
+        /// get/set - Foreign key to the business address.
+        /// </summary>
+        public int? BusinessAddressId { get; set; }
+
+        /// <summary>
         /// get/set - The account's business address.
         /// </summary>
         public Address BusinessAddress { get; set; }
@@ -60,17 +65,17 @@ namespace Fosol.Schedule.Entities
         /// <summary>
         /// get/set - The account's business phone.
         /// </summary>
-        public PhoneNumber BusinessPhone { get; set; }
+        public string BusinessPhone { get; set; }
 
         /// <summary>
         /// get/set - The account's toll-free phone.
         /// </summary>
-        public PhoneNumber TollFreeNumber { get; set; }
+        public string TollFreeNumber { get; set; }
 
         /// <summary>
         /// get/set - The account's fax number.
         /// </summary>
-        public PhoneNumber FaxNumber { get; set; }
+        public string FaxNumber { get; set; }
 
         /// <summary>
         /// get/set - The account's email adddress.

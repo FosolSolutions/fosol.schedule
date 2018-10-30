@@ -1,4 +1,4 @@
-﻿using Fosol.Schedule.Entities.ValueObjects;
+﻿using Fosol.Core.Data.ValueObjects;
 using System;
 using System.Collections.Generic;
 
@@ -92,9 +92,19 @@ namespace Fosol.Schedule.Entities
         public DateTime? Birthdate { get; set; }
 
         /// <summary>
+        /// get/set - Foreign key to the home address.
+        /// </summary>
+        public int? HomeAddressId { get; set; }
+
+        /// <summary>
         /// get/set - The participants home address.
         /// </summary>
         public Address HomeAddress { get; set; }
+
+        /// <summary>
+        /// get/set - Foreign key to the work address.
+        /// </summary>
+        public int? WorkAddressId { get; set; }
 
         /// <summary>
         /// get/set - The participants work address.
@@ -104,17 +114,17 @@ namespace Fosol.Schedule.Entities
         /// <summary>
         /// get/set - The participants home phone.
         /// </summary>
-        public PhoneNumber HomePhone { get; set; }
+        public string HomePhone { get; set; }
 
         /// <summary>
         /// get/set - The participants mobile phone.
         /// </summary>
-        public PhoneNumber MobilePhone { get; set; }
+        public string MobilePhone { get; set; }
 
         /// <summary>
         /// get/set - The participants work phone.
         /// </summary>
-        public PhoneNumber WorkPhone { get; set; }
+        public string WorkPhone { get; set; }
 
         /// <summary>
         /// get - A collection of contact information about the participant.
@@ -165,7 +175,9 @@ namespace Fosol.Schedule.Entities
             this.Key = user.Key;
             this.Email = user.Email;
             this.HomeAddress = user.Info?.HomeAddress;
+            this.HomeAddressId = user.Info?.HomeAddressId;
             this.WorkAddress = user.Info?.WorkAddress;
+            this.WorkAddressId = user.Info?.WorkAddressId;
         }
 
         /// <summary>
@@ -190,7 +202,9 @@ namespace Fosol.Schedule.Entities
             this.LastName = lastName;
             this.Key = Guid.NewGuid();
             this.Email = new EmailAddress(email).Address;
+            this.HomeAddressId = home?.Id;
             this.HomeAddress = home;
+            this.WorkAddressId = work?.Id;
             this.WorkAddress = work;
         }
         #endregion

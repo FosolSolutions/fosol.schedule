@@ -10,7 +10,6 @@ namespace Fosol.Schedule.Models.Validation
         #region Constructors
         public AddressValidator()
         {
-            RuleFor(m => m.Id).GreaterThanOrEqualTo(0);
         }
         #endregion
     }
