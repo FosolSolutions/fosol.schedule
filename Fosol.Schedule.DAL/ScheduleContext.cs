@@ -86,7 +86,6 @@ namespace Fosol.Schedule.DAL
                 optionsBuilder.EnableSensitiveDataLogging();
                 //optionsBuilder.UseInMemoryDatabase("Schedule", options => { });
             }
-            optionsBuilder.EnableSensitiveDataLogging();
 
             base.OnConfiguring(optionsBuilder);
         }
