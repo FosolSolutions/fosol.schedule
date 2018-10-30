@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Fosol.Schedule.Entities
 {
@@ -14,13 +12,11 @@ namespace Fosol.Schedule.Entities
         /// <summary>
         /// get/set - Primary key uses IDENTITY
         /// </summary>
-        [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
 
         /// <summary>
         /// get/set - A unique name to identify this contact information.
         /// </summary>
-        [Required, MaxLength(100)]
         public string Name { get; set; }
 
         /// <summary>
@@ -36,18 +32,17 @@ namespace Fosol.Schedule.Entities
         /// <summary>
         /// get/set - The email address, phone number of other other.
         /// </summary>
-        [Required, MaxLength(250)]
         public string Value { get; set; }
 
         /// <summary>
         /// get - A collection of users who own this contact information.  It'll only ever be one.
         /// </summary>
-        public ICollection<UserContactInfo> UserContactInfo { get; private set; } = new List<UserContactInfo>();
+        public ICollection<UserContactInfo> Users { get; private set; } = new List<UserContactInfo>();
 
         /// <summary>
         /// get - A collection of participants who references this information.  It'll only ever be one.
         /// </summary>
-        public ICollection<ParticipantContactInfo> ParticipantContactInfo { get; private set; } = new List<ParticipantContactInfo>();
+        public ICollection<ParticipantContactInfo> Participants { get; private set; } = new List<ParticipantContactInfo>();
         #endregion
 
         #region Constructors
@@ -73,7 +68,7 @@ namespace Fosol.Schedule.Entities
             if (String.IsNullOrWhiteSpace(value))
                 throw new ArgumentNullException(nameof(value));
 
-            this.UserContactInfo.Add(new UserContactInfo(user, this));
+            this.Users.Add(new UserContactInfo(user, this));
             this.Name = name;
             this.Type = type;
             this.Category = category;
@@ -96,7 +91,7 @@ namespace Fosol.Schedule.Entities
             if (String.IsNullOrWhiteSpace(value))
                 throw new ArgumentNullException(nameof(value));
 
-            this.ParticipantContactInfo.Add(new ParticipantContactInfo(participant, this));
+            this.Participants.Add(new ParticipantContactInfo(participant, this));
             this.Name = name;
             this.Type = type;
             this.Category = category;

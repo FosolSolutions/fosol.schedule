@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Fosol.Schedule.Entities
 {
@@ -14,7 +12,6 @@ namespace Fosol.Schedule.Entities
         /// <summary>
         /// get/set - Primary key uses IDENTITY.  Unique way to identify the event.
         /// </summary>
-        [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
 
         /// <summary>
@@ -25,37 +22,31 @@ namespace Fosol.Schedule.Entities
         /// <summary>
         /// get/set - The calendar this event belongs to.
         /// </summary>
-        [ForeignKey(nameof(CalendarId))]
         public Calendar Calendar { get; set; }
 
         /// <summary>
         /// get/set - A unique key to identify this event.
         /// </summary>
-        [Required]
         public Guid Key { get; set; }
 
         /// <summary>
         /// get/set - A name to identify the event.
         /// </summary>
-        [Required, MaxLength(250)]
         public string Name { get; set; }
 
         /// <summary>
         /// get/set - A description of the event.
         /// </summary>
-        [MaxLength(2000)]
         public string Description { get; set; }
 
         /// <summary>
         /// get/set - An event always has a start date and time.
         /// </summary>
-        [Required]
         public DateTime StartOn { get; set; }
 
         /// <summary>
         /// get/set - An event always has an end date and time.
         /// </summary>
-        [Required]
         public DateTime EndOn { get; set; }
 
         /// <summary>

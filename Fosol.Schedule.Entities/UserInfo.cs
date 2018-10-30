@@ -1,6 +1,5 @@
-﻿using System;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
+﻿using Fosol.Schedule.Entities.ValueObjects;
+using System;
 
 namespace Fosol.Schedule.Entities
 {
@@ -13,13 +12,11 @@ namespace Fosol.Schedule.Entities
         /// <summary>
         /// get/set - Primary key and foreign key to the user.
         /// </summary>
-        [Key, DatabaseGenerated(DatabaseGeneratedOption.None)]
         public int UserId { get; set; }
 
         /// <summary>
         /// get/set - The user who this info belongs to.
         /// </summary>
-        [ForeignKey(nameof(UserId))]
         public User User { get; set; }
 
         /// <summary>
@@ -66,6 +63,21 @@ namespace Fosol.Schedule.Entities
         /// get/set - The users' work address.
         /// </summary>
         public Address WorkAddress { get; set; }
+
+        /// <summary>
+        /// get/set - The participants home phone.
+        /// </summary>
+        public PhoneNumber HomePhone { get; set; }
+
+        /// <summary>
+        /// get/set - The participants mobile phone.
+        /// </summary>
+        public PhoneNumber MobilePhone { get; set; }
+
+        /// <summary>
+        /// get/set - The participants work phone.
+        /// </summary>
+        public PhoneNumber WorkPhone { get; set; }
         #endregion
 
         #region Constructors

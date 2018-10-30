@@ -3,6 +3,7 @@ using Fosol.Core.Extensions.Principals;
 using Fosol.Core.Extensions.Strings;
 using Fosol.Schedule.DAL.Interfaces;
 using Fosol.Schedule.Entities;
+using Fosol.Schedule.Entities.ValueObjects;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;

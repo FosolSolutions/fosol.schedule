@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Fosol.Schedule.Entities
 {
@@ -14,7 +12,6 @@ namespace Fosol.Schedule.Entities
         /// <summary>
         /// get/set - Primary key uses IDENTITY.
         /// </summary>
-        [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
 
         /// <summary>
@@ -25,25 +22,21 @@ namespace Fosol.Schedule.Entities
         /// <summary>
         /// get/set - The account this calendar belongs to.
         /// </summary>
-        [ForeignKey(nameof(AccountId))]
         public Account Account { get; set; }
 
         /// <summary>
         /// get/set - A unique key to identify this calendar.
         /// </summary>
-        [Required]
         public Guid Key { get; set; }
 
         /// <summary>
         /// get/set - A unique name within an account that identifies this calendar.
         /// </summary>
-        [Required, MaxLength(100)]
         public string Name { get; set; }
 
         /// <summary>
         /// get/set - A description of the calendar.
         /// </summary>
-        [MaxLength(2000)]
         public string Description { get; set; }
 
         /// <summary>
@@ -70,6 +63,11 @@ namespace Fosol.Schedule.Entities
         /// get - A collection of criteria for this calendar.
         /// </summary>
         public ICollection<CalendarCriteria> Criteria { get; private set; } = new List<CalendarCriteria>();
+
+        /// <summary>
+        /// get - A collection of tags for this calendar.
+        /// </summary>
+        public ICollection<CalendarTag> Tags { get; private set; } = new List<CalendarTag>();
         #endregion
 
         #region Constructors

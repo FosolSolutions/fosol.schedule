@@ -8,33 +8,21 @@ namespace Fosol.Schedule.Entities.Configuration
         #region Methods
         public void Configure(EntityTypeBuilder<Subscription> builder)
         {
-            builder
-                .ToTable("Subscriptions");
+            builder.ToTable("Subscriptions");
 
-            builder
-                .Property(m => m.Id)
-                .ValueGeneratedOnAdd();
+            builder.HasKey(m => m.Id);
 
-            builder
-                .HasIndex(m => new { m.Key })
-                .IsUnique();
+            builder.Property(m => m.Id).ValueGeneratedOnAdd();
+            builder.Property(m => m.Key).IsRequired();
+            builder.Property(m => m.Name).HasMaxLength(100).IsRequired();
+            builder.Property(m => m.Description).HasMaxLength(2000);
+            builder.Property(m => m.RowVersion).IsRowVersion();
 
-            builder
-                .HasIndex(m => new { m.Name, m.State });
+            builder.HasOne(m => m.AddedBy).WithMany().HasForeignKey(m => m.AddedById).OnDelete(DeleteBehavior.ClientSetNull);
+            builder.HasOne(m => m.UpdatedBy).WithMany().HasForeignKey(m => m.UpdatedById).OnDelete(DeleteBehavior.ClientSetNull);
 
-            builder
-                .HasOne(m => m.AddedBy)
-                .WithMany()
-                .HasForeignKey(m => m.AddedById)
-                .HasPrincipalKey(m => m.Id)
-                .OnDelete(DeleteBehavior.ClientSetNull);
-
-            builder
-                .HasOne(m => m.UpdatedBy)
-                .WithMany()
-                .HasForeignKey(m => m.UpdatedById)
-                .HasPrincipalKey(m => m.Id)
-                .OnDelete(DeleteBehavior.ClientSetNull);
+            builder.HasIndex(m => new { m.Key }).IsUnique();
+            builder.HasIndex(m => new { m.Name, m.State });
         }
         #endregion
     }

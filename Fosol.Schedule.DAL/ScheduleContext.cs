@@ -1,4 +1,5 @@
-﻿using Fosol.Schedule.Entities;
+﻿using Fosol.Schedule.DAL.Extensions;
+using Fosol.Schedule.Entities;
 using Fosol.Schedule.Entities.Configuration;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -22,13 +23,13 @@ namespace Fosol.Schedule.DAL
 
         public DbSet<Activity> Activities { get; set; }
         public DbSet<ActivityCriteria> ActivityCriteria { get; set; }
-
-        public DbSet<Address> Addresses { get; set; }
+        public DbSet<ActivityTag> ActivityTags { get; set; }
 
         public DbSet<Entities.Attribute> Attributes { get; set; }
 
         public DbSet<Calendar> Calendars { get; set; }
         public DbSet<CalendarCriteria> CalendarCriteria { get; set; }
+        public DbSet<CalendarTag> CalendarTags { get; set; }
 
         public DbSet<ContactInfo> ContactInfo { get; set; }
 
@@ -36,13 +37,17 @@ namespace Fosol.Schedule.DAL
 
         public DbSet<Event> Events { get; set; }
         public DbSet<EventCriteria> EventCriteria { get; set; }
+        public DbSet<EventTag> EventTags { get; set; }
 
         public DbSet<Opening> Openings { get; set; }
         public DbSet<OpeningCriteria> OpeningCriteria { get; set; }
         public DbSet<OpeningParticipant> OpeningParticipants { get; set; }
         public DbSet<OpeningParticipantApplication> OpeningParticipantApplications { get; set; }
+        public DbSet<OpeningTag> OpeningTags { get; set; }
 
         public DbSet<Participant> Participants { get; set; }
+        public DbSet<ParticipantAttribute> ParticipantAttributes { get; set; }
+        public DbSet<ParticipantContactInfo> ParticipantContactInfo { get; set; }
 
         public DbSet<Subscription> Subscriptions { get; set; }
 
@@ -82,8 +87,6 @@ namespace Fosol.Schedule.DAL
                 //optionsBuilder.UseInMemoryDatabase("Schedule", options => { });
             }
 
-            // var map = ScheduleMapper.Map; // Initialize mapping.
-
             base.OnConfiguring(optionsBuilder);
         }
 
@@ -93,58 +96,20 @@ namespace Fosol.Schedule.DAL
         /// <param name="modelBuilder"></param>
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            modelBuilder.ApplyConfiguration(new AccountConfiguration());
-            modelBuilder.ApplyConfiguration(new AccountRoleConfiguration());
-            modelBuilder.ApplyConfiguration(new AccountUserConfiguration());
-
-            modelBuilder.ApplyConfiguration(new ActivityConfiguration());
-            modelBuilder.ApplyConfiguration(new ActivityCriteriaConfiguration());
-
-            modelBuilder.ApplyConfiguration(new AttributeConfiguration());
-
-            modelBuilder.ApplyConfiguration(new CalendarAttributeConfiguration());
-            modelBuilder.ApplyConfiguration(new CalendarConfiguration());
-            modelBuilder.ApplyConfiguration(new CalendarCriteriaConfiguration());
-
-            modelBuilder.ApplyConfiguration(new ContactInfoConfiguration());
-
-            modelBuilder.ApplyConfiguration(new CriteriaObjectConfiguration());
-
-            modelBuilder.ApplyConfiguration(new EventConfiguration());
-            modelBuilder.ApplyConfiguration(new EventCriteriaConfiguration());
-            modelBuilder.ApplyConfiguration(new EventTagConfiguration());
-
-            modelBuilder.ApplyConfiguration(new OpeningConfiguration());
-            modelBuilder.ApplyConfiguration(new OpeningCriteriaConfiguration());
-            modelBuilder.ApplyConfiguration(new OpeningParticipantApplicationConfiguration());
-            modelBuilder.ApplyConfiguration(new OpeningParticipantConfiguration());
-
-            modelBuilder.ApplyConfiguration(new ParticipantAttributeConfiguration());
-            modelBuilder.ApplyConfiguration(new ParticipantConfiguration());
-            modelBuilder.ApplyConfiguration(new ParticipantContactInfoConfiguration());
-
-            //modelBuilder.ApplyConfiguration(new ScheduleConfiguration());
-
-            modelBuilder.ApplyConfiguration(new SubscriptionConfiguration());
-
-            modelBuilder.ApplyConfiguration(new TagConfiguration());
-
-            modelBuilder.ApplyConfiguration(new UserAccountRoleConfiguration());
-            modelBuilder.ApplyConfiguration(new UserAttributeConfiguration());
-            modelBuilder.ApplyConfiguration(new UserConfiguration());
-            modelBuilder.ApplyConfiguration(new UserContactInfoConfiguration());
-            modelBuilder.ApplyConfiguration(new UserInfoConfiguration());
-            modelBuilder.ApplyConfiguration(new UserSettingConfiguration());
+            modelBuilder.ApplyAllConfigurations(typeof(AccountConfiguration));
 
             foreach (var property in modelBuilder.Model.GetEntityTypes()
                 .SelectMany(m => m.GetProperties())
                 .Where(p => p.ClrType == typeof(DateTime)))
             {
-                property.Relational().ColumnType = "DATETIME2";
-
-                if (property.Name == "AddedOn")
+                if (property.ClrType == typeof(DateTime))
                 {
-                    property.Relational().DefaultValueSql = "GETUTCDATE()";
+                    property.Relational().ColumnType = "DATETIME2";
+
+                    if (property.Name == nameof(BaseEntity.AddedOn))
+                    {
+                        property.Relational().DefaultValueSql = "GETUTCDATE()";
+                    }
                 }
             }
 

@@ -8,38 +8,23 @@ namespace Fosol.Schedule.Entities.Configuration
         #region Methods
         public void Configure(EntityTypeBuilder<Activity> builder)
         {
-            builder
-                .ToTable("Activities");
+            builder.ToTable("Activities");
 
-            builder
-                .Property(m => m.Id)
-                .ValueGeneratedOnAdd();
+            builder.HasKey(m => m.Id);
 
-            builder
-                .HasIndex(m => new { m.Key })
-                .IsUnique();
+            builder.Property(m => m.Id).ValueGeneratedOnAdd();
+            builder.Property(m => m.Key).IsRequired();
+            builder.Property(m => m.Name).HasMaxLength(250).IsRequired();
+            builder.Property(m => m.Description).HasMaxLength(2000);
+            builder.Property(m => m.Sequence).HasDefaultValue(0);
+            builder.Property(m => m.RowVersion).IsRowVersion();
 
-            builder
-                .HasIndex(m => new { m.EventId, m.State, m.StartOn, m.EndOn, m.Name });
+            builder.HasOne(m => m.Event).WithMany(m => m.Activities).HasForeignKey(m => m.EventId).OnDelete(DeleteBehavior.Cascade);
+            builder.HasOne(m => m.AddedBy).WithMany().HasForeignKey(m => m.AddedById).OnDelete(DeleteBehavior.ClientSetNull);
+            builder.HasOne(m => m.UpdatedBy).WithMany().HasForeignKey(m => m.UpdatedById).OnDelete(DeleteBehavior.ClientSetNull);
 
-            builder
-                .HasOne(m => m.AddedBy)
-                .WithMany()
-                .HasForeignKey(m => m.AddedById)
-                .HasPrincipalKey(m => m.Id)
-                .OnDelete(DeleteBehavior.ClientSetNull);
-
-            builder
-                .HasOne(m => m.UpdatedBy)
-                .WithMany()
-                .HasForeignKey(m => m.UpdatedById)
-                .HasPrincipalKey(m => m.Id)
-                .OnDelete(DeleteBehavior.ClientSetNull);
-
-            builder
-                .HasMany(m => m.Criteria)
-                .WithOne(m => m.Activity)
-                .OnDelete(DeleteBehavior.ClientSetNull);
+            builder.HasIndex(m => new { m.Key }).IsUnique();
+            builder.HasIndex(m => new { m.EventId, m.State, m.StartOn, m.EndOn, m.Name });
         }
         #endregion
     }

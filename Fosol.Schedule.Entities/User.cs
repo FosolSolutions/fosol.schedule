@@ -1,7 +1,6 @@
-﻿using System;
+﻿using Fosol.Schedule.Entities.ValueObjects;
+using System;
 using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Fosol.Schedule.Entities
 {
@@ -14,20 +13,17 @@ namespace Fosol.Schedule.Entities
         /// <summary>
         /// get/set - Primary key uses IDENTITY.
         /// </summary>
-        [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
 
         /// <summary>
         /// get/set - A unique key to identify this user.
         /// </summary>
-        [Required]
         public Guid Key { get; set; }
 
         /// <summary>
         /// get/set - A unique email address that identifies this user.
         /// </summary>
-        [Required, MaxLength(250)]
-        public string Email { get; set; }
+        public EmailAddress Email { get; set; }
 
         /// <summary>
         /// get/set - The current state of this user.
@@ -37,7 +33,6 @@ namespace Fosol.Schedule.Entities
         /// <summary>
         /// get/set - The user information.
         /// </summary>
-        [ForeignKey(nameof(Id))]
         public UserInfo Info { get; set; }
 
         /// <summary>
@@ -53,7 +48,6 @@ namespace Fosol.Schedule.Entities
         /// <summary>
         /// get/set - The default account this user signs into.
         /// </summary>
-        [ForeignKey(nameof(DefaultAccountId))]
         public Account DefaultAccount { get; set; }
 
         /// <summary>
@@ -110,7 +104,7 @@ namespace Fosol.Schedule.Entities
                 throw new ArgumentNullException(nameof(email));
 
             this.Key = Guid.NewGuid();
-            this.Email = email;
+            this.Email = new EmailAddress(email);
             this.State = state;
         }
 

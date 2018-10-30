@@ -1,5 +1,4 @@
 ﻿using System;
-using System.ComponentModel.DataAnnotations;
 using System.Linq;
 
 namespace Fosol.Schedule.Entities
@@ -10,13 +9,19 @@ namespace Fosol.Schedule.Entities
     public class CriteriaObject : BaseEntity
     {
         #region Properties
-        [Key]
+        /// <summary>
+        /// get/set - Primary key uses IDENTITY.
+        /// </summary>
         public int Id { get; set; }
 
-        [Required]
+        /// <summary>
+        /// get/set - The criteria statement.
+        /// </summary>
         public string Criteria { get; set; }
 
-        [Required]
+        /// <summary>
+        /// get/set - Whether the criteria is a group of criteria.
+        /// </summary>
         public bool IsGroup { get; set; }
         #endregion
 

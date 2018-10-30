@@ -8,29 +8,20 @@ namespace Fosol.Schedule.Entities.Configuration
         #region Methods
         public void Configure(EntityTypeBuilder<ContactInfo> builder)
         {
-            builder
-                .ToTable("ContactInfo");
+            builder.ToTable("ContactInfo");
 
-            builder
-                .Property(m => m.Id)
-                .ValueGeneratedOnAdd();
+            builder.HasKey(m => m.Id);
 
-            builder
-                .HasIndex(m => new { m.Name, m.Category, m.Value });
+            builder.Property(m => m.Name).HasMaxLength(100).IsRequired();
+            builder.Property(m => m.Value).HasMaxLength(250).IsRequired();
 
-            builder
-                .HasOne(m => m.AddedBy)
-                .WithMany()
-                .HasForeignKey(m => m.AddedById)
-                .HasPrincipalKey(m => m.Id)
-                .OnDelete(DeleteBehavior.ClientSetNull);
+            builder.Property(m => m.Id).ValueGeneratedOnAdd();
+            builder.Property(m => m.RowVersion).IsRowVersion();
 
-            builder
-                .HasOne(m => m.UpdatedBy)
-                .WithMany()
-                .HasForeignKey(m => m.UpdatedById)
-                .HasPrincipalKey(m => m.Id)
-                .OnDelete(DeleteBehavior.ClientSetNull);
+            builder.HasOne(m => m.AddedBy).WithMany().HasForeignKey(m => m.AddedById).OnDelete(DeleteBehavior.ClientSetNull);
+            builder.HasOne(m => m.UpdatedBy).WithMany().HasForeignKey(m => m.UpdatedById).OnDelete(DeleteBehavior.ClientSetNull);
+
+            builder.HasIndex(m => new { m.Name, m.Category, m.Value });
         }
         #endregion
     }

@@ -8,48 +8,22 @@ namespace Fosol.Schedule.Entities.Configuration
         #region Methods
         public void Configure(EntityTypeBuilder<Opening> builder)
         {
-            builder
-                .ToTable("Openings");
+            builder.ToTable("Openings");
 
-            builder
-                .Property(m => m.Id)
-                .ValueGeneratedOnAdd();
+            builder.HasKey(m => m.Id);
 
-            builder
-                .HasIndex(m => new { m.Key })
-                .IsUnique();
+            builder.Property(m => m.Id).ValueGeneratedOnAdd();
+            builder.Property(m => m.Key).IsRequired();
+            builder.Property(m => m.Name).HasMaxLength(250).IsRequired();
+            builder.Property(m => m.Description).HasMaxLength(2000);
+            builder.Property(m => m.RowVersion).IsRowVersion();
 
-            builder
-                .HasIndex(m => new { m.ActivityId, m.State, m.OpeningType, m.ApplicationProcess, m.Name });
+            builder.HasOne(m => m.Activity).WithMany(m => m.Openings).HasForeignKey(m => m.ActivityId).OnDelete(DeleteBehavior.Cascade);
+            builder.HasOne(m => m.AddedBy).WithMany().HasForeignKey(m => m.AddedById).OnDelete(DeleteBehavior.ClientSetNull);
+            builder.HasOne(m => m.UpdatedBy).WithMany().HasForeignKey(m => m.UpdatedById).OnDelete(DeleteBehavior.ClientSetNull);
 
-            builder
-                .HasOne(m => m.AddedBy)
-                .WithMany()
-                .HasForeignKey(m => m.AddedById)
-                .HasPrincipalKey(m => m.Id)
-                .OnDelete(DeleteBehavior.ClientSetNull);
-
-            builder
-                .HasOne(m => m.UpdatedBy)
-                .WithMany()
-                .HasForeignKey(m => m.UpdatedById)
-                .HasPrincipalKey(m => m.Id)
-                .OnDelete(DeleteBehavior.ClientSetNull);
-
-            builder
-                .HasMany(m => m.Participants)
-                .WithOne(m => m.Opening)
-                .OnDelete(DeleteBehavior.ClientSetNull);
-
-            builder
-                .HasMany(m => m.Applications)
-                .WithOne(m => m.Opening)
-                .OnDelete(DeleteBehavior.ClientSetNull);
-
-            builder
-                .HasMany(m => m.Criteria)
-                .WithOne(m => m.Opening)
-                .OnDelete(DeleteBehavior.ClientSetNull);
+            builder.HasIndex(m => new { m.Key }).IsUnique();
+            builder.HasIndex(m => new { m.ActivityId, m.State, m.OpeningType, m.ApplicationProcess, m.Name });
         }
         #endregion
     }

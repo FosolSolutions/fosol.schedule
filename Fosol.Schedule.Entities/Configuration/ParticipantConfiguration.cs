@@ -8,115 +8,53 @@ namespace Fosol.Schedule.Entities.Configuration
         #region Methods
         public void Configure(EntityTypeBuilder<Participant> builder)
         {
-            builder
-                .ToTable("Participants");
+            builder.ToTable("Participants");
 
-            builder
-                .Property(m => m.Id)
-                .ValueGeneratedOnAdd();
+            builder.HasKey(m => m.Id);
 
-            builder
-                .HasIndex(m => new { m.Key })
-                .IsUnique();
+            builder.Property(m => m.Id).ValueGeneratedOnAdd();
+            builder.Property(m => m.Key).IsRequired();
+            builder.Property(m => m.DisplayName).HasMaxLength(100).IsRequired();
+            builder.Property(m => m.Email).HasMaxLength(250);
+            builder.Property(m => m.Title).HasMaxLength(100);
+            builder.Property(m => m.FirstName).HasMaxLength(100).IsRequired();
+            builder.Property(m => m.MiddleName).HasMaxLength(100);
+            builder.Property(m => m.LastName).HasMaxLength(100).IsRequired();
+            builder.Property(m => m.RowVersion).IsRowVersion();
 
-            builder
-                .HasIndex(m => new { m.CalendarId, m.DisplayName })
-                .IsUnique();
+            builder.OwnsOne(m => m.HomeAddress).Property(m => m.Name).HasMaxLength(100).HasColumnName("HomeName");
+            builder.OwnsOne(m => m.HomeAddress).Property(m => m.Address1).HasMaxLength(150).HasColumnName("HomeAddress1");
+            builder.OwnsOne(m => m.HomeAddress).Property(m => m.Address2).HasMaxLength(150).HasColumnName("HomeAddress2");
+            builder.OwnsOne(m => m.HomeAddress).Property(m => m.City).HasMaxLength(150).HasColumnName("HomeCity");
+            builder.OwnsOne(m => m.HomeAddress).Property(m => m.Province).HasMaxLength(150).HasColumnName("HomeProvince");
+            builder.OwnsOne(m => m.HomeAddress).Property(m => m.Country).HasMaxLength(100).HasColumnName("HomeCountry");
+            builder.OwnsOne(m => m.HomeAddress).Property(m => m.PostalCode).HasMaxLength(20).HasColumnName("HomePostalCode");
 
-            builder
-                .HasIndex(m => new { m.Email, m.State });
+            builder.OwnsOne(m => m.WorkAddress).Property(m => m.Name).HasMaxLength(100).HasColumnName("WorkName");
+            builder.OwnsOne(m => m.WorkAddress).Property(m => m.Address1).HasMaxLength(150).HasColumnName("WorkAddress1");
+            builder.OwnsOne(m => m.WorkAddress).Property(m => m.Address2).HasMaxLength(150).HasColumnName("WorkAddress2");
+            builder.OwnsOne(m => m.WorkAddress).Property(m => m.City).HasMaxLength(150).HasColumnName("WorkCity");
+            builder.OwnsOne(m => m.WorkAddress).Property(m => m.Province).HasMaxLength(150).HasColumnName("WorkProvince");
+            builder.OwnsOne(m => m.WorkAddress).Property(m => m.Country).HasMaxLength(100).HasColumnName("WorkCountry");
+            builder.OwnsOne(m => m.WorkAddress).Property(m => m.PostalCode).HasMaxLength(20).HasColumnName("WorkPostalCode");
 
-            builder
-                .HasOne(m => m.AddedBy)
-                .WithMany()
-                .HasForeignKey(m => m.AddedById)
-                .HasPrincipalKey(m => m.Id)
-                .OnDelete(DeleteBehavior.ClientSetNull);
+            builder.OwnsOne(m => m.HomePhone).Property(m => m.Name).HasMaxLength(50).HasColumnName("HomePhoneName");
+            builder.OwnsOne(m => m.HomePhone).Property(m => m.Number).HasMaxLength(25).HasColumnName("HomePhone");
 
-            builder
-                .HasOne(m => m.UpdatedBy)
-                .WithMany()
-                .HasForeignKey(m => m.UpdatedById)
-                .HasPrincipalKey(m => m.Id)
-                .OnDelete(DeleteBehavior.ClientSetNull);
+            builder.OwnsOne(m => m.MobilePhone).Property(m => m.Name).HasMaxLength(50).HasColumnName("MobilePhoneName");
+            builder.OwnsOne(m => m.MobilePhone).Property(m => m.Number).HasMaxLength(25).HasColumnName("MobilePhone");
 
-            builder
-                .Property(m => m.RowVersion)
-                .IsRowVersion().IsConcurrencyToken();
+            builder.OwnsOne(m => m.WorkPhone).Property(m => m.Name).HasMaxLength(50).HasColumnName("WorkPhoneName");
+            builder.OwnsOne(m => m.WorkPhone).Property(m => m.Number).HasMaxLength(25).HasColumnName("WorkPhone");
 
-            builder
-                .HasOne(m => m.User)
-                .WithMany(m => m.Participants)
-                .HasForeignKey(m => m.UserId)
-                .HasPrincipalKey(m => m.Id)
-                .OnDelete(DeleteBehavior.ClientSetNull);
+            builder.HasOne(m => m.User).WithMany(m => m.Participants).HasForeignKey(m => m.UserId).OnDelete(DeleteBehavior.Cascade);
+            builder.HasOne(m => m.Calendar).WithMany(m => m.Participants).HasForeignKey(m => m.CalendarId).OnDelete(DeleteBehavior.Cascade);
+            builder.HasOne(m => m.AddedBy).WithMany().HasForeignKey(m => m.AddedById).OnDelete(DeleteBehavior.ClientSetNull);
+            builder.HasOne(m => m.UpdatedBy).WithMany().HasForeignKey(m => m.UpdatedById).OnDelete(DeleteBehavior.ClientSetNull);
 
-            builder
-                .HasMany(m => m.Attributes)
-                .WithOne(m => m.Participant)
-                .OnDelete(DeleteBehavior.ClientSetNull);
-
-            builder
-                .HasMany(m => m.ContactInfo)
-                .WithOne(m => m.Participant)
-                .OnDelete(DeleteBehavior.ClientSetNull);
-
-            builder.OwnsOne(m => m.HomeAddress)
-                .Property(m => m.Name)
-                .HasColumnName("HomeName");
-
-            builder.OwnsOne(m => m.HomeAddress)
-                .Property(m => m.Address1)
-                .HasColumnName("HomeAddress1");
-
-            builder.OwnsOne(m => m.HomeAddress)
-                .Property(m => m.Address2)
-                .HasColumnName("HomeAddress2");
-
-            builder.OwnsOne(m => m.HomeAddress)
-                .Property(m => m.City)
-                .HasColumnName("HomeCity");
-
-            builder.OwnsOne(m => m.HomeAddress)
-                .Property(m => m.Province)
-                .HasColumnName("HomeProvince");
-
-            builder.OwnsOne(m => m.HomeAddress)
-                .Property(m => m.Country)
-                .HasColumnName("HomeCountry");
-
-            builder.OwnsOne(m => m.HomeAddress)
-                .Property(m => m.PostalCode)
-                .HasColumnName("HomePostalCode");
-
-
-            builder.OwnsOne(m => m.WorkAddress)
-                .Property(m => m.Name)
-                .HasColumnName("WorkName");
-
-            builder.OwnsOne(m => m.WorkAddress)
-                .Property(m => m.Address1)
-                .HasColumnName("WorkAddress1");
-
-            builder.OwnsOne(m => m.WorkAddress)
-                .Property(m => m.Address2)
-                .HasColumnName("WorkAddress2");
-
-            builder.OwnsOne(m => m.WorkAddress)
-                .Property(m => m.City)
-                .HasColumnName("WorkCity");
-
-            builder.OwnsOne(m => m.WorkAddress)
-                .Property(m => m.Province)
-                .HasColumnName("WorkProvince");
-
-            builder.OwnsOne(m => m.WorkAddress)
-                .Property(m => m.Country)
-                .HasColumnName("WorkCountry");
-
-            builder.OwnsOne(m => m.WorkAddress)
-                .Property(m => m.PostalCode)
-                .HasColumnName("WorkPostalCode");
+            builder.HasIndex(m => new { m.Key }).IsUnique();
+            builder.HasIndex(m => new { m.CalendarId, m.DisplayName }).IsUnique();
+            builder.HasIndex(m => new { m.Email, m.State });
         }
         #endregion
     }

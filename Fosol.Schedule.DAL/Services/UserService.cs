@@ -64,7 +64,7 @@ namespace Fosol.Schedule.DAL.Services
             var claims = new List<Claim>(new[]
             {
                 new Claim(ClaimTypes.NameIdentifier, $"{user.Id}"),
-                new Claim(ClaimTypes.Email, user.Email),
+                new Claim(ClaimTypes.Email, user.Email.Address),
                 new Claim(ClaimTypes.Name, $"{user.Info.FirstName} {user.Info.LastName}"),
                 new Claim(ClaimTypes.Surname, user.Info.LastName ?? ""),
                 new Claim(ClaimTypes.Gender, $"{user.Info.Gender}"),

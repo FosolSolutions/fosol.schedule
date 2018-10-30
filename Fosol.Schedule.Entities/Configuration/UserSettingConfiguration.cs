@@ -8,34 +8,21 @@ namespace Fosol.Schedule.Entities.Configuration
         #region Methods
         public void Configure(EntityTypeBuilder<UserSetting> builder)
         {
-            builder
-                .ToTable("UserSettings");
+            builder.ToTable("UserSettings");
 
-            builder
-                .Property(m => m.UserId)
-                .ValueGeneratedNever();
+            builder.HasKey(m => new { m.UserId, m.Key });
 
-            builder
-                .HasIndex(m => new { m.UserId, m.Key })
-                .IsUnique(true);
+            builder.Property(m => m.UserId).ValueGeneratedNever();
+            builder.Property(m => m.Key).HasMaxLength(50).IsRequired();
+            builder.Property(m => m.Value).HasMaxLength(500).IsRequired();
+            builder.Property(m => m.ValueType).HasMaxLength(250).IsRequired();
+            builder.Property(m => m.RowVersion).IsRowVersion();
 
-            builder
-                .HasOne(m => m.User)
-                .WithMany(m => m.Settings);
+            builder.HasOne(m => m.User).WithMany(m => m.Settings).HasForeignKey(m => m.UserId).OnDelete(DeleteBehavior.Cascade);
+            builder.HasOne(m => m.AddedBy).WithMany().HasForeignKey(m => m.AddedById).OnDelete(DeleteBehavior.ClientSetNull);
+            builder.HasOne(m => m.UpdatedBy).WithMany().HasForeignKey(m => m.UpdatedById).OnDelete(DeleteBehavior.ClientSetNull);
 
-            builder
-                .HasOne(m => m.AddedBy)
-                .WithMany()
-                .HasForeignKey(m => m.AddedById)
-                .HasPrincipalKey(m => m.Id)
-                .OnDelete(DeleteBehavior.ClientSetNull);
-
-            builder
-                .HasOne(m => m.UpdatedBy)
-                .WithMany()
-                .HasForeignKey(m => m.UpdatedById)
-                .HasPrincipalKey(m => m.Id)
-                .OnDelete(DeleteBehavior.ClientSetNull);
+            builder.HasIndex(m => new { m.Key, m.Value });
         }
         #endregion
     }

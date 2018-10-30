@@ -8,12 +8,12 @@ namespace Fosol.Schedule.Entities.Configuration
         #region Methods
         public void Configure(EntityTypeBuilder<CalendarCriteria> builder)
         {
+            builder.ToTable("CalendarCriteria");
 
-            builder
-                .ToTable("CalendarCriteria");
+            builder.HasKey(m => new { m.CalendarId, m.CriteriaId });
 
-            builder
-                .HasKey(m => new { m.CalendarId, m.CriteriaId });
+            builder.HasOne(m => m.Calendar).WithMany(m => m.Criteria).HasForeignKey(m => m.CalendarId).OnDelete(DeleteBehavior.Cascade);
+            builder.HasOne(m => m.Criteria).WithMany().HasForeignKey(m => m.CriteriaId).OnDelete(DeleteBehavior.Cascade);
         }
         #endregion
     }

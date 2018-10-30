@@ -1,7 +1,7 @@
-﻿using System;
+﻿using Fosol.Schedule.Entities.ValueObjects;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Fosol.Schedule.Entities
 {
@@ -14,7 +14,6 @@ namespace Fosol.Schedule.Entities
         /// <summary>
         /// get/set - Primary key uses IDENITTY.
         /// </summary>
-        [Key, DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         public int Id { get; set; }
 
         /// <summary>
@@ -31,7 +30,6 @@ namespace Fosol.Schedule.Entities
         /// <summary>
         /// get/set - The owner of this account.
         /// </summary>
-        [ForeignKey(nameof(OwnerId))]
         public User Owner { get; set; }
 
         /// <summary>
@@ -52,8 +50,32 @@ namespace Fosol.Schedule.Entities
         /// <summary>
         /// get/set - The current subscription for this account.
         /// </summary>
-        [ForeignKey(nameof(SubscriptionId))]
         public Subscription Subscription { get; set; }
+
+        /// <summary>
+        /// get/set - The account's business address.
+        /// </summary>
+        public Address BusinessAddress { get; set; }
+
+        /// <summary>
+        /// get/set - The account's business phone.
+        /// </summary>
+        public PhoneNumber BusinessPhone { get; set; }
+
+        /// <summary>
+        /// get/set - The account's toll-free phone.
+        /// </summary>
+        public PhoneNumber TollFreeNumber { get; set; }
+
+        /// <summary>
+        /// get/set - The account's fax number.
+        /// </summary>
+        public PhoneNumber FaxNumber { get; set; }
+
+        /// <summary>
+        /// get/set - The account's email adddress.
+        /// </summary>
+        public EmailAddress Email { get; set; }
 
         /// <summary>
         /// get - A collection of users associated with this account.
@@ -64,6 +86,11 @@ namespace Fosol.Schedule.Entities
         /// get - A collection of all the roles for this account.
         /// </summary>
         public ICollection<AccountRole> Roles { get; private set; } = new List<AccountRole>();
+
+        /// <summary>
+        /// get - A collection of calendars belonging to this account.
+        /// </summary>
+        public ICollection<Calendar> Calendars { get; private set; } = new List<Calendar>();
         #endregion
 
         #region Constructors

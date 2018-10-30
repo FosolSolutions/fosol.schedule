@@ -4,6 +4,7 @@ using Fosol.Schedule.DAL.Helpers;
 using Fosol.Schedule.DAL.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using System;
+using System.Linq;
 
 namespace Fosol.Schedule.DAL.Services
 {
@@ -192,7 +193,9 @@ namespace Fosol.Schedule.DAL.Services
         /// <returns></returns>
         protected virtual T Find<T>(ModelT model) where T : class
         {
-            var keys = ScheduleMapper.Map.GetMap<T>().GetPrimaryKeyValues(this.Source.UpdateMapper.Map<T>(model));
+            //var keys = ScheduleMapper.Map.GetMap<T>().GetPrimaryKeyValues(this.Source.UpdateMapper.Map<T>(model));
+            var entity = this.Source.UpdateMapper.Map<T>(model);
+            var keys = this.Context.Model.FindEntityType(typeof(T)).FindPrimaryKey().Properties.Select(p => p.PropertyInfo.GetValue(entity)).ToArray();
             return this.Find<T>(keys);
         }
 

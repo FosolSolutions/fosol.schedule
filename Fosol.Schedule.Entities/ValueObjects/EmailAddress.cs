@@ -1,32 +1,28 @@
 ﻿using Fosol.Core.Data;
-using System;
 using System.Collections.Generic;
-using System.Text;
 
-namespace Fosol.Schedule.Entities
+namespace Fosol.Schedule.Entities.ValueObjects
 {
-    public class PhoneNumber : ValueObject
+    public class EmailAddress : ValueObject
     {
         #region Properties
         /// <summary>
-        /// get/set - A unique name to identify the phone number.
-        /// </summary>
-        public string Name { get; set; }
-
-        /// <summary>
         /// get/set - The phone number.
         /// </summary>
-        public string Number { get; set; }
+        public string Address { get; set; }
         #endregion
 
         #region Constructors
+        public EmailAddress(string email)
+        {
+            this.Address = email;
+        }
         #endregion
 
         #region Methods
         protected override IEnumerable<object> GetAtomicValues()
         {
-            yield return this.Name;
-            yield return this.Number;
+            yield return this.Address;
         }
         #endregion
     }
