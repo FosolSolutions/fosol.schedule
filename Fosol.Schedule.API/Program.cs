@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.Reflection;
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Hosting;
@@ -57,7 +58,15 @@ namespace Fosol.Schedule.API
                     else
                     {
                         var config = builder.Build();
-                        builder.AddAzureKeyVault(config["KeyVault:Endpoint"], config["KeyVault:ClientId"], config["KeyVault:ClientSecret"]);
+                        if (!String.IsNullOrWhiteSpace(config["KeyVault:Endpoint"]) && !String.IsNullOrWhiteSpace(config["KeyVault:ClientId"]) && !String.IsNullOrWhiteSpace(config["KeyVault:ClientSecret"]))
+                        {
+                            builder.AddAzureKeyVault(config["KeyVault:Endpoint"], config["KeyVault:ClientId"], config["KeyVault:ClientSecret"]);
+                            config["KeyVault:IsLoaded"] = "true";
+                        }
+                        else
+                        {
+                            config["KeyVault:IsLoaded"] = "false";
+                        }
                     }
 
                     if (args != null)

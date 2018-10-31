@@ -35,7 +35,7 @@ namespace Fosol.Schedule.API.Areas.Data.Controllers
         /// <param name="id">The primary key for the account.</param>
         /// <returns>An account for the specified 'id'.</returns>
         [HttpGet("{id}")]
-        public IActionResult GetAccount(int id)
+        public IActionResult GetAccount(int id) // TODO: Should I use async?
         {
             var account = _datasource.Accounts.Get(id);
             return Ok(account);
