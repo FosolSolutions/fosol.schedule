@@ -1,4 +1,4 @@
-﻿namespace Fosol.Overseer
+﻿namespace Fosol.Overseer.Requesting
 {
     public interface IRequest<TResponse>
     {

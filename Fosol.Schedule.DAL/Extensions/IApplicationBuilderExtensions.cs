@@ -5,7 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Fosol.Schedule.DAL
 {
-    public static class ApplicationBuilderExtensions
+    public static class IApplicationBuilderExtensions
     {
         #region Methods
         /// <summary>

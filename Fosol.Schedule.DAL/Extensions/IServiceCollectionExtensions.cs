@@ -1,4 +1,5 @@
-﻿using Fosol.Schedule.DAL.Extensions;
+﻿using Fosol.Overseer;
+using Fosol.Schedule.DAL.Extensions;
 using Fosol.Schedule.DAL.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;
@@ -6,7 +7,7 @@ using System;
 
 namespace Fosol.Schedule.DAL
 {
-    public static class ServiceCollectionExtensions
+    public static class IServiceCollectionExtensions
     {
         /// <summary>
         /// Adds the datasource to the service collection and configures the DbContext options.
@@ -21,6 +22,7 @@ namespace Fosol.Schedule.DAL
             services.AddSingleton<DbContextOptions>(builder.Options);
             services.AddSingleton(builder.Options);
             services.AddScoped<IDataSource, DataSource>();
+            services.AddOverseer();
             return services;
         }
 
@@ -33,6 +35,7 @@ namespace Fosol.Schedule.DAL
                 setupAction?.Invoke(builder);
                 services.AddSingleton<DbContextOptions>(builder.Options);
                 services.AddSingleton(builder.Options);
+                services.AddOverseer();
             });
 
             return services;

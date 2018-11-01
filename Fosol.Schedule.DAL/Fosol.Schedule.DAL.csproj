@@ -6,9 +6,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-  </ItemGroup>
-
-  <ItemGroup>
     <None Remove="Migrations\v01.00.00\PostDeploy\00 Subscriptions.sql" />
     <None Remove="Migrations\v01.00.00\PostDeploy\00 Users.sql" />
     <None Remove="Migrations\v01.00.00\PostDeploy\01 Accounts.sql" />
@@ -48,6 +45,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Fosol.Core\Fosol.Core.csproj" />
+    <ProjectReference Include="..\Fosol.Overseer\Fosol.Overseer.csproj" />
     <ProjectReference Include="..\Fosol.Schedule.Entities\Fosol.Schedule.Entities.csproj" />
     <ProjectReference Include="..\Fosol.Schedule.Models\Fosol.Schedule.Models.csproj" />
   </ItemGroup>

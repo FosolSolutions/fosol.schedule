@@ -1,6 +1,8 @@
 ﻿using Fosol.Core.Mvc;
 using Fosol.Schedule.DAL.Interfaces;
 using Microsoft.AspNetCore.Mvc;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Fosol.Schedule.API.Areas.Data.Controllers
 {
@@ -14,6 +16,7 @@ namespace Fosol.Schedule.API.Areas.Data.Controllers
     {
         #region Variables
         private readonly IDataSource _datasource;
+        private readonly Overseer.IOverseer _overseer;
         #endregion
 
         #region Constructors
@@ -21,9 +24,10 @@ namespace Fosol.Schedule.API.Areas.Data.Controllers
         /// Creates a new instance of a AccountController object.
         /// </summary>
         /// <param name="datasource"></param>
-        public AccountController(IDataSource datasource)
+        public AccountController(IDataSource datasource, Overseer.IOverseer overseer)
         {
             _datasource = datasource;
+            _overseer = overseer;
         }
         #endregion
 
@@ -38,6 +42,9 @@ namespace Fosol.Schedule.API.Areas.Data.Controllers
         public IActionResult GetAccount(int id) // TODO: Should I use async?
         {
             var account = _datasource.Accounts.Get(id);
+            var request = new DAL.Requestors.Accounts.AccountRequest() { Id = id };
+            var act = _overseer.Send(request);
+            var a2 = _overseer.Send<DAL.Requestors.Accounts.GetAccount, DAL.Requestors.Accounts.AccountRequest, Models.Account>(request, r => r.Execute);
             return Ok(account);
         }
 
