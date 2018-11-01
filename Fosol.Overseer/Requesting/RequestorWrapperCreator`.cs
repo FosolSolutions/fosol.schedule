@@ -21,6 +21,11 @@ namespace Fosol.Overseer.Requesting
     internal class RequestorWrapperCreator<TRequest, TResponse> : RequestorWrapper<TResponse>
         where TRequest : IRequest<TResponse>
     {
+        #region Properties
+        public override object Requestor { get; protected set; }
+        #endregion
+
+        #region Methods
         /// <summary>
         /// Execute all of the requestors for the specified request.
         /// </summary>
@@ -30,12 +35,15 @@ namespace Fosol.Overseer.Requesting
         /// <returns></returns>
         public override Task<TResponse> Execute(IRequest<TResponse> request, CancellationToken cancellationToken, ServiceFactory serviceFactory)
         {
-            Task<TResponse> Requestor() => GetRequestor<IRequestor<TRequest, TResponse>>(serviceFactory).Execute((TRequest)request, cancellationToken);
+            var requestor = GetRequestor<IRequestor<TRequest, TResponse>>(serviceFactory);
+            this.Requestor = requestor;
+            Task<TResponse> Requestor() => requestor.Execute((TRequest)request, cancellationToken);
 
             return serviceFactory
                 .GetInstances<IRequestTrigger<TRequest, TResponse>>()
                 .Reverse()
                 .Aggregate((RequestorDelegate<TResponse>)Requestor, (next, pipeline) => () => pipeline.Execute((TRequest)request, cancellationToken, next))();
         }
+        #endregion
     }
 }

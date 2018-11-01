@@ -9,6 +9,8 @@ namespace Fosol.Schedule.DAL.Requestors.Accounts
     {
         #region Properties
         public int Id { get; set; }
+
+        public Models.Account Account { get; set; }
         #endregion
     }
 }
