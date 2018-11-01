@@ -54,7 +54,6 @@ namespace Fosol.Overseer
         /// Instead of the default Execute(...) function, call the specified caller.
         /// </summary>
         /// <typeparam name="TRequestor"></typeparam>
-        /// <typeparam name="TRequest"></typeparam>
         /// <typeparam name="TResponse"></typeparam>
         /// <param name="request">The request object.</param>
         /// <param name="caller">The function to call instead of the default Execute(...) function.</param>
@@ -62,6 +61,7 @@ namespace Fosol.Overseer
         /// <returns></returns>
         public Task<TResponse> Send<TRequestor, TRequest, TResponse>(TRequest request, Expression<Func<TRequestor, Func<TRequest, CancellationToken, Task<TResponse>>>> caller, CancellationToken cancellationToken = default)
             where TRequest : IRequest<TResponse>
+            where TRequestor : IRequestor<TRequest, TResponse>
         {
             if (request == null) throw new ArgumentNullException(nameof(request));
 
@@ -71,8 +71,7 @@ namespace Fosol.Overseer
             var requestor = (RequestorWrapper<TResponse>)_requestors.GetOrAdd(requestType,
                 t => Activator.CreateInstance(typeof(RequestorWrapperCreator<,>).MakeGenericType(requestType, typeof(TResponse))));
 
-            var call = caller.Compile();
-            return call.Invoke((TRequestor)requestor.Requestor)?.Invoke(request, cancellationToken);
+            return requestor.Execute(request, caller, cancellationToken, _serviceFactory);
         }
 
         /// <summary>

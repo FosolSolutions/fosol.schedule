@@ -41,7 +41,7 @@ namespace Fosol.Schedule.API.Areas.Data.Controllers
         {
             var account = _datasource.Accounts.Get(id);
             var request = new DAL.Requestors.Accounts.AccountRequest() { Id = id };
-            var act = _overseer.Send(request);
+            //var act = _overseer.Send(request);
             request.Account = _overseer.Send<DAL.Requestors.Accounts.AccountRequestor, DAL.Requestors.Accounts.AccountRequest, Models.Account>(request, r => r.Get).Result;
             request.Account = _overseer.Send(request, (r) => r, (r) => r).Result;
             var a4 = _overseer.Send<DAL.Requestors.Accounts.AccountRequestor, DAL.Requestors.Accounts.AccountRequest, Models.Account>(request, r => r.Update).Result;
