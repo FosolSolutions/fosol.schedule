@@ -17,6 +17,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Serialization;
 using System;
+using System.Data.SqlClient;
 
 namespace Fosol.Schedule.API
 {
@@ -152,12 +153,14 @@ namespace Fosol.Schedule.API
                     optionsBuilder.EnableSensitiveDataLogging();
                 }
                 var connectionString = this.Configuration.GetConnectionString("Schedule") ?? @"Server=(localdb)\mssqllocaldb;Database=EFProviders.InMemory;Trusted_Connection=True;ConnectRetryCount=0";
+                var builder = new SqlConnectionStringBuilder(connectionString);
+                builder.Password = this.Configuration["Database:Schedule:Password"];
                 optionsBuilder.UseApplicationServiceProvider(services.BuildServiceProvider());
                 optionsBuilder.UseLoggerFactory(_loggerFactory);
-                optionsBuilder.UseSqlServer(connectionString);
+                optionsBuilder.UseSqlServer(builder.ConnectionString);
                 //services.AddDataSourcePool(options =>
                 //{
-                //    options.UseSqlServer(connectionString);
+                //    options.UseSqlServer(builder.ConnectionString);
                 //});
                 //optionsBuilder.UseInMemoryDatabase("Schedule", options => { });
             });
