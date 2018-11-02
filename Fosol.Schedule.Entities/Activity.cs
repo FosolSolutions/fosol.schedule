@@ -55,6 +55,11 @@ namespace Fosol.Schedule.Entities
         public ActivityState State { get; set; } = ActivityState.Published;
 
         /// <summary>
+        /// get/set - How criteria is applied to participants in this activity.  This can be overridden in child entities.
+        /// </summary>
+        public CriteriaRule CriteriaRule { get; set; } = CriteriaRule.Participate;
+
+        /// <summary>
         /// get/set - The order the activities will be displayed.
         /// </summary>
         public int Sequence { get; set; }

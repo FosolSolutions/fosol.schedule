@@ -40,7 +40,7 @@ namespace Fosol.Schedule.DAL.Services
         public Models.Activity Get(int id)
         {
             var calendarId = this.GetCalendarId();
-            return this.Map(this.Find((set) => set.Include(a => a.Criteria).Include(a => a.Openings).ThenInclude(o => o.Criteria).SingleOrDefault(a => a.Id == id && a.Event.CalendarId == calendarId)));
+            return this.Map(this.Find((set) => set.Include(c => c.Criteria).Include(c => c.Tags).Include(a => a.Openings).ThenInclude(o => o.Criteria).SingleOrDefault(a => a.Id == id && a.Event.CalendarId == calendarId)));
         }
 
         /// <summary>

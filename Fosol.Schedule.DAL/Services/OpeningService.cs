@@ -41,7 +41,7 @@ namespace Fosol.Schedule.DAL.Services
         {
             this.VerifyPrincipal();
             var accountId = this.GetAccountId();
-            return this.Map(this.Find((set) => set.SingleOrDefault(o => o.Id == id && o.Activity.Event.Calendar.AccountId == accountId)));
+            return this.Map(this.Find((set) => set.Include(c => c.Criteria).Include(c => c.Tags).SingleOrDefault(o => o.Id == id && o.Activity.Event.Calendar.AccountId == accountId)));
         }
 
         /// <summary>

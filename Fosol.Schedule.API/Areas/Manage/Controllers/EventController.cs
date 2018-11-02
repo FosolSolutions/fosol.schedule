@@ -4,13 +4,13 @@ using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Linq;
 
-namespace Fosol.Schedule.API.Areas.Data.Controllers
+namespace Fosol.Schedule.API.Areas.Manage.Controllers
 {
     /// <summary>
     /// EventController sealed class, provides API endpoints for calendar events.
     /// </summary>
     [Produces("application/json")]
-    [Area("data")]
+    [Area("manage")]
     [Route("[area]/calendar/[controller]")]
     public sealed class EventController : ApiController
     {
@@ -36,7 +36,7 @@ namespace Fosol.Schedule.API.Areas.Data.Controllers
         /// </summary>
         /// <param name="id">The primary key for the event.</param>
         /// <returns>An event for the specified 'id'.</returns>
-        [HttpGet("{id}")]
+        [HttpGet("{id}", Name = nameof(GetEvent))]
         public IActionResult GetEvent(int id)
         {
             var cevent = _datasource.Events.Get(id);
@@ -60,6 +60,48 @@ namespace Fosol.Schedule.API.Areas.Data.Controllers
 
             var cevents = _datasource.Events.Get(id, start, end);
             return cevents.Count() != 0 ? Ok(cevents) : (IActionResult)NoContent();
+        }
+
+        /// <summary>
+        /// Adds the new event to the datasource.
+        /// </summary>
+        /// <param name="cevent"></param>
+        /// <returns></returns>
+        [HttpPost]
+        public IActionResult AddEvent([FromBody] Models.Event cevent)
+        {
+            _datasource.Events.Add(cevent);
+            _datasource.CommitTransaction();
+
+            return Created(Url.RouteUrl(nameof(GetEvent), new { cevent.Id }), cevent);
+        }
+
+        /// <summary>
+        /// Updates the specified event in the datasource.
+        /// </summary>
+        /// <param name="cevent"></param>
+        /// <returns></returns>
+        [HttpPut]
+        public IActionResult UpdateEvent([FromBody] Models.Event cevent)
+        {
+            _datasource.Events.Update(cevent);
+            _datasource.CommitTransaction();
+
+            return Ok(cevent);
+        }
+
+        /// <summary>
+        /// Deletes the specified event from the datasource.
+        /// </summary>
+        /// <param name="cevent"></param>
+        /// <returns></returns>
+        [HttpDelete]
+        public IActionResult DeleteEvent([FromBody] Models.Event cevent)
+        {
+            _datasource.Events.Remove(cevent);
+            _datasource.CommitTransaction();
+
+            return Ok();
         }
         #endregion
     }

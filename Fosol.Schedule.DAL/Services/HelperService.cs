@@ -102,6 +102,7 @@ namespace Fosol.Schedule.DAL.Services
 
             // Sunday Memorial
             var sunday = start.DayOfWeek == DayOfWeek.Sunday ? start : start.AddDays(7 - (int)start.DayOfWeek);
+            Event firstMemorial = null;
             while (sunday <= end)
             {
                 // Memorial
@@ -109,43 +110,47 @@ namespace Fosol.Schedule.DAL.Services
                 var memorial = new Event(calendar, "Memorial Meeting", sunday.AddHours(11), sunday.AddHours(13))
                 {
                     Description = "Sunday memorial meeting.",
-                    AddedById = userId
+                    AddedById = userId,
+                    ParentEvent = firstMemorial,
+                    Repetition = EventRepetition.Weekly,
+                    RepetitionEndOn = end,
+                    RepetitionSize = 1
                 };
                 var aPreside = new Activity(memorial, "Preside") { AddedById = userId };
-                aPreside.Openings.Add(new Opening(aPreside, "Presider", 1, 1, OpeningType.Application, ApplicationProcess.Accept) { AddedById = userId });
+                aPreside.Openings.Add(new Opening(aPreside, "Presider", 1, 1, OpeningType.Application, ApplicationProcess.Accept, CriteriaRule.Visibility) { AddedById = userId });
                 aPreside.Criteria.Add(new ActivityCriteria(aPreside, presider));
                 memorial.Activities.Add(aPreside);
 
                 var aExhort = new Activity(memorial, "Exhortation") { AddedById = userId };
-                aExhort.Openings.Add(new Opening(aExhort, "Exhort", 1, 1, OpeningType.Application, ApplicationProcess.Accept) { AddedById = userId });
+                aExhort.Openings.Add(new Opening(aExhort, "Exhort", 1, 1, OpeningType.Application, ApplicationProcess.Accept, CriteriaRule.Visibility) { AddedById = userId });
                 aExhort.Criteria.Add(new ActivityCriteria(aExhort, exhorter));
                 memorial.Activities.Add(aExhort);
 
                 var aDoor = new Activity(memorial, "Door") { AddedById = userId };
-                aDoor.Openings.Add(new Opening(aDoor, "Door", 1, 1, OpeningType.Application, ApplicationProcess.Accept) { AddedById = userId });
+                aDoor.Openings.Add(new Opening(aDoor, "Door", 1, 1, OpeningType.Application, ApplicationProcess.Accept, CriteriaRule.Visibility) { AddedById = userId });
                 aDoor.Criteria.Add(new ActivityCriteria(aDoor, door));
                 memorial.Activities.Add(aDoor);
 
                 var aReadings = new Activity(memorial, "Readings") { AddedById = userId };
-                aReadings.Openings.Add(new Opening(aReadings, "1st Reading", 1, 1, OpeningType.Application, ApplicationProcess.Accept) { AddedById = userId });
-                aReadings.Openings.Add(new Opening(aReadings, "2nd Reading", 1, 1, OpeningType.Application, ApplicationProcess.Accept) { AddedById = userId });
+                aReadings.Openings.Add(new Opening(aReadings, "1st Reading", 1, 1, OpeningType.Application, ApplicationProcess.Accept, CriteriaRule.Visibility) { AddedById = userId });
+                aReadings.Openings.Add(new Opening(aReadings, "2nd Reading", 1, 1, OpeningType.Application, ApplicationProcess.Accept, CriteriaRule.Visibility) { AddedById = userId });
                 aReadings.Criteria.Add(new ActivityCriteria(aReadings, reader));
                 memorial.Activities.Add(aReadings);
 
                 var aPrayers = new Activity(memorial, "Prayers") { AddedById = userId };
-                aPrayers.Openings.Add(new Opening(aPrayers, "Bread", 1, 1, OpeningType.Application, ApplicationProcess.Accept) { AddedById = userId });
-                aPrayers.Openings.Add(new Opening(aPrayers, "Wine", 1, 1, OpeningType.Application, ApplicationProcess.Accept) { AddedById = userId });
-                aPrayers.Openings.Add(new Opening(aPrayers, "Close", 1, 1, OpeningType.Application, ApplicationProcess.Accept) { AddedById = userId });
+                aPrayers.Openings.Add(new Opening(aPrayers, "Bread", 1, 1, OpeningType.Application, ApplicationProcess.Accept, CriteriaRule.Visibility) { AddedById = userId });
+                aPrayers.Openings.Add(new Opening(aPrayers, "Wine", 1, 1, OpeningType.Application, ApplicationProcess.Accept, CriteriaRule.Visibility) { AddedById = userId });
+                aPrayers.Openings.Add(new Opening(aPrayers, "Close", 1, 1, OpeningType.Application, ApplicationProcess.Accept, CriteriaRule.Visibility) { AddedById = userId });
                 aPrayers.Criteria.Add(new ActivityCriteria(aPrayers, prayer));
                 memorial.Activities.Add(aPrayers);
 
                 var aPianist = new Activity(memorial, "Pianist") { AddedById = userId };
-                aPianist.Openings.Add(new Opening(aPianist, "Pianist", 1, 1, OpeningType.Application, ApplicationProcess.Accept) { AddedById = userId });
+                aPianist.Openings.Add(new Opening(aPianist, "Pianist", 1, 1, OpeningType.Application, ApplicationProcess.Accept, CriteriaRule.Visibility) { AddedById = userId });
                 aPianist.Criteria.Add(new ActivityCriteria(aPianist, pianist));
                 memorial.Activities.Add(aPianist);
 
                 var aServe = new Activity(memorial, "Serve") { AddedById = userId };
-                aServe.Openings.Add(new Opening(aServe, "Servers", 4, 4, OpeningType.Application, ApplicationProcess.Accept) { AddedById = userId });
+                aServe.Openings.Add(new Opening(aServe, "Servers", 4, 4, OpeningType.Application, ApplicationProcess.Accept, CriteriaRule.Visibility) { AddedById = userId });
                 aServe.Criteria.Add(new ActivityCriteria(aServe, server));
                 memorial.Activities.Add(aServe);
 
@@ -158,60 +163,82 @@ namespace Fosol.Schedule.DAL.Services
                     AddedById = userId
                 };
                 var aPreside2 = new Activity(lecture, "Preside") { AddedById = userId };
-                aPreside2.Openings.Add(new Opening(aPreside2, "Presider", 1, 1, OpeningType.Application, ApplicationProcess.Accept) { AddedById = userId });
+                aPreside2.Openings.Add(new Opening(aPreside2, "Presider", 1, 1, OpeningType.Application, ApplicationProcess.Accept, CriteriaRule.Visibility) { AddedById = userId });
                 aPreside2.Criteria.Add(new ActivityCriteria(aPreside2, presider));
                 lecture.Activities.Add(aPreside2);
 
                 var aLecture = new Activity(lecture, "Lecture") { AddedById = userId };
-                aLecture.Openings.Add(new Opening(aLecture, "Speaker", 1, 1, OpeningType.Application, ApplicationProcess.Accept) { AddedById = userId });
+                aLecture.Openings.Add(new Opening(aLecture, "Speaker", 1, 1, OpeningType.Application, ApplicationProcess.Accept, CriteriaRule.Visibility) { AddedById = userId });
                 aLecture.Criteria.Add(new ActivityCriteria(aLecture, lecturer));
                 lecture.Activities.Add(aLecture);
 
                 calendar.Events.Add(lecture);
 
+                if (firstMemorial == null)
+                {
+                    firstMemorial = memorial;
+                }
                 sunday = sunday.AddDays(7);
             }
 
             // Bible Class
             var thursday = start.DayOfWeek <= DayOfWeek.Thursday ? start.AddDays(4 - (int)start.DayOfWeek) : start.AddDays(7 + (int)start.DayOfWeek - 4);
+            Event firstBibleClass = null;
             while (thursday <= end)
             {
                 // Lecture
                 var bibleClass = new Event(calendar, "Bible Class", thursday.AddHours(19), thursday.AddHours(20))
                 {
                     Description = "Sunday night Bible talk.",
-                    AddedById = userId
+                    AddedById = userId,
+                    ParentEvent = firstBibleClass,
+                    Repetition = EventRepetition.Weekly,
+                    RepetitionEndOn = end,
+                    RepetitionSize = 1
                 };
                 var aPreside = new Activity(bibleClass, "Preside") { AddedById = userId };
-                aPreside.Openings.Add(new Opening(aPreside, "Presider", 1, 1, OpeningType.Application, ApplicationProcess.Accept) { AddedById = userId });
+                aPreside.Openings.Add(new Opening(aPreside, "Presider", 1, 1, OpeningType.Application, ApplicationProcess.Accept, CriteriaRule.Visibility) { AddedById = userId });
                 aPreside.Criteria.Add(new ActivityCriteria(aPreside, presider));
                 bibleClass.Activities.Add(aPreside);
 
                 var aSpeak = new Activity(bibleClass, "Speak") { AddedById = userId };
-                aSpeak.Openings.Add(new Opening(aSpeak, "Speaker", 1, 1, OpeningType.Application, ApplicationProcess.Accept) { AddedById = userId });
+                aSpeak.Openings.Add(new Opening(aSpeak, "Speaker", 1, 1, OpeningType.Application, ApplicationProcess.Accept, CriteriaRule.Visibility) { AddedById = userId });
                 aSpeak.Criteria.Add(new ActivityCriteria(aSpeak, study));
                 bibleClass.Activities.Add(aSpeak);
 
                 calendar.Events.Add(bibleClass);
 
+                if (firstBibleClass == null)
+                {
+                    firstBibleClass = bibleClass;
+                }
                 thursday = thursday.AddDays(7);
             }
 
             // Hall Cleaning
             var saturday = start.DayOfWeek == DayOfWeek.Saturday ? start : start.AddDays(DayOfWeek.Saturday - start.DayOfWeek);
+            Event firstCleanHall = null;
             while (saturday <= end)
             {
                 var cleanHall = new Event(calendar, "Hall Cleaning", saturday.AddHours(8), saturday.AddHours(10))
                 {
                     Description = "Hall cleaning and maintenance.",
-                    AddedById = userId
+                    AddedById = userId,
+                    ParentEvent = firstCleanHall,
+                    Repetition = EventRepetition.Weekly,
+                    RepetitionEndOn = end,
+                    RepetitionSize = 1
                 };
                 var cleaning = new Activity(cleanHall, "Cleaning") { AddedById = userId };
-                cleaning.Openings.Add(new Opening(cleaning, "Cleaner", 2, 6, OpeningType.Application, ApplicationProcess.Accept) { AddedById = userId });
+                cleaning.Openings.Add(new Opening(cleaning, "Cleaner", 2, 6, OpeningType.Application, ApplicationProcess.Accept, CriteriaRule.Visibility) { AddedById = userId });
                 cleaning.Criteria.Add(new ActivityCriteria(cleaning, clean));
 
                 calendar.Events.Add(cleanHall);
 
+                if (firstCleanHall == null)
+                {
+                    firstCleanHall = cleanHall;
+                }
                 saturday = saturday.AddDays(7);
             }
 
@@ -371,6 +398,7 @@ namespace Fosol.Schedule.DAL.Services
                     participants.Add(CreateParticipant(calendar, user, "R Coles", "Rylan", "Coles", "rylan1315@gmail.com", Gender.Male, "", "", "", "Member=true, Brother=true, Skill=Preside, Skill=Serve, Skill=Read, Skill=Pray, Skill=Doorman, Skill=Bible Class, Skill=Emblems, Skill=Clean"));
                     participants.Add(CreateParticipant(calendar, user, "N Crawford", "Nathan", "Crawford", "nathanael.crawford@gmail.com", Gender.Male, "", "", "", "Member=true, Brother=true, Skill=Preside, Skill=Exhort, Skill=Serve, Skill=Read, Skill=Pray, Skill=Doorman, Skill=Lecturer, Skill=Bible Class, Skill=Emblems, Skill=Clean"));
                     participants.Add(CreateParticipant(calendar, user, "S Crawford", "Sarah", "Crawford", "crawfordsarahm@gmail.com", Gender.Female, "", "", "", "Member=true, Sister=true, Skill=Pianist, Skill=Emblems, Skill=Clean"));
+                    participants.Add(CreateParticipant(calendar, user, "N Fernando", "Naleen", "Fernando", "naleenandjulie@gmail.com", Gender.Male, "", "", "", "Member=true, Brother=true, Skill=Exhort, Skill=Bible Class"));
                     this.Context.SaveChanges();
 
                     transaction.Commit();

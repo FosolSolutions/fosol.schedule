@@ -10,16 +10,18 @@ namespace Fosol.Schedule.Models
         public int Id { get; set; }
         public Guid Key { get; set; }
 
+        public int AccountId { get; set; }
+
         public string Name { get; set; }
 
         public string Description { get; set; }
 
-        /// <summary>
-        /// get/set - The foreign key to the user who owns this schedule.
-        /// </summary>
-        public int OwnerId { get; set; }
         public DateTime StartOn { get; set; }
         public DateTime EndOn { get; set; }
+
+        public Entities.ScheduleState State { get; set; }
+
+        public Entities.CriteriaRule CriteriaRule { get; set; }
 
         public IList<Event> Events { get; set; }
         #endregion

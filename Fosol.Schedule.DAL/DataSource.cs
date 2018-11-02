@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
 using Fosol.Schedule.DAL.Interfaces;
-using Fosol.Schedule.DAL.Map;
+using Fosol.Schedule.DAL.Maps;
 using Fosol.Schedule.DAL.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
@@ -108,16 +108,20 @@ namespace Fosol.Schedule.DAL
         /// Creates a new instance of a DataSource object, and initializes it with the specified configuration options.
         /// </summary>
         /// <param name="httpContext"></param>
-        DataSource(IHttpContextAccessor httpContext)
+        /// <param name="addProfile"></param>
+        /// <param name="updateProfile"></param>
+        DataSource(IHttpContextAccessor httpContext, IProfileAddMap addProfile, IProfileUpdateMap updateProfile)
         {
             this.Principal = httpContext.HttpContext?.User;
             this.AddMapper = new MapperConfiguration(config =>
             {
-                config.AddProfile(new AddProfile(this));
+                addProfile.BindDataSource(this);
+                config.AddProfile((Profile)addProfile);
             }).CreateMapper();
             this.UpdateMapper = new MapperConfiguration(config =>
             {
-                config.AddProfile(new UpdateProfile(this));
+                updateProfile.BindDataSource(this);
+                config.AddProfile((Profile)updateProfile);
             }).CreateMapper();
 
             // TODO: reflection to auto initialize the services.
@@ -138,7 +142,9 @@ namespace Fosol.Schedule.DAL
         /// </summary>
         /// <param name="options"></param>
         /// <param name="httpContext"></param>
-        internal DataSource(DbContextOptions<ScheduleContext> options, IHttpContextAccessor httpContext) : this(httpContext)
+        /// <param name="addProfile"></param>
+        /// <param name="updateProfile"></param>
+        internal DataSource(DbContextOptions<ScheduleContext> options, IHttpContextAccessor httpContext, IProfileAddMap addProfile, IProfileUpdateMap updateProfile) : this(httpContext, addProfile, updateProfile)
         {
             this.Context = new ScheduleContext(options);
         }
@@ -148,7 +154,9 @@ namespace Fosol.Schedule.DAL
         /// </summary>
         /// <param name="options"></param>
         /// <param name="httpContext"></param>
-        public DataSource(DbContextOptions options, IHttpContextAccessor httpContext) : this(httpContext)
+        /// <param name="addProfile"></param>
+        /// <param name="updateProfile"></param>
+        public DataSource(DbContextOptions options, IHttpContextAccessor httpContext, IProfileAddMap addProfile, IProfileUpdateMap updateProfile) : this(httpContext, addProfile, updateProfile)
         {
             this.Context = new ScheduleContext(options);
         }

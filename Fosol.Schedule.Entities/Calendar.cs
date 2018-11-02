@@ -45,6 +45,11 @@ namespace Fosol.Schedule.Entities
         public CalendarState State { get; set; } = CalendarState.Published;
 
         /// <summary>
+        /// get/set - How criteria is applied to participants in this calendar.  This can be overridden in child entities.
+        /// </summary>
+        public CriteriaRule CriteriaRule { get; set; } = CriteriaRule.Participate;
+
+        /// <summary>
         /// get - A collection of events within this calendar.
         /// </summary>
         public ICollection<Event> Events { get; private set; } = new List<Event>();

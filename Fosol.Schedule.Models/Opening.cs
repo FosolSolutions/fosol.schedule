@@ -38,11 +38,15 @@ namespace Fosol.Schedule.Models
 
         public Entities.OpeningState State { get; set; }
 
+        public Entities.CriteriaRule CriteriaRule { get; set; }
+
         public IEnumerable<Participant> Participants { get; set; }
 
         public IEnumerable<Participant> Applications { get; set; }
 
         public IEnumerable<Criteria> Criteria { get; set; }
+
+        public IEnumerable<Tag> Tags { get; set; }
         #endregion
     }
 }

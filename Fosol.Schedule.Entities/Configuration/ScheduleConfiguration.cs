@@ -18,10 +18,12 @@ namespace Fosol.Schedule.Entities.Configuration
             builder.Property(m => m.Description).HasMaxLength(2000);
             builder.Property(m => m.RowVersion).IsRowVersion();
 
+            builder.HasOne(m => m.Account).WithMany(m => m.Schedules).HasForeignKey(m => m.AccountId).OnDelete(DeleteBehavior.ClientSetNull);
             builder.HasOne(m => m.AddedBy).WithMany().HasForeignKey(m => m.AddedById).OnDelete(DeleteBehavior.ClientSetNull);
             builder.HasOne(m => m.UpdatedBy).WithMany().HasForeignKey(m => m.UpdatedById).OnDelete(DeleteBehavior.ClientSetNull);
 
-            builder.HasIndex(m => m.Name);
+            builder.HasIndex(m => new { m.Key }).IsUnique();
+            builder.HasIndex(m => new { m.Name, m.State });
         }
         #endregion
     }

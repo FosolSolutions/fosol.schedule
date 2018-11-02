@@ -22,11 +22,15 @@ namespace Fosol.Schedule.Models
 
         public Entities.ActivityState State { get; set; }
 
+        public Entities.CriteriaRule CriteriaRule { get; set; }
+
         public int Sequence { get; set; }
 
         public IEnumerable<Opening> Openings { get; set; }
 
         public IEnumerable<Criteria> Criteria { get; set; }
+
+        public IEnumerable<Tag> Tags { get; set; }
         #endregion
     }
 }

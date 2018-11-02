@@ -24,7 +24,7 @@ namespace Fosol.Schedule.Entities.Configuration
             builder.HasOne(m => m.UpdatedBy).WithMany().HasForeignKey(m => m.UpdatedById).OnDelete(DeleteBehavior.ClientSetNull);
 
             builder.HasIndex(m => new { m.Key }).IsUnique();
-            builder.HasIndex(m => new { m.EventId, m.State, m.StartOn, m.EndOn, m.Name });
+            builder.HasIndex(m => new { m.EventId, m.State, m.StartOn, m.EndOn, m.CriteriaRule, m.Name });
         }
         #endregion
     }

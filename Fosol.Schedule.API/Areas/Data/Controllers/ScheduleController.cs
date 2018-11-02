@@ -31,6 +31,18 @@ namespace Fosol.Schedule.API.Areas.Data.Controllers
 
         #region Methods
         /// <summary>
+        /// Returns the specified schedule.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [HttpGet("{id}")]
+        public IActionResult GetSchedule(int id)
+        {
+            var schedule = _dataSource.Schedules.Get(id);
+            return Ok(schedule);
+        }
+
+        /// <summary>
         /// Returns the specified schedule and its events for the current week (or timespan).
         /// </summary>
         /// <param name="id">The primary key to identify the schedule.</param>
