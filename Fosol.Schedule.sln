@@ -20,8 +20,6 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Fosol.Schedule.Models", "Fo
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Fosol.Core", "Fosol.Core\Fosol.Core.csproj", "{A12D4AEB-F0EE-4588-ACCF-29E308580ED2}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Fosol.Overseer", "Fosol.Overseer\Fosol.Overseer.csproj", "{5B30B591-E035-4580-BC62-96EF894ADF46}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -48,10 +46,6 @@ Global
 		{A12D4AEB-F0EE-4588-ACCF-29E308580ED2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A12D4AEB-F0EE-4588-ACCF-29E308580ED2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A12D4AEB-F0EE-4588-ACCF-29E308580ED2}.Release|Any CPU.Build.0 = Release|Any CPU
-		{5B30B591-E035-4580-BC62-96EF894ADF46}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{5B30B591-E035-4580-BC62-96EF894ADF46}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{5B30B591-E035-4580-BC62-96EF894ADF46}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{5B30B591-E035-4580-BC62-96EF894ADF46}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

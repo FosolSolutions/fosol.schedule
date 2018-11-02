@@ -22,7 +22,6 @@ namespace Fosol.Schedule.DAL
             services.AddSingleton<DbContextOptions>(builder.Options);
             services.AddSingleton(builder.Options);
             services.AddScoped<IDataSource, DataSource>();
-            services.AddOverseer();
             return services;
         }
 
@@ -35,7 +34,6 @@ namespace Fosol.Schedule.DAL
                 setupAction?.Invoke(builder);
                 services.AddSingleton<DbContextOptions>(builder.Options);
                 services.AddSingleton(builder.Options);
-                services.AddOverseer();
             });
 
             return services;
