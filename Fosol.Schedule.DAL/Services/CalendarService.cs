@@ -53,7 +53,7 @@ namespace Fosol.Schedule.DAL.Services
         /// <returns></returns>
         public Models.Calendar Get(int id)
         {
-            return this.Map(this.Find((set) => set.Include(c => c.Criteria).SingleOrDefault(c => c.Id == id)));
+            return this.Map(this.Find((set) => set.Include(c => c.Criteria).Include(c => c.Tags).SingleOrDefault(c => c.Id == id)));
         }
 
         /// <summary>

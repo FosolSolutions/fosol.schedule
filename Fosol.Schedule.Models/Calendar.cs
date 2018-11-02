@@ -18,9 +18,13 @@ namespace Fosol.Schedule.Models
 
         public Entities.CalendarState State { get; set; }
 
+        public Entities.CriteriaRule CriteriaRule { get; set; }
+
         public IEnumerable<Event> Events { get; set; }
 
         public IEnumerable<Criteria> Criteria { get; set; }
+
+        public IEnumerable<Tag> Tags { get; set; }
         #endregion
     }
 }

@@ -1,5 +1,4 @@
-﻿using Fosol.Core.Data.ValueObjects;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
@@ -96,6 +95,11 @@ namespace Fosol.Schedule.Entities
         /// get - A collection of calendars belonging to this account.
         /// </summary>
         public ICollection<Calendar> Calendars { get; private set; } = new List<Calendar>();
+
+        /// <summary>
+        /// get - A collection of schedules belonging to this account.
+        /// </summary>
+        public ICollection<Schedule> Schedules { get; private set; } = new List<Schedule>();
         #endregion
 
         #region Constructors

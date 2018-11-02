@@ -20,12 +20,13 @@ namespace Fosol.Schedule.Entities.Configuration
             builder.Property(m => m.EndOn).IsRequired();
             builder.Property(m => m.RowVersion).IsRowVersion();
 
+            builder.HasOne(m => m.ParentEvent).WithMany().HasForeignKey(m => m.ParentEventId).OnDelete(DeleteBehavior.ClientSetNull);
             builder.HasOne(m => m.Calendar).WithMany(m => m.Events).HasForeignKey(m => m.CalendarId).OnDelete(DeleteBehavior.Cascade);
             builder.HasOne(m => m.AddedBy).WithMany().HasForeignKey(m => m.AddedById).OnDelete(DeleteBehavior.ClientSetNull);
             builder.HasOne(m => m.UpdatedBy).WithMany().HasForeignKey(m => m.UpdatedById).OnDelete(DeleteBehavior.ClientSetNull);
 
             builder.HasIndex(m => new { m.Key }).IsUnique();
-            builder.HasIndex(m => new { m.CalendarId, m.State, m.StartOn, m.EndOn, m.Name });
+            builder.HasIndex(m => new { m.CalendarId, m.State, m.StartOn, m.EndOn, m.CriteriaRule, m.Name });
         }
         #endregion
     }

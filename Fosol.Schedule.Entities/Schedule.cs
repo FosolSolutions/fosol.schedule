@@ -4,7 +4,7 @@ using System.Collections.Generic;
 namespace Fosol.Schedule.Entities
 {
     /// <summary>
-    /// A schedule provides a way to filter a collection of events from multiple calendars.
+    /// Schedule class, provides a way to filter a collection of events from multiple calendars.
     /// </summary>
     public class Schedule : BaseEntity
     {
@@ -18,6 +18,16 @@ namespace Fosol.Schedule.Entities
         /// get/set - A unique key to identify this schedule.
         /// </summary>
         public Guid Key { get; set; }
+
+        /// <summary>
+        /// get/set - Foreign key to the account that own's this schedule.
+        /// </summary>
+        public int AccountId { get; set; }
+
+        /// <summary>
+        /// get/set - The account that own's this schedule.
+        /// </summary>
+        public Account Account { get; set; }
 
         /// <summary>
         /// get/set - A name to identify the schedule.
@@ -62,12 +72,15 @@ namespace Fosol.Schedule.Entities
         /// <summary>
         /// Creates a new instance of a Schedule object, and initializes it with the specified properties.
         /// </summary>
+        /// <param name="account"></param>
         /// <param name="name"></param>
         /// <param name="startOn"></param>
         /// <param name="endOn"></param>
-        public Schedule(string name, DateTime startOn, DateTime endOn)
+        public Schedule(Account account, string name, DateTime startOn, DateTime endOn)
         {
             if (String.IsNullOrWhiteSpace(name)) throw new ArgumentException($"Argument 'name' cannot be null, empty or whitespace.");
+            this.AccountId = account?.Id ?? throw new ArgumentNullException(nameof(account));
+            this.Account = account;
             this.Name = name;
             this.Key = Guid.NewGuid();
             this.StartOn = startOn;

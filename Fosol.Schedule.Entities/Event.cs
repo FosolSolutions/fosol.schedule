@@ -55,6 +55,36 @@ namespace Fosol.Schedule.Entities
         public EventState State { get; set; } = EventState.Published;
 
         /// <summary>
+        /// get/set - How criteria is applied to participants in this event.  This can be overridden in child entities.
+        /// </summary>
+        public CriteriaRule CriteriaRule { get; set; } = CriteriaRule.Participate;
+
+        /// <summary>
+        /// get/set - Foreign key to the parent event.
+        /// </summary>
+        public int? ParentEventId { get; set; }
+
+        /// <summary>
+        /// get/set - The event that this event originated from.
+        /// </summary>
+        public Event ParentEvent { get; set; }
+
+        /// <summary>
+        /// get/set - How often this event repeats.
+        /// </summary>
+        public EventRepetition Repetition { get; set; } = EventRepetition.None;
+
+        /// <summary>
+        /// get/set - When the repeat will end.
+        /// </summary>
+        public DateTime? RepetitionEndOn { get; set; }
+
+        /// <summary>
+        /// get/set - The size of the delta between each repeated event (i.e. days, weeks, months, etc).  This value is influenced by the 'Repetition' property.
+        /// </summary>
+        public int RepetitionSize { get; set; }
+
+        /// <summary>
         /// get - A collection of criteria which are required to participate in the events.
         /// </summary>
         public ICollection<EventCriteria> Criteria { get; private set; } = new List<EventCriteria>();
@@ -87,7 +117,8 @@ namespace Fosol.Schedule.Entities
         /// <param name="start"></param>
         /// <param name="end"></param>
         /// <param name="state"></param>
-        public Event(Calendar calendar, string name, DateTime start, DateTime end, EventState state = EventState.Published)
+        /// <param name="criteriaRule"></param>
+        public Event(Calendar calendar, string name, DateTime start, DateTime end, EventState state = EventState.Published, CriteriaRule criteriaRule = CriteriaRule.Participate)
         {
             if (String.IsNullOrWhiteSpace(name))
                 throw new ArgumentNullException(nameof(name));
@@ -99,6 +130,7 @@ namespace Fosol.Schedule.Entities
             this.StartOn = start;
             this.EndOn = end;
             this.State = state;
+            this.CriteriaRule = CriteriaRule;
         }
         #endregion
     }

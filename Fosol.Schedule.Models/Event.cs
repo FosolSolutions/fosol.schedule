@@ -22,9 +22,30 @@ namespace Fosol.Schedule.Models
 
         public Entities.EventState State { get; set; }
 
+        public Entities.CriteriaRule CriteriaRule { get; set; }
+
+        public int? ParentEventId { get; set; }
+
+        /// <summary>
+        /// get/set - How often this event repeats.
+        /// </summary>
+        public Entities.EventRepetition Repetition { get; set; }
+
+        /// <summary>
+        /// get/set - When the repeat will end.
+        /// </summary>
+        public DateTime? RepetitionEndOn { get; set; }
+
+        /// <summary>
+        /// get/set - The size of the delta between each repeated event (i.e. days, weeks, months, etc).  This value is influenced by the 'Repetition' property.
+        /// </summary>
+        public int RepetitionSize { get; set; }
+
         public IEnumerable<Activity> Activities { get; set; }
 
         public IEnumerable<Criteria> Criteria { get; set; }
+
+        public IEnumerable<Tag> Tags { get; set; }
         #endregion
     }
 }

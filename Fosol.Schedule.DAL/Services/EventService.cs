@@ -38,7 +38,7 @@ namespace Fosol.Schedule.DAL.Services
         public Models.Event Get(int id)
         {
             // TODO: Is user allowed ot see event?
-            return this.Map(this.Find((set) => set.Include(e => e.Criteria).Include(e => e.Activities).SingleOrDefault(e => e.Id == id)));
+            return this.Map(this.Find((set) => set.Include(c => c.Criteria).Include(c => c.Tags).Include(e => e.Activities).SingleOrDefault(e => e.Id == id)));
         }
 
         /// <summary>

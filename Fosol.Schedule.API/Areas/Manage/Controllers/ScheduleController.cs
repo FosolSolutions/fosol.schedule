@@ -53,6 +53,18 @@ namespace Fosol.Schedule.API.Areas.Manage.Controllers
         }
 
         /// <summary>
+        /// Returns the specified schedule.
+        /// </summary>
+        /// <param name="id"></param>
+        /// <returns></returns>
+        [HttpGet("{id}", Name = nameof(GetSchedule))]
+        public IActionResult GetSchedule(int id)
+        {
+            var schedule = _dataSource.Schedules.Get(id);
+            return Ok(schedule);
+        }
+
+        /// <summary>
         /// Add the specified schedule to the datasource.
         /// </summary>
         /// <param name="schedule"></param>
