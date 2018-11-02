@@ -42,12 +42,37 @@ namespace Fosol.Schedule.Entities
         /// <summary>
         /// get/set - The current state of the schedule.
         /// </summary>
-        public ScheduleState State { get; set; }
+        public ScheduleState State { get; set; } = ScheduleState.Published;
 
         /// <summary>
         /// get - A collection of events associated with this schedule.
         /// </summary>
         public ICollection<ScheduleEvent> Events { get; private set; } = new List<ScheduleEvent>(); // TODO: Must use many-to-many table because events are linked to Calendar and not Schedule.  Or I need to instead create a filter which will pull in events from calendars.
+        #endregion
+
+        #region Constructors
+        /// <summary>
+        /// Creates a new instance of a Schedule object.
+        /// </summary>
+        public Schedule()
+        {
+
+        }
+
+        /// <summary>
+        /// Creates a new instance of a Schedule object, and initializes it with the specified properties.
+        /// </summary>
+        /// <param name="name"></param>
+        /// <param name="startOn"></param>
+        /// <param name="endOn"></param>
+        public Schedule(string name, DateTime startOn, DateTime endOn)
+        {
+            if (String.IsNullOrWhiteSpace(name)) throw new ArgumentException($"Argument 'name' cannot be null, empty or whitespace.");
+            this.Name = name;
+            this.Key = Guid.NewGuid();
+            this.StartOn = startOn;
+            this.EndOn = endOn;
+        }
         #endregion
     }
 }

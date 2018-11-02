@@ -21,5 +21,12 @@ namespace Fosol.Schedule.DAL.Interfaces
         /// <param name="endOn"></param>
         /// <returns></returns>
         IEnumerable<Models.Event> Get(int calendarId, DateTime startOn, DateTime endOn);
+
+        /// <summary>
+        /// Get the event Ids for the specified schedule.
+        /// </summary>
+        /// <param name="scheduleId"></param>
+        /// <returns></returns>
+        IEnumerable<int> GetEventIdsForSchedule(int scheduleId);
     }
 }

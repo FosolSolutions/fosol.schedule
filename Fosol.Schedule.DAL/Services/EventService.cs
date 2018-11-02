@@ -60,6 +60,16 @@ namespace Fosol.Schedule.DAL.Services
             var events = this.Context.Events.Include(e => e.Criteria).Where(e => e.CalendarId == calendarId && e.StartOn >= start && e.EndOn <= end).Select(e => this.Map(e)).ToArray();
             return events;
         }
+
+        /// <summary>
+        /// Get the event Ids for the specified schedule.
+        /// </summary>
+        /// <param name="scheduleId"></param>
+        /// <returns></returns>
+        public IEnumerable<int> GetEventIdsForSchedule(int scheduleId)
+        {
+            return this.Context.Schedules.Where(s => s.Id == scheduleId).SelectMany(s => s.Events.Select(e => e.EventId)).ToArray();
+        }
         #endregion
     }
 }

@@ -9,7 +9,6 @@ using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
@@ -58,6 +57,11 @@ namespace Fosol.Schedule.API
             _logger = loggerFactory.CreateLogger<Startup>();
 
             _logger.LogInformation("Application starting");
+
+            if (configuration["KeyVault:IsLoaded"] == "false")
+            {
+                _logger.LogWarning("KeyVault was not configured.");
+            }
         }
         #endregion
 
@@ -143,14 +147,18 @@ namespace Fosol.Schedule.API
 
             services.AddDataSource(optionsBuilder =>
             {
-                var connectionString = this.Configuration.GetConnectionString("Schedule") ?? @"Server=(localdb)\mssqllocaldb;Database=EFProviders.InMemory;Trusted_Connection=True;ConnectRetryCount=0";
-                optionsBuilder.UseApplicationServiceProvider(services.BuildServiceProvider());
-                optionsBuilder.UseLoggerFactory(_loggerFactory);
-                optionsBuilder.UseSqlServer(connectionString);
                 if (this.HostingEnvironment.IsDevelopment())
                 {
                     optionsBuilder.EnableSensitiveDataLogging();
                 }
+                var connectionString = this.Configuration.GetConnectionString("Schedule") ?? @"Server=(localdb)\mssqllocaldb;Database=EFProviders.InMemory;Trusted_Connection=True;ConnectRetryCount=0";
+                optionsBuilder.UseApplicationServiceProvider(services.BuildServiceProvider());
+                optionsBuilder.UseLoggerFactory(_loggerFactory);
+                optionsBuilder.UseSqlServer(connectionString);
+                //services.AddDataSourcePool(options =>
+                //{
+                //    options.UseSqlServer(connectionString);
+                //});
                 //optionsBuilder.UseInMemoryDatabase("Schedule", options => { });
             });
 

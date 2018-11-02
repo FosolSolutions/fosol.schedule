@@ -18,7 +18,12 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Fosol.Schedule.DAL", "Fosol
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Fosol.Schedule.Models", "Fosol.Schedule.Models\Fosol.Schedule.Models.csproj", "{B8F79C74-A952-4FF9-A2D9-17FAEE9F3CA3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Fosol.Core", "Fosol.Core\Fosol.Core.csproj", "{A12D4AEB-F0EE-4588-ACCF-29E308580ED2}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "Fosol.Core", "Fosol.Core\Fosol.Core.csproj", "{A12D4AEB-F0EE-4588-ACCF-29E308580ED2}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{7EE0996A-5EF8-48AF-A572-0895039526EE}"
+	ProjectSection(SolutionItems) = preProject
+		.gitignore = .gitignore
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

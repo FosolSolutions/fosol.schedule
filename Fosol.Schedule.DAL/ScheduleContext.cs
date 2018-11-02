@@ -49,6 +49,8 @@ namespace Fosol.Schedule.DAL
         public DbSet<ParticipantAttribute> ParticipantAttributes { get; set; }
         public DbSet<ParticipantContactInfo> ParticipantContactInfo { get; set; }
 
+        public DbSet<Entities.Schedule> Schedules { get; set; }
+
         public DbSet<Subscription> Subscriptions { get; set; }
 
         public DbSet<User> Users { get; set; }
