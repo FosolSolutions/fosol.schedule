@@ -159,35 +159,5 @@ namespace Fosol.Schedule.API.Areas.Manage.Controllers
 
         }
         #endregion
-
-        #region Helpers
-        /// <summary>
-        /// Creates and adds all events for the specified ecclesia.
-        /// </summary>
-        /// <param name="calendar">The calendar the will be updated in the datasource. JSON data object in the body of the request.</param>
-        /// <param name="startOn"></param>
-        /// <param name="endOn"></param>
-        /// <returns>The calendar that was updated and all the newly added events in the datasource.</returns>
-        [HttpPost("ecclesia")]
-        public IActionResult AddEcclesialEvents([FromBody] Models.Calendar calendar, [FromQuery] DateTime? startOn, [FromQuery] DateTime? endOn)
-        {
-            var result = _dataSource.Helper.AddEcclesialEvents(calendar.Id, startOn, endOn);
-
-            return Ok(result);
-        }
-
-        /// <summary>
-        /// Adds all the members of the Victoria ecclesia to the specified calendar.
-        /// </summary>
-        /// <param name="calendar">The calendar the will be updated in the datasource. JSON data object in the body of the request.</param>
-        /// <returns>An array of participants that were added.</returns>
-        [HttpPost("ecclesia/participants")]
-        public IActionResult AddEcclesialParticipants([FromBody] Models.Calendar calendar)
-        {
-            var result = _dataSource.Helper.AddParticipants(calendar.Id);
-
-            return Ok(result);
-        }
-        #endregion
     }
 }

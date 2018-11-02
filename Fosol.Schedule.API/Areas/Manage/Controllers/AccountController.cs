@@ -14,7 +14,6 @@ namespace Fosol.Schedule.API.Areas.Data.Controllers
     {
         #region Variables
         private readonly IDataSource _datasource;
-        private readonly Overseer.IOverseer _overseer;
         #endregion
 
         #region Constructors
@@ -22,10 +21,9 @@ namespace Fosol.Schedule.API.Areas.Data.Controllers
         /// Creates a new instance of a AccountController object.
         /// </summary>
         /// <param name="datasource"></param>
-        public AccountController(IDataSource datasource, Overseer.IOverseer overseer)
+        public AccountController(IDataSource datasource)
         {
             _datasource = datasource;
-            _overseer = overseer;
         }
         #endregion
 

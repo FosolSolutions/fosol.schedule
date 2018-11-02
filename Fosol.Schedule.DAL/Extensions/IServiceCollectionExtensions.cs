@@ -1,5 +1,4 @@
-﻿using Fosol.Overseer;
-using Fosol.Schedule.DAL.Extensions;
+﻿using Fosol.Schedule.DAL.Extensions;
 using Fosol.Schedule.DAL.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.DependencyInjection;

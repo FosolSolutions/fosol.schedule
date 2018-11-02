@@ -1,0 +1,10 @@
+﻿{
+  "Mail": {
+    "AccountAddress": "jeremymfoster@hotmail.com",
+    "SmtpDNS": "smtp.live.com",
+    "SmtpPort": "587",
+    "EnableSsl": "true",
+    "UseDefaultCredentials": "false",
+    "Timeout": "15000"
+  }
+}

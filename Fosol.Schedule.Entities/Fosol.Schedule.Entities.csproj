@@ -15,4 +15,8 @@
     <ProjectReference Include="..\Fosol.Core\Fosol.Core.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Maps\" />
+  </ItemGroup>
+
 </Project>

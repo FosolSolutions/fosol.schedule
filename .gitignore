@@ -4,7 +4,8 @@
 ## Get latest from https://github.com/github/gitignore/blob/master/VisualStudio.gitignore
 
 # Configuration
-*.connectionstrings.json
+connectionstrings.json
+connectionstrings.*.json
 
 # User-specific files
 *.suo
@@ -331,5 +332,3 @@ ASALocalRun/
 
 # MFractors (Xamarin productivity tool) working folder 
 .mfractor/
-/Fosol.Schedule.DAL/connectionstrings.json
-/Fosol.Schedule.API/connectionstrings.json

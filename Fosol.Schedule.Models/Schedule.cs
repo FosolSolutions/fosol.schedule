@@ -18,8 +18,8 @@ namespace Fosol.Schedule.Models
         /// get/set - The foreign key to the user who owns this schedule.
         /// </summary>
         public int OwnerId { get; set; }
-        public DateTime StartDate { get; set; }
-        public DateTime EndDate { get; set; }
+        public DateTime StartOn { get; set; }
+        public DateTime EndOn { get; set; }
 
         public IList<Event> Events { get; set; }
         #endregion
