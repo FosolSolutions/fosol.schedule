@@ -101,20 +101,20 @@ namespace Fosol.Schedule.DAL.Services
 
             var claims = new List<Claim>(new[]
             {
-                new Claim(ClaimTypes.NameIdentifier, $"{participant.Id}"),
-                new Claim(ClaimTypes.Email, email?.Value ?? ""),
-                new Claim(ClaimTypes.Name, $"{participant.FirstName} {participant.LastName}"),
-                new Claim(ClaimTypes.Surname, participant.LastName),
-                new Claim(ClaimTypes.Gender, $"{participant.Gender}"),
-                new Claim("Key", $"{participant.Key}", typeof(Guid).FullName, "Fosol.Schedule"), // TODO: Namespace constant
-                new Claim("Participant", $"{participant.Id}", typeof(int).FullName, "Fosol.Schedule"),
-                new Claim("Calendar", $"{participant.CalendarId}", typeof(int).FullName, "Fosol.Schedule"),
-                new Claim("Account", $"{participant.Calendar.AccountId}", typeof(int).FullName, "Fosol.Schedule")
+                new Claim(ClaimTypes.NameIdentifier, $"{participant.Key}", typeof(Guid).FullName, "CoEvent"), // TODO: Namespace constant
+                new Claim(ClaimTypes.Email, email?.Value ?? "", typeof(string).FullName, "CoEvent"),
+                new Claim(ClaimTypes.Name, $"{participant.FirstName} {participant.LastName}", typeof(string).FullName, "CoEvent"),
+                new Claim(ClaimTypes.GivenName, participant.FirstName, typeof(string).FullName, "CoEvent"),
+                new Claim(ClaimTypes.Surname, participant.LastName, typeof(string).FullName, "CoEvent"),
+                new Claim(ClaimTypes.Gender, $"{participant.Gender}", typeof(Gender).FullName, "CoEvent"),
+                new Claim("Participant", $"{participant.Id}", typeof(int).FullName, "CoEvent"),
+                new Claim("Calendar", $"{participant.CalendarId}", typeof(int).FullName, "CoEvent"),
+                new Claim("Account", $"{participant.Calendar.AccountId}", typeof(int).FullName, "CoEvent")
             });
 
             foreach (var attr in participant.Attributes)
             {
-                claims.Add(new Claim(attr.Attribute.Key, attr.Attribute.Value, attr.Attribute.ValueType, "Fosol.Schedule"));
+                claims.Add(new Claim(attr.Attribute.Key, attr.Attribute.Value, attr.Attribute.ValueType, "CoEvent"));
             }
 
             return claims;

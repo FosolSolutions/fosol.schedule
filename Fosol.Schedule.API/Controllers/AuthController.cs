@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using System.Security.Claims;
 using System.Threading.Tasks;
 using Fosol.Core.Extensions.ClaimsIdentities;
@@ -10,6 +11,7 @@ using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Logging;
 
 namespace Fosol.Schedule.API.Controllers
@@ -18,8 +20,7 @@ namespace Fosol.Schedule.API.Controllers
     /// AuthController class, provides a way to authenticate a user.
     /// </summary>
     [Produces("application/json")]
-    [Area("api")]
-    [Route("[area]/[controller]")]
+    [Route("[controller]")]
     public class AuthController : Controller
     {
         #region Variables
@@ -46,7 +47,29 @@ namespace Fosol.Schedule.API.Controllers
         /// </summary>
         /// <returns></returns>
         [HttpGet("signin")]
-        public IActionResult Signin()
+        public async Task<IActionResult> Signin([FromQuery] string authScheme)
+        {
+            if (!String.IsNullOrWhiteSpace(authScheme))
+            {
+                var authProperties = new AuthenticationProperties() { RedirectUri = "/api/endpoints" };
+                return new ChallengeResult(authScheme, authProperties);
+            }
+
+            var providers = new List<string>();
+            var schemeProvider = this.HttpContext.RequestServices.GetRequiredService<IAuthenticationSchemeProvider>();
+            foreach (var provider in await schemeProvider.GetAllSchemesAsync())
+            {
+                providers.Add("<a href=\"?authscheme=" + provider.Name + "\">" + (provider.DisplayName ?? "(suppressed)") + "</a>");
+            }
+            return View(providers);
+        }
+
+        /// <summary>
+        /// Occurs when the oauth signin fails because access was denied.
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet("access/denied")]
+        public IActionResult AccessDenied()
         {
             return View();
         }

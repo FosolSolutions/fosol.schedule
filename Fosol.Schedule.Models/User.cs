@@ -13,13 +13,15 @@ namespace Fosol.Schedule.Models
 
         public string Email { get; set; }
 
+        public int? DefaultAccountId { get; set; }
+
         public string FirstName { get; set; }
 
         public string MiddleName { get; set; }
 
         public string LastName { get; set; }
 
-        public Gender Gender { get; set; }
+        public Gender? Gender { get; set; }
 
         public DateTime? Birthdate { get; set; }
 
