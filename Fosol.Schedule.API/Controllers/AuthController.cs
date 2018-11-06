@@ -25,18 +25,18 @@ namespace Fosol.Schedule.API.Controllers
     {
         #region Variables
         private readonly ILogger _logger;
-        private readonly IDataSource _datasource;
+        private readonly IDataSource _dataSource;
         #endregion
 
         #region Constructors
         /// <summary>
         /// Creates a new instance of an AuthController object, and initializes it with the specified arguments.
         /// </summary>
-        /// <param name="datasource"></param>
+        /// <param name="dataSource"></param>
         /// <param name="logger"></param>
-        public AuthController(IDataSource datasource, ILogger<AuthController> logger)
+        public AuthController(IDataSource dataSource, ILogger<AuthController> logger)
         {
-            _datasource = datasource;
+            _dataSource = dataSource;
             _logger = logger;
         }
         #endregion
@@ -82,7 +82,7 @@ namespace Fosol.Schedule.API.Controllers
         [HttpGet("signin/participant/{key}")]
         public async Task<IActionResult> SigninParticipant(Guid key)
         {
-            var identity = _datasource.Participants.CreateIdentity(key);
+            var identity = _dataSource.Participants.CreateIdentity(key);
             if (identity == null)
                 return Unauthorized();
 
@@ -91,22 +91,6 @@ namespace Fosol.Schedule.API.Controllers
 
             var participant = new ClaimsPrincipal(identity);
             await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, participant);
-
-            return Ok(true);
-        }
-
-        /// <summary>
-        /// Makes the specified calendar the active calendar for the currently signed in user.
-        /// Updates the users claims.
-        /// </summary>
-        /// <param name="calendarId"></param>
-        /// <returns></returns>
-        [HttpPut("calendar/{calendarId}")]
-        public async Task<IActionResult> SelectCalendar(int calendarId)
-        {
-            _datasource.Calendars.SelectCalendar(User, calendarId);
-            var principal = new ClaimsPrincipal(User);
-            await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal);
 
             return Ok(true);
         }
@@ -130,11 +114,11 @@ namespace Fosol.Schedule.API.Controllers
         [HttpGet("backdoor/user")]
         public async Task<IActionResult> BackdoorUser()
         {
-            var user = _datasource.Users.Get(1);
+            var user = _dataSource.Users.Get(1);
             if (user == null)
                 return BadRequest();
 
-            var identity = _datasource.Users.CreateIdentity(user.Key);
+            var identity = _dataSource.Users.CreateIdentity(user.Key);
             if (identity == null)
                 return Unauthorized();
 
@@ -151,11 +135,11 @@ namespace Fosol.Schedule.API.Controllers
         [HttpGet("backdoor/participant")]
         public async Task<IActionResult> BackdoorParticipant()
         {
-            var participant = _datasource.Participants.Get(1);
+            var participant = _dataSource.Participants.Get(1);
             if (participant == null)
                 return BadRequest();
 
-            var identity = _datasource.Users.CreateIdentity(participant.Key);
+            var identity = _dataSource.Users.CreateIdentity(participant.Key);
             if (identity == null)
                 return Unauthorized();
 
@@ -178,20 +162,30 @@ namespace Fosol.Schedule.API.Controllers
 
             // TODO: Verify that the user is allowed to perform this action.
             var userId = int.Parse(User.GetNameIdentifier().Value);
-            var participant = _datasource.Participants.Get(key);
+            var participant = _dataSource.Participants.Get(key);
             if (participant == null)
                 return BadRequest();
 
-            var identity = _datasource.Participants.CreateIdentity(key);
+            var identity = _dataSource.Participants.CreateIdentity(key);
             if (identity == null)
                 return Unauthorized();
 
             _logger.LogInformation($"Impersonating participant '{participant.Id}' - current user: '{userId}'.");
 
-            var id = identity.GetNameIdentifier();
-            identity.RemoveClaim(id);
-            identity.AddClaim(new Claim(ClaimTypes.NameIdentifier, $"{participant.Id}"));
-            identity.AddClaim(new Claim("Impersonator", $"{userId}", "int", "Fosol.Schedule"));
+            var participantClaim = identity.GetParticipant();
+            if (participantClaim != null)
+            {
+                identity.RemoveClaim(participantClaim);
+            }
+
+            var impersonateClaim = identity.GetImpersonator();
+            if (impersonateClaim != null)
+            {
+                identity.RemoveClaim(impersonateClaim);
+            }
+            
+            identity.AddClaim(new Claim("Participant", $"{participant.Id}", typeof(int).Name, "CoEvent"));
+            identity.AddClaim(new Claim("Impersonator", $"{userId}", typeof(int).Name, "CoEvent")); // TODO: Issuer
 
             var impersonate = new ClaimsPrincipal(identity);
             await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, impersonate);
@@ -212,20 +206,37 @@ namespace Fosol.Schedule.API.Controllers
 
             // TODO: Verify that the user is allowed to perform this action.
             var userId = int.Parse(User.GetNameIdentifier().Value);
-            var user = _datasource.Users.Get(key);
+            var user = _dataSource.Users.Get(key);
             if (user == null)
                 return BadRequest();
 
-            var identity = _datasource.Users.CreateIdentity(key);
+            var identity = _dataSource.Users.CreateIdentity(key);
             if (identity == null)
                 return Unauthorized();
 
             _logger.LogInformation($"Impersonating user '{user.Id}' - current user: '{userId}'.");
 
-            var id = identity.GetNameIdentifier();
-            identity.RemoveClaim(id);
-            identity.AddClaim(new Claim(ClaimTypes.NameIdentifier, $"{user.Id}"));
-            identity.AddClaim(new Claim("Impersonator", $"{userId}", "int", "Fosol.Schedule"));
+            var identifierClaim = identity.GetNameIdentifier();
+            if (identifierClaim != null)
+            {
+                identity.RemoveClaim(identifierClaim);
+            }
+
+            var userClaim = identity.GetUser();
+            if (userClaim != null)
+            {
+                identity.RemoveClaim(userClaim);
+            }
+
+            var impersonateClaim = identity.GetImpersonator();
+            if (impersonateClaim != null)
+            {
+                identity.RemoveClaim(impersonateClaim);
+            }
+
+            identity.AddClaim(new Claim(ClaimTypes.NameIdentifier, $"{user.Key}", typeof(Guid).Name, "CoEvent"));
+            identity.AddClaim(new Claim("User", $"{user.Id}", typeof(int).Name, "CoEvent"));
+            identity.AddClaim(new Claim("Impersonator", $"{userId}", typeof(int).Name, "CoEvent")); // TODO: Issuer
 
             var impersonate = new ClaimsPrincipal(identity);
             await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, impersonate);

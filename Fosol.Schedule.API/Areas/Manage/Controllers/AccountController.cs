@@ -13,7 +13,7 @@ namespace Fosol.Schedule.API.Areas.Data.Controllers
     public sealed class AccountController : ApiController
     {
         #region Variables
-        private readonly IDataSource _datasource;
+        private readonly IDataSource _dataSource;
         #endregion
 
         #region Constructors
@@ -23,7 +23,7 @@ namespace Fosol.Schedule.API.Areas.Data.Controllers
         /// <param name="datasource"></param>
         public AccountController(IDataSource datasource)
         {
-            _datasource = datasource;
+            _dataSource = datasource;
         }
         #endregion
 
@@ -37,7 +37,7 @@ namespace Fosol.Schedule.API.Areas.Data.Controllers
         [HttpGet("{id}")]
         public IActionResult GetAccount(int id) // TODO: Should I use async?
         {
-            var account = _datasource.Accounts.Get(id);
+            var account = _dataSource.Accounts.Get(id);
             return Ok(account);
         }
 
@@ -49,8 +49,8 @@ namespace Fosol.Schedule.API.Areas.Data.Controllers
         [HttpPost]
         public IActionResult AddAccount([FromBody] Models.Account account)
         {
-            _datasource.Accounts.Add(account);
-            _datasource.CommitTransaction();
+            _dataSource.Accounts.Add(account);
+            _dataSource.CommitTransaction();
 
             return Created(Url.RouteUrl(nameof(GetAccount), new { account.Id }), account);
         }
@@ -63,8 +63,8 @@ namespace Fosol.Schedule.API.Areas.Data.Controllers
         [HttpPut]
         public IActionResult UpdateAccount([FromBody] Models.Account account)
         {
-            _datasource.Accounts.Update(account);
-            _datasource.CommitTransaction();
+            _dataSource.Accounts.Update(account);
+            _dataSource.CommitTransaction();
 
             return Ok(account);
         }
@@ -77,8 +77,8 @@ namespace Fosol.Schedule.API.Areas.Data.Controllers
         [HttpDelete]
         public IActionResult DeleteAccount([FromBody] Models.Account account)
         {
-            _datasource.Accounts.Remove(account);
-            _datasource.CommitTransaction();
+            _dataSource.Accounts.Remove(account);
+            _dataSource.CommitTransaction();
 
             return Ok();
         }

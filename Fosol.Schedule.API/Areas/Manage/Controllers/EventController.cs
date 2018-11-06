@@ -15,7 +15,7 @@ namespace Fosol.Schedule.API.Areas.Manage.Controllers
     public sealed class EventController : ApiController
     {
         #region Variables
-        private readonly IDataSource _datasource;
+        private readonly IDataSource _dataSource;
         #endregion
 
         #region Constructors
@@ -25,7 +25,7 @@ namespace Fosol.Schedule.API.Areas.Manage.Controllers
         /// <param name="datasource"></param>
         public EventController(IDataSource datasource)
         {
-            _datasource = datasource;
+            _dataSource = datasource;
         }
         #endregion
 
@@ -39,7 +39,7 @@ namespace Fosol.Schedule.API.Areas.Manage.Controllers
         [HttpGet("{id}", Name = nameof(GetEvent))]
         public IActionResult GetEvent(int id)
         {
-            var cevent = _datasource.Events.Get(id);
+            var cevent = _dataSource.Events.Get(id);
             return Ok(cevent);
         }
 
@@ -58,7 +58,7 @@ namespace Fosol.Schedule.API.Areas.Manage.Controllers
             start = start.DayOfWeek == DayOfWeek.Sunday ? start : start.AddDays(-1 * (int)start.DayOfWeek);
             var end = endOn ?? start.AddDays(7);
 
-            var cevents = _datasource.Events.Get(id, start, end);
+            var cevents = _dataSource.Events.Get(id, start, end);
             return cevents.Count() != 0 ? Ok(cevents) : (IActionResult)NoContent();
         }
 
@@ -70,8 +70,8 @@ namespace Fosol.Schedule.API.Areas.Manage.Controllers
         [HttpPost]
         public IActionResult AddEvent([FromBody] Models.Event cevent)
         {
-            _datasource.Events.Add(cevent);
-            _datasource.CommitTransaction();
+            _dataSource.Events.Add(cevent);
+            _dataSource.CommitTransaction();
 
             return Created(Url.RouteUrl(nameof(GetEvent), new { cevent.Id }), cevent);
         }
@@ -84,8 +84,8 @@ namespace Fosol.Schedule.API.Areas.Manage.Controllers
         [HttpPut]
         public IActionResult UpdateEvent([FromBody] Models.Event cevent)
         {
-            _datasource.Events.Update(cevent);
-            _datasource.CommitTransaction();
+            _dataSource.Events.Update(cevent);
+            _dataSource.CommitTransaction();
 
             return Ok(cevent);
         }
@@ -98,8 +98,8 @@ namespace Fosol.Schedule.API.Areas.Manage.Controllers
         [HttpDelete]
         public IActionResult DeleteEvent([FromBody] Models.Event cevent)
         {
-            _datasource.Events.Remove(cevent);
-            _datasource.CommitTransaction();
+            _dataSource.Events.Remove(cevent);
+            _dataSource.CommitTransaction();
 
             return Ok();
         }

@@ -16,7 +16,7 @@ namespace Fosol.Schedule.API.Areas.Manage.Controllers
     public class ParticipantController : ApiController
     {
         #region Variables
-        private readonly IDataSource _datasource;
+        private readonly IDataSource _dataSource;
         private readonly MailClient _mailClient;
         #endregion
 
@@ -28,7 +28,7 @@ namespace Fosol.Schedule.API.Areas.Manage.Controllers
         /// <param name="mailClient"></param>
         public ParticipantController(IDataSource datasource, MailClient mailClient)
         {
-            _datasource = datasource;
+            _dataSource = datasource;
             _mailClient = mailClient;
         }
         #endregion
@@ -42,7 +42,7 @@ namespace Fosol.Schedule.API.Areas.Manage.Controllers
         [HttpGet("{id}", Name = nameof(GetParticipant))]
         public IActionResult GetParticipant(int id)
         {
-            var participant = _datasource.Participants.Get(id);
+            var participant = _dataSource.Participants.Get(id);
 
             return Ok(participant);
         }
@@ -55,7 +55,7 @@ namespace Fosol.Schedule.API.Areas.Manage.Controllers
         [HttpGet("{key}")]
         public IActionResult GetParticipant(Guid key)
         {
-            var participant = _datasource.Participants.Get(key);
+            var participant = _dataSource.Participants.Get(key);
 
             return Ok(participant);
         }
@@ -72,7 +72,7 @@ namespace Fosol.Schedule.API.Areas.Manage.Controllers
         {
             var take = quantity < 1 ? 20 : quantity;
             var skip = page > 1 ? page - 1 * take : 0;
-            var participants = _datasource.Participants.GetForCalendar(calendarId, skip, take);
+            var participants = _dataSource.Participants.GetForCalendar(calendarId, skip, take);
             // TODO: Need a PageRequest object.
             return Ok(participants);
         }
@@ -87,8 +87,8 @@ namespace Fosol.Schedule.API.Areas.Manage.Controllers
         {
             if (this.ModelState.IsValid)
             {
-                _datasource.Participants.Add(participant);
-                _datasource.CommitTransaction();
+                _dataSource.Participants.Add(participant);
+                _dataSource.CommitTransaction();
 
                 return Created(Url.RouteUrl(nameof(GetParticipant), new { participant.Id }), participant);
             }
@@ -106,8 +106,8 @@ namespace Fosol.Schedule.API.Areas.Manage.Controllers
         {
             if (this.ModelState.IsValid)
             {
-                _datasource.Participants.Update(participant);
-                _datasource.CommitTransaction();
+                _dataSource.Participants.Update(participant);
+                _dataSource.CommitTransaction();
 
                 return Ok(participant);
             }
@@ -125,8 +125,8 @@ namespace Fosol.Schedule.API.Areas.Manage.Controllers
         {
             if (this.ModelState.IsValid)
             {
-                _datasource.Participants.Remove(participant);
-                _datasource.CommitTransaction();
+                _dataSource.Participants.Remove(participant);
+                _dataSource.CommitTransaction();
 
                 return Ok(true);
             }
@@ -142,7 +142,7 @@ namespace Fosol.Schedule.API.Areas.Manage.Controllers
         [HttpPut("invite/{id}")]
         public async Task<IActionResult> InviteParticipant(int id)
         {
-            var participant = _datasource.Participants.Get(id);
+            var participant = _dataSource.Participants.Get(id);
 
             if (!String.IsNullOrWhiteSpace(participant.Email))
             {

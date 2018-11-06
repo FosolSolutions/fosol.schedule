@@ -152,10 +152,10 @@ namespace Fosol.Schedule.DAL.Services
         /// <returns></returns>
         public IEnumerable<Claim> GetClaims(int calendarId)
         {
-            var id = this.GetUserId() ?? this.GetParticipantId();
+            var id = this.GetParticipantId() ?? this.GetUserId();
             var isParticipant = this.IsPrincipalAParticipant;
             var calendar = this.Context.Calendars.SingleOrDefault(c => c.Id == calendarId && (isParticipant && c.Participants.Any(p => p.Id == id) || c.Account.Users.Any(u => u.UserId == id))) ?? throw new NotAuthorizedException();
-            var participant = this.Context.Participants.SingleOrDefault(p => isParticipant && p.Id == id || (p.CalendarId == calendarId && p.UserId == id)) ?? throw new InvalidOperationException($"User must first become a participant in this calendar.");
+            var participant = this.Context.Participants.SingleOrDefault(p => isParticipant && p.Id == id || (p.CalendarId == calendarId && p.UserId == id)) ?? throw new InvalidOperationException($"User must first become a participant in this calendar."); // TODO: New workflow, if a user isn't a participant it should redirect them to a page to become one.
             var claims = new List<Claim>(new[]
             {
                 new Claim("Calendar", $"{calendarId}", typeof(int).FullName, "CoEvent"),

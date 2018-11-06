@@ -57,6 +57,8 @@ namespace Fosol.Schedule.Models
         public IList<Account> Accounts { get; set; }
 
         public IList<Attribute> Attributes { get; set; }
+
+        public IList<OauthAccount> OauthAccounts { get; set; }
         #endregion
     }
 }

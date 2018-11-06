@@ -15,7 +15,7 @@ namespace Fosol.Schedule.API.Areas.Data.Controllers
     public sealed class OpeningController : ApiController
     {
         #region Variables
-        private readonly IDataSource _datasource;
+        private readonly IDataSource _dataSource;
         #endregion
 
         #region Constructors
@@ -25,7 +25,7 @@ namespace Fosol.Schedule.API.Areas.Data.Controllers
         /// <param name="datasource"></param>
         public OpeningController(IDataSource datasource)
         {
-            _datasource = datasource;
+            _dataSource = datasource;
         }
         #endregion
 
@@ -38,7 +38,7 @@ namespace Fosol.Schedule.API.Areas.Data.Controllers
         [HttpGet("{id}", Name = "GetOpening")]
         public IActionResult GetOpening(int id)
         {
-            var opening = _datasource.Openings.Get(id);
+            var opening = _dataSource.Openings.Get(id);
             return Ok(opening);
         }
 
@@ -50,8 +50,8 @@ namespace Fosol.Schedule.API.Areas.Data.Controllers
         [HttpPost]
         public IActionResult AddOpening([FromBody] Opening opening)
         {
-            _datasource.Openings.Add(opening);
-            _datasource.CommitTransaction();
+            _dataSource.Openings.Add(opening);
+            _dataSource.CommitTransaction();
 
             return Created(Url.RouteUrl(nameof(GetOpening), new { opening.Id }), opening);
         }
@@ -64,8 +64,8 @@ namespace Fosol.Schedule.API.Areas.Data.Controllers
         [HttpPut]
         public IActionResult UpdateOpening([FromBody] Opening opening)
         {
-            _datasource.Openings.Update(opening);
-            _datasource.CommitTransaction();
+            _dataSource.Openings.Update(opening);
+            _dataSource.CommitTransaction();
 
             return Ok(opening);
         }
@@ -78,8 +78,8 @@ namespace Fosol.Schedule.API.Areas.Data.Controllers
         [HttpDelete]
         public IActionResult DeleteOpening([FromBody] Opening opening)
         {
-            _datasource.Openings.Remove(opening);
-            _datasource.CommitTransaction();
+            _dataSource.Openings.Remove(opening);
+            _dataSource.CommitTransaction();
 
             return Ok();
         }
@@ -92,8 +92,8 @@ namespace Fosol.Schedule.API.Areas.Data.Controllers
         [HttpPut("apply")]
         public IActionResult Apply([FromBody] Opening opening)
         {
-            var result = _datasource.Openings.Apply(opening);
-            _datasource.CommitTransaction();
+            var result = _dataSource.Openings.Apply(opening);
+            _dataSource.CommitTransaction();
 
             return Ok(result);
         }
@@ -106,8 +106,8 @@ namespace Fosol.Schedule.API.Areas.Data.Controllers
         [HttpPut("unapply")]
         public IActionResult Unapply([FromBody] Opening opening)
         {
-            var result = _datasource.Openings.Unapply(opening);
-            _datasource.CommitTransaction();
+            var result = _dataSource.Openings.Unapply(opening);
+            _dataSource.CommitTransaction();
 
             return Ok(result);
         }

@@ -1,6 +1,5 @@
-﻿using Fosol.Core.Exceptions;
+﻿using Fosol.Core.Extensions.Enumerable;
 using Fosol.Schedule.DAL.Interfaces;
-using Fosol.Schedule.Models;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -33,14 +32,13 @@ namespace Fosol.Schedule.DAL.Services
 
         #region Methods
         /// <summary>
-        /// Verify the user with the specified key or email exists.
+        /// Verify the user, or oauth account with the specified email exists.
         /// </summary>
-        /// <param name="key"></param>
         /// <param name="email"></param>
         /// <returns></returns>
-        public int Verify(Guid key, string email = null)
+        public int Verify(string email)
         {
-            return this.Context.Users.Where(u => u.Key == key || u.Email == email).Select(u => u.Id).SingleOrDefault();
+            return this.Context.Users.Where(u => u.Email == email || u.OauthAccounts.Any(a => a.Email == email)).Select(u => u.Id).SingleOrDefault();
         }
 
         /// <summary>
@@ -102,7 +100,19 @@ namespace Fosol.Schedule.DAL.Services
         {
             var entity = this.AddMap(model);
             entity.AddedById = this.GetUserId(); // Oauth users will be null.
-            entity.Info.AddedBy = entity;
+
+            if (entity.Info != null)
+            {
+                entity.Info.AddedBy = entity;
+            }
+            if (entity.OauthAccounts.Count() > 0)
+            {
+                entity.OauthAccounts.ForEach(a =>
+                {
+                    a.User = entity;
+                    a.AddedBy = entity;
+                });
+            }
             this.Add(entity);
             Track(entity, model);
         }

@@ -1,12 +1,16 @@
-﻿using Fosol.Core.Exceptions;
-using Fosol.Core.Extensions.Enumerable;
+﻿using Fosol.Core.Extensions.Enumerable;
 using Fosol.Core.Extensions.Principals;
 using Fosol.Schedule.DAL.Interfaces;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Http;
+using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Security.Claims;
+using System.Text.Encodings.Web;
+using System.Threading.Tasks;
 
 namespace Fosol.Schedule.API.Helpers
 {
@@ -16,6 +20,51 @@ namespace Fosol.Schedule.API.Helpers
     public static class AuthenticationHelper
     {
         #region Methods
+        // TODO: Replace with better implementation, use built-in error handling.
+        /// <summary>
+        /// When an oath authorization or token request fails.
+        /// </summary>
+        /// <param name="context"></param>
+        /// <returns></returns>
+        public static async Task HandleOnRemoteFailure(RemoteFailureContext context)
+        {
+            context.Response.StatusCode = 500;
+            context.Response.ContentType = "text/html";
+            await context.Response.WriteAsync("<html><body>");
+            await context.Response.WriteAsync("A remote failure has occurred: " + UrlEncoder.Default.Encode(context.Failure.Message) + "<br>");
+
+            if (context.Properties != null)
+            {
+                await context.Response.WriteAsync("Properties:<br>");
+                foreach (var pair in context.Properties.Items)
+                {
+                    await context.Response.WriteAsync($"-{ UrlEncoder.Default.Encode(pair.Key)}={ UrlEncoder.Default.Encode(pair.Value)}<br>");
+                }
+            }
+
+            await context.Response.WriteAsync("<a href=\"/\">Home</a>");
+            await context.Response.WriteAsync("</body></html>");
+
+            // context.Response.Redirect("/error?FailureMessage=" + UrlEncoder.Default.Encode(context.Failure.Message));
+
+            context.HandleResponse();
+        }
+
+        /// <summary>
+        /// When an oauth token has been successfully received.
+        /// </summary>
+        /// <param name="context"></param>
+        /// <returns></returns>
+        public static async Task HandleOnTicketReceived(TicketReceivedContext context)
+        {
+            await Task.Run(() =>
+            {
+                var datasource = context.HttpContext.RequestServices.GetRequiredService<IDataSource>();
+                AuthenticationHelper.AuthorizeOauthUser(datasource, context.Principal);
+            });
+            context.Success();
+        }
+
         /// <summary>
         /// Creates an identity object for a participant that matches the specified 'key'.
         /// </summary>
@@ -77,18 +126,26 @@ namespace Fosol.Schedule.API.Helpers
             // TODO: Redirect user to create a User Profile page.
             try
             {
-                var key = new Guid(principal.GetNameIdentifier()?.Value);
                 var email = principal.GetEmail()?.Value;
-                var userId = datasource.Users.Verify(key, email);
+                var userId = datasource.Users.Verify(email);
                 Models.User user;
                 if (userId == 0)
                 {
                     user = new Models.User()
                     {
-                        Key = key,
+                        Key = Guid.NewGuid(),
                         LastName = principal.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Surname)?.Value,
                         FirstName = principal.Claims.FirstOrDefault(c => c.Type == ClaimTypes.GivenName)?.Value,
-                        Email = email
+                        Email = email,
+                        OauthAccounts = new List<Models.OauthAccount>(new[] 
+                        {
+                            new Models.OauthAccount()
+                            {
+                                Key = principal.GetNameIdentifier()?.Value,
+                                Email = email,
+                                Issuer = principal.GetNameIdentifier().Issuer
+                            }
+                        })
                     };
                     datasource.Users.Add(user);
                     datasource.CommitTransaction();
@@ -103,7 +160,7 @@ namespace Fosol.Schedule.API.Helpers
                 {
                     new Claim(ClaimTypes.Name, $"{user.FirstName} {user.LastName}", typeof(string).FullName, "CoEvent"),
                     new Claim("User", $"{user.Id}", typeof(int).FullName, "CoEvent"),
-                    //new Claim("Account", $"{user.DefaultAccountId ?? user.OwnedAccounts.FirstOrDefault().Id}", typeof(int).FullName, "CoEvent")
+                    new Claim("Account", $"{user.DefaultAccountId ?? user.OwnedAccounts.FirstOrDefault()?.Id ?? 0}", typeof(int).FullName, "CoEvent")
                 });
                 claims.ForEach(c =>
                 {

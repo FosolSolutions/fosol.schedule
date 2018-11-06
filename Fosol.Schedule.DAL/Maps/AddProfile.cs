@@ -34,6 +34,7 @@ namespace Fosol.Schedule.DAL.Maps
                 .Include<Entities.Attribute, Models.Attribute>()
                 .Include<Entities.Schedule, Models.Schedule>()
                 .Include<Entities.Tag, Models.Tag>()
+                .Include<Entities.OauthAccount, Models.OauthAccount>()
                 .ForMember(dest => dest.RowVersion, opt => opt.MapFrom(src => Convert.ToBase64String(src.RowVersion)))
                 .ReverseMap()
                 .ForMember(dest => dest.RowVersion, opt => opt.MapFrom(src => Convert.FromBase64String(src.RowVersion)))
@@ -96,6 +97,9 @@ namespace Fosol.Schedule.DAL.Maps
                 .ForPath(dest => dest.Info.MobilePhone, opt => opt.MapFrom(src => src.MobilePhone))
                 .ForPath(dest => dest.Info.WorkPhone, opt => opt.MapFrom(src => src.WorkPhone))
                 .ForMember(dest => dest.Key, opt => opt.MapFrom(src => (src.Key != Guid.Empty) ? src.Key : Guid.NewGuid()));
+
+            CreateMap<Entities.OauthAccount, Models.OauthAccount>()
+                .ReverseMap();
 
             CreateMap<Entities.Account, Models.Account>()
                 .ReverseMap()

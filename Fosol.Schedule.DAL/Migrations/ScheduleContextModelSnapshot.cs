@@ -577,6 +577,50 @@ namespace Fosol.Schedule.DAL.Migrations
                     b.ToTable("EventTags");
                 });
 
+            modelBuilder.Entity("Fosol.Schedule.Entities.OauthAccount", b =>
+                {
+                    b.Property<int>("UserId");
+
+                    b.Property<string>("Email")
+                        .HasMaxLength(150);
+
+                    b.Property<int>("AddedById");
+
+                    b.Property<DateTime>("AddedOn")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("DATETIME2")
+                        .HasDefaultValueSql("GETUTCDATE()");
+
+                    b.Property<string>("Issuer")
+                        .IsRequired()
+                        .HasMaxLength(100);
+
+                    b.Property<string>("Key")
+                        .IsRequired();
+
+                    b.Property<byte[]>("RowVersion")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate();
+
+                    b.Property<int?>("UpdatedById");
+
+                    b.Property<DateTime?>("UpdatedOn");
+
+                    b.HasKey("UserId", "Email");
+
+                    b.HasIndex("AddedById");
+
+                    b.HasIndex("Email")
+                        .IsUnique();
+
+                    b.HasIndex("Key")
+                        .IsUnique();
+
+                    b.HasIndex("UpdatedById");
+
+                    b.ToTable("OauthAccounts");
+                });
+
             modelBuilder.Entity("Fosol.Schedule.Entities.Opening", b =>
                 {
                     b.Property<int>("Id")
@@ -1382,6 +1426,22 @@ namespace Fosol.Schedule.DAL.Migrations
                     b.HasOne("Fosol.Schedule.Entities.Tag", "Tag")
                         .WithMany("Events")
                         .HasForeignKey("TagKey", "TagValue")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+
+            modelBuilder.Entity("Fosol.Schedule.Entities.OauthAccount", b =>
+                {
+                    b.HasOne("Fosol.Schedule.Entities.User", "AddedBy")
+                        .WithMany()
+                        .HasForeignKey("AddedById");
+
+                    b.HasOne("Fosol.Schedule.Entities.User", "UpdatedBy")
+                        .WithMany()
+                        .HasForeignKey("UpdatedById");
+
+                    b.HasOne("Fosol.Schedule.Entities.User", "User")
+                        .WithMany("OauthAccounts")
+                        .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 

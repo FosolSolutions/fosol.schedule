@@ -13,7 +13,7 @@ namespace Fosol.Schedule.API.Areas.Data.Controllers
     public sealed class UserController : ApiController
     {
         #region Variables
-        private readonly IDataSource _datasource;
+        private readonly IDataSource _dataSource;
         #endregion
 
         #region Constructors
@@ -23,7 +23,7 @@ namespace Fosol.Schedule.API.Areas.Data.Controllers
         /// <param name="datasource"></param>
         public UserController(IDataSource datasource)
         {
-            _datasource = datasource;
+            _dataSource = datasource;
         }
         #endregion
 
@@ -37,7 +37,7 @@ namespace Fosol.Schedule.API.Areas.Data.Controllers
         [HttpGet("{id}")]
         public IActionResult GetUser(int id)
         {
-            var user = _datasource.Users.Get(id);
+            var user = _dataSource.Users.Get(id);
             return Ok(user);
         }
 
@@ -49,8 +49,8 @@ namespace Fosol.Schedule.API.Areas.Data.Controllers
         [HttpPost]
         public IActionResult AddUser([FromBody] Models.User user)
         {
-            _datasource.Users.Add(user);
-            _datasource.CommitTransaction();
+            _dataSource.Users.Add(user);
+            _dataSource.CommitTransaction();
 
             return Created(Url.RouteUrl(nameof(GetUser), new { user.Id }), user);
         }
@@ -63,8 +63,8 @@ namespace Fosol.Schedule.API.Areas.Data.Controllers
         [HttpPut]
         public IActionResult UpdateUser([FromBody] Models.User user)
         {
-            _datasource.Users.Update(user);
-            _datasource.CommitTransaction();
+            _dataSource.Users.Update(user);
+            _dataSource.CommitTransaction();
 
             return Ok(user);
         }
@@ -77,8 +77,8 @@ namespace Fosol.Schedule.API.Areas.Data.Controllers
         [HttpDelete]
         public IActionResult DeleteUser([FromBody] Models.User user)
         {
-            _datasource.Users.Remove(user);
-            _datasource.CommitTransaction();
+            _dataSource.Users.Remove(user);
+            _dataSource.CommitTransaction();
 
             return Ok();
         }

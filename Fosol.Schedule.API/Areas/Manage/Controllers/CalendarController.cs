@@ -1,10 +1,15 @@
 ﻿using Fosol.Core.Mvc;
+using Fosol.Schedule.API.Helpers;
 using Fosol.Schedule.API.Helpers.Mail;
 using Fosol.Schedule.DAL.Interfaces;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 
 namespace Fosol.Schedule.API.Areas.Manage.Controllers
@@ -112,6 +117,22 @@ namespace Fosol.Schedule.API.Areas.Manage.Controllers
             _dataSource.CommitTransaction();
 
             return Ok();
+        }
+
+        /// <summary>
+        /// Makes the specified calendar the active calendar for the currently signed in user.
+        /// Updates the users claims.
+        /// </summary>
+        /// <param name="calendarId"></param>
+        /// <returns></returns>
+        [HttpPut("select/{calendarId}"), Authorize]
+        public async Task<IActionResult> SelectCalendar(int calendarId)
+        {
+            _dataSource.Calendars.SelectCalendar(User, calendarId);
+            var principal = new ClaimsPrincipal(User);
+            await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal);
+
+            return Ok(true);
         }
 
         /// <summary>

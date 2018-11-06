@@ -13,6 +13,7 @@ using Microsoft.AspNetCore.Authentication.OAuth;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.HttpOverrides;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
@@ -108,15 +109,33 @@ namespace Fosol.Schedule.API
                 {
                     options.ClientId = this.Configuration["Authentication:Microsoft:ClientId"];
                     options.ClientSecret = this.Configuration["Authentication:Microsoft:ClientSecret"];
-                    options.AuthorizationEndpoint = "https://login.microsoftonline.com/270632f2-6258-4bc4-80b3-435c63f379cf/oauth2/v2.0/authorize";
-                    options.TokenEndpoint = "https://login.microsoftonline.com/270632f2-6258-4bc4-80b3-435c63f379cf/oauth2/v2.0/token";
+                    options.AuthorizationEndpoint = this.Configuration["Authentication:Microsoft:AuthorizationEndpoint"];
+                    options.TokenEndpoint = this.Configuration["Authentication:Microsoft:TokenEndpoint"];
                     options.SaveTokens = true;
                     options.Scope.Add("offline_access");
                     options.Events = new OAuthEvents()
                     {
-                        OnRemoteFailure = HandleOnRemoteFailure,
-                        OnTicketReceived = HandleOnTicketReceived
+                        OnRemoteFailure = AuthenticationHelper.HandleOnRemoteFailure,
+                        OnTicketReceived = AuthenticationHelper.HandleOnTicketReceived
                     };
+                })// You must first create an app with Google and add its ID and Secret to your user-secrets.
+                  // https://console.developers.google.com/project
+                  // https://developers.google.com/identity/protocols/OAuth2WebServer
+                  // https://developers.google.com/+/web/people/
+                .AddGoogle(options =>
+                {
+                    options.ClientId = Configuration["Authentication:Google:ClientId"];
+                    options.ClientSecret = Configuration["Authentication:Google:ClientSecret"];
+                    options.AuthorizationEndpoint += "?prompt=consent"; // Hack so we always get a refresh token, it only comes on the first authorization response
+                    options.AccessType = "offline";
+                    options.SaveTokens = true;
+                    options.Events = new OAuthEvents()
+                    {
+                        OnRemoteFailure = AuthenticationHelper.HandleOnRemoteFailure,
+                        OnTicketReceived = AuthenticationHelper.HandleOnTicketReceived
+                    };
+                    options.ClaimActions.MapJsonSubKey("urn:google:image", "image", "url");
+                    //options.ClaimActions.Remove(ClaimTypes.GivenName);
                 });
 
             services.ConfigureApplicationCookie(options =>
@@ -230,6 +249,15 @@ namespace Fosol.Schedule.API
             }
             
             app.UseDataSource();
+            /***
+            * Forwarded Headers were required for nginx at some point.
+            * https://docs.microsoft.com/en-us/aspnet/core/host-and-deploy/proxy-load-balancer?view=aspnetcore-2.1#nginx-configuration
+            ***/
+            app.UseForwardedHeaders(new ForwardedHeadersOptions
+            {
+                RequireHeaderSymmetry = false,
+                ForwardedHeaders = ForwardedHeaders.XForwardedProto | ForwardedHeaders.XForwardedFor
+            });
             app.UseResponseHeaders();
             app.UseCors(env.EnvironmentName);
             app.UseHttpsRedirection();
@@ -250,42 +278,6 @@ namespace Fosol.Schedule.API
                     template: "{controller}/{action}/{id?}",
                     defaults: new { controller = "Home", action = "Index" });
             });
-        }
-
-
-        // TODO: Replace with better implementation, use built-in error handling.
-        private async Task HandleOnRemoteFailure(RemoteFailureContext context)
-        {
-            context.Response.StatusCode = 500;
-            context.Response.ContentType = "text/html";
-            await context.Response.WriteAsync("<html><body>");
-            await context.Response.WriteAsync("A remote failure has occurred: " + UrlEncoder.Default.Encode(context.Failure.Message) + "<br>");
-
-            if (context.Properties != null)
-            {
-                await context.Response.WriteAsync("Properties:<br>");
-                foreach (var pair in context.Properties.Items)
-                {
-                    await context.Response.WriteAsync($"-{ UrlEncoder.Default.Encode(pair.Key)}={ UrlEncoder.Default.Encode(pair.Value)}<br>");
-                }
-            }
-
-            await context.Response.WriteAsync("<a href=\"/\">Home</a>");
-            await context.Response.WriteAsync("</body></html>");
-
-            // context.Response.Redirect("/error?FailureMessage=" + UrlEncoder.Default.Encode(context.Failure.Message));
-
-            context.HandleResponse();
-        }
-
-        private async Task HandleOnTicketReceived(TicketReceivedContext context)
-        {
-            await Task.Run(() =>
-            {
-                var datasource = context.HttpContext.RequestServices.GetRequiredService<IDataSource>();
-                AuthenticationHelper.AuthorizeOauthUser(datasource, context.Principal);
-            });
-            context.Success();
         }
         #endregion
     }

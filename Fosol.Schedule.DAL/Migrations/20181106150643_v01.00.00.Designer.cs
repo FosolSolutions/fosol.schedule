@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Fosol.Schedule.DAL.Migrations
 {
     [DbContext(typeof(ScheduleContext))]
-    [Migration("20181102193202_v01.00.00")]
+    [Migration("20181106150643_v01.00.00")]
     partial class v010000
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -577,6 +577,50 @@ namespace Fosol.Schedule.DAL.Migrations
                     b.HasIndex("TagKey", "TagValue");
 
                     b.ToTable("EventTags");
+                });
+
+            modelBuilder.Entity("Fosol.Schedule.Entities.OauthAccount", b =>
+                {
+                    b.Property<int>("UserId");
+
+                    b.Property<string>("Email")
+                        .HasMaxLength(150);
+
+                    b.Property<int>("AddedById");
+
+                    b.Property<DateTime>("AddedOn")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("DATETIME2")
+                        .HasDefaultValueSql("GETUTCDATE()");
+
+                    b.Property<string>("Issuer")
+                        .IsRequired()
+                        .HasMaxLength(100);
+
+                    b.Property<string>("Key")
+                        .IsRequired();
+
+                    b.Property<byte[]>("RowVersion")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate();
+
+                    b.Property<int?>("UpdatedById");
+
+                    b.Property<DateTime?>("UpdatedOn");
+
+                    b.HasKey("UserId", "Email");
+
+                    b.HasIndex("AddedById");
+
+                    b.HasIndex("Email")
+                        .IsUnique();
+
+                    b.HasIndex("Key")
+                        .IsUnique();
+
+                    b.HasIndex("UpdatedById");
+
+                    b.ToTable("OauthAccounts");
                 });
 
             modelBuilder.Entity("Fosol.Schedule.Entities.Opening", b =>
@@ -1384,6 +1428,22 @@ namespace Fosol.Schedule.DAL.Migrations
                     b.HasOne("Fosol.Schedule.Entities.Tag", "Tag")
                         .WithMany("Events")
                         .HasForeignKey("TagKey", "TagValue")
+                        .OnDelete(DeleteBehavior.Cascade);
+                });
+
+            modelBuilder.Entity("Fosol.Schedule.Entities.OauthAccount", b =>
+                {
+                    b.HasOne("Fosol.Schedule.Entities.User", "AddedBy")
+                        .WithMany()
+                        .HasForeignKey("AddedById");
+
+                    b.HasOne("Fosol.Schedule.Entities.User", "UpdatedBy")
+                        .WithMany()
+                        .HasForeignKey("UpdatedById");
+
+                    b.HasOne("Fosol.Schedule.Entities.User", "User")
+                        .WithMany("OauthAccounts")
+                        .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 

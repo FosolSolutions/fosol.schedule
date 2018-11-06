@@ -9,10 +9,9 @@ namespace Fosol.Schedule.DAL.Interfaces
         /// <summary>
         /// Verify the user with the specified key or email exists.
         /// </summary>
-        /// <param name="key"></param>
         /// <param name="email"></param>
         /// <returns></returns>
-        int Verify(Guid key, string email = null);
+        int Verify(string email);
 
         /// <summary>
         /// Get the calendar for the specified 'id'.
