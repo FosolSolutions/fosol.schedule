@@ -1,5 +1,6 @@
 ﻿using Fosol.Core.Mvc;
 using Fosol.Schedule.DAL.Interfaces;
+using Fosol.Schedule.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Fosol.Schedule.API.Areas.Data.Controllers
@@ -47,7 +48,7 @@ namespace Fosol.Schedule.API.Areas.Data.Controllers
         /// <param name="account"></param>
         /// <returns></returns>
         [HttpPost]
-        public IActionResult AddAccount([FromBody] Models.Account account)
+        public IActionResult AddAccount([FromBody] Account account)
         {
             _dataSource.Accounts.Add(account);
             _dataSource.CommitTransaction();
@@ -61,7 +62,7 @@ namespace Fosol.Schedule.API.Areas.Data.Controllers
         /// <param name="account"></param>
         /// <returns></returns>
         [HttpPut]
-        public IActionResult UpdateAccount([FromBody] Models.Account account)
+        public IActionResult UpdateAccount([FromBody] Account account)
         {
             _dataSource.Accounts.Update(account);
             _dataSource.CommitTransaction();
@@ -75,7 +76,7 @@ namespace Fosol.Schedule.API.Areas.Data.Controllers
         /// <param name="account"></param>
         /// <returns></returns>
         [HttpDelete]
-        public IActionResult DeleteAccount([FromBody] Models.Account account)
+        public IActionResult DeleteAccount([FromBody] Account account)
         {
             _dataSource.Accounts.Remove(account);
             _dataSource.CommitTransaction();

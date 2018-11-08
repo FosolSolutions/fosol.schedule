@@ -47,7 +47,7 @@ namespace Fosol.Schedule.API.Areas.Data.Controllers
         /// <param name="user"></param>
         /// <returns></returns>
         [HttpPost]
-        public IActionResult AddUser([FromBody] Models.User user)
+        public IActionResult AddUser([FromBody] Schedule.Models.User user)
         {
             _dataSource.Users.Add(user);
             _dataSource.CommitTransaction();
@@ -61,7 +61,7 @@ namespace Fosol.Schedule.API.Areas.Data.Controllers
         /// <param name="user"></param>
         /// <returns></returns>
         [HttpPut]
-        public IActionResult UpdateUser([FromBody] Models.User user)
+        public IActionResult UpdateUser([FromBody] Schedule.Models.User user)
         {
             _dataSource.Users.Update(user);
             _dataSource.CommitTransaction();
@@ -75,7 +75,7 @@ namespace Fosol.Schedule.API.Areas.Data.Controllers
         /// <param name="user"></param>
         /// <returns></returns>
         [HttpDelete]
-        public IActionResult DeleteUser([FromBody] Models.User user)
+        public IActionResult DeleteUser([FromBody] Schedule.Models.User user)
         {
             _dataSource.Users.Remove(user);
             _dataSource.CommitTransaction();

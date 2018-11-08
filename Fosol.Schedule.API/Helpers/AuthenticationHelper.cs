@@ -1,5 +1,7 @@
-﻿using Fosol.Core.Extensions.Enumerable;
+﻿using Fosol.Core.Exceptions;
+using Fosol.Core.Extensions.Enumerable;
 using Fosol.Core.Extensions.Principals;
+using Fosol.Core.Mvc;
 using Fosol.Schedule.DAL.Interfaces;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -8,8 +10,8 @@ using Microsoft.Extensions.DependencyInjection;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Net;
 using System.Security.Claims;
-using System.Text.Encodings.Web;
 using System.Threading.Tasks;
 
 namespace Fosol.Schedule.API.Helpers
@@ -28,25 +30,11 @@ namespace Fosol.Schedule.API.Helpers
         /// <returns></returns>
         public static async Task HandleOnRemoteFailure(RemoteFailureContext context)
         {
-            context.Response.StatusCode = 500;
-            context.Response.ContentType = "text/html";
-            await context.Response.WriteAsync("<html><body>");
-            await context.Response.WriteAsync("A remote failure has occurred: " + UrlEncoder.Default.Encode(context.Failure.Message) + "<br>");
+            var handler = context.HttpContext.RequestServices.GetRequiredService<JsonErrorHandler>();
 
-            if (context.Properties != null)
-            {
-                await context.Response.WriteAsync("Properties:<br>");
-                foreach (var pair in context.Properties.Items)
-                {
-                    await context.Response.WriteAsync($"-{ UrlEncoder.Default.Encode(pair.Key)}={ UrlEncoder.Default.Encode(pair.Value)}<br>");
-                }
-            }
-
-            await context.Response.WriteAsync("<a href=\"/\">Home</a>");
-            await context.Response.WriteAsync("</body></html>");
-
-            // context.Response.Redirect("/error?FailureMessage=" + UrlEncoder.Default.Encode(context.Failure.Message));
-
+            context.Response.StatusCode = (int)HttpStatusCode.InternalServerError;
+            context.Response.ContentType = "application/json";
+            await context.Response.WriteAsync(handler.Serialize(new OauthException(context.Failure)));
             context.HandleResponse();
         }
 
@@ -124,57 +112,48 @@ namespace Fosol.Schedule.API.Helpers
         {
             // TODO: Allow a user to have multiple Oauth accounts from different providers that link to the internal user by it's email account(s).
             // TODO: Redirect user to create a User Profile page.
-            try
+            var email = principal.GetEmail()?.Value;
+            var userId = datasource.Users.Verify(email);
+            Schedule.Models.User user;
+            if (userId == 0)
             {
-                var email = principal.GetEmail()?.Value;
-                var userId = datasource.Users.Verify(email);
-                Models.User user;
-                if (userId == 0)
+                user = new Schedule.Models.User()
                 {
-                    user = new Models.User()
+                    Key = Guid.NewGuid(),
+                    LastName = principal.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Surname)?.Value,
+                    FirstName = principal.Claims.FirstOrDefault(c => c.Type == ClaimTypes.GivenName)?.Value,
+                    Email = email,
+                    OauthAccounts = new List<Schedule.Models.OauthAccount>(new[] 
                     {
-                        Key = Guid.NewGuid(),
-                        LastName = principal.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Surname)?.Value,
-                        FirstName = principal.Claims.FirstOrDefault(c => c.Type == ClaimTypes.GivenName)?.Value,
-                        Email = email,
-                        OauthAccounts = new List<Models.OauthAccount>(new[] 
+                        new Schedule.Models.OauthAccount()
                         {
-                            new Models.OauthAccount()
-                            {
-                                Key = principal.GetNameIdentifier()?.Value,
-                                Email = email,
-                                Issuer = principal.GetNameIdentifier().Issuer
-                            }
-                        })
-                    };
-                    datasource.Users.Add(user);
-                    datasource.CommitTransaction();
-                }
-                else
-                {
-                    user = datasource.Users.Get(userId);
-                }
-
-                var identity = principal.Identity as ClaimsIdentity;
-                var claims = new List<Claim>(new[]
-                {
-                    new Claim(ClaimTypes.Name, $"{user.FirstName} {user.LastName}", typeof(string).FullName, "CoEvent"),
-                    new Claim("User", $"{user.Id}", typeof(int).FullName, "CoEvent"),
-                    new Claim("Account", $"{user.DefaultAccountId ?? user.OwnedAccounts.FirstOrDefault()?.Id ?? 0}", typeof(int).FullName, "CoEvent")
-                });
-                claims.ForEach(c =>
-                {
-                    var claim = identity.Claims.FirstOrDefault(cl => cl.Type == c.Type);
-                    if (claim != null) identity?.TryRemoveClaim(claim);
-                });
-                identity?.AddClaims(claims);
+                            Key = principal.GetNameIdentifier()?.Value,
+                            Email = email,
+                            Issuer = principal.GetNameIdentifier().Issuer
+                        }
+                    })
+                };
+                datasource.Users.Add(user);
+                datasource.CommitTransaction();
             }
-            catch (InvalidOperationException ex)
+            else
             {
-                // Two accounts exists, one with the 'key' and one with the 'email.
-
-
+                user = datasource.Users.Get(userId);
             }
+
+            var identity = principal.Identity as ClaimsIdentity;
+            var claims = new List<Claim>(new[]
+            {
+                new Claim(ClaimTypes.Name, $"{user.FirstName} {user.LastName}", typeof(string).FullName, "CoEvent"), // TODO: Issuer namespace.
+                new Claim("User", $"{user.Id}", typeof(int).FullName, "CoEvent"),
+                new Claim("Account", $"{user.DefaultAccountId ?? user.OwnedAccounts.FirstOrDefault()?.Id ?? 0}", typeof(int).FullName, "CoEvent")
+            });
+            claims.ForEach(c =>
+            {
+                var claim = identity.Claims.FirstOrDefault(cl => cl.Type == c.Type);
+                if (claim != null) identity?.TryRemoveClaim(claim);
+            });
+            identity?.AddClaims(claims);
         }
         #endregion
     }

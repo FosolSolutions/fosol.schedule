@@ -4,6 +4,7 @@ using System.Security.Claims;
 using System.Threading.Tasks;
 using Fosol.Core.Extensions.ClaimsIdentities;
 using Fosol.Core.Extensions.Principals;
+using Fosol.Core.Extensions.Strings;
 using Fosol.Schedule.API.Helpers;
 using Fosol.Schedule.DAL.Interfaces;
 using Microsoft.AspNetCore.Authentication;
@@ -59,9 +60,46 @@ namespace Fosol.Schedule.API.Controllers
             var schemeProvider = this.HttpContext.RequestServices.GetRequiredService<IAuthenticationSchemeProvider>();
             foreach (var provider in await schemeProvider.GetAllSchemesAsync())
             {
-                providers.Add("<a href=\"?authscheme=" + provider.Name + "\">" + (provider.DisplayName ?? "(suppressed)") + "</a>");
+                if (!String.IsNullOrWhiteSpace(provider.DisplayName))
+                {
+                    providers.Add("<a href=\"?authscheme=" + provider.Name + "\">" + (provider.DisplayName ?? "(suppressed)") + "</a>");
+                }
             }
             return View(providers);
+        }
+
+        /// <summary>
+        /// Validate the key and sign the participant in.
+        /// </summary>
+        /// <param name="key"></param>
+        /// <returns></returns>
+        [HttpGet("signin/participant/{key}")]
+        public async Task<IActionResult> SigninParticipant(Guid key)
+        {
+            var participant = _dataSource.Participants.Get(key);
+            var identity = _dataSource.Participants.CreateIdentity(key);
+            if (identity == null)
+                return Unauthorized();
+
+            var id = int.Parse(identity.GetNameIdentifier().Value);
+            _logger.LogInformation($"Participant '{id}' signed in.");
+
+            var principal = new ClaimsPrincipal(identity);
+            await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal);
+
+            return Ok(participant);
+        }
+
+        /// <summary>
+        /// Signoff the application, clear cookies and session.
+        /// </summary>
+        /// <returns></returns>
+        [HttpGet("signoff"), Authorize]
+        public async Task<IActionResult> SignOff()
+        {
+            await HttpContext.SignOutAsync();
+
+            return Ok(true);
         }
 
         /// <summary>
@@ -75,36 +113,25 @@ namespace Fosol.Schedule.API.Controllers
         }
 
         /// <summary>
-        /// Validate the key and sign the participant in.
-        /// </summary>
-        /// <param name="key"></param>
-        /// <returns></returns>
-        [HttpGet("signin/participant/{key}")]
-        public async Task<IActionResult> SigninParticipant(Guid key)
-        {
-            var identity = _dataSource.Participants.CreateIdentity(key);
-            if (identity == null)
-                return Unauthorized();
-
-            var id = int.Parse(identity.GetNameIdentifier().Value);
-            _logger.LogInformation($"Participant '{id}' signed in.");
-
-            var participant = new ClaimsPrincipal(identity);
-            await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, participant);
-
-            return Ok(true);
-        }
-
-        /// <summary>
-        /// Signoff the application, clear cookies and session.
+        /// Get the current identity of the logged in user.  This may be a particpant or a user depending on how they signed in.
         /// </summary>
         /// <returns></returns>
-        [HttpGet("signoff"), Authorize]
-        public async Task<IActionResult> SignOff()
+        [HttpGet("current/identity"), Authorize]
+        public IActionResult CurrentPrincipal()
         {
-            await HttpContext.SignOutAsync();
+            var participantId = User.GetParticipant()?.Value.ConvertTo<int>();
+            var userId = User.GetUser()?.Value.ConvertTo<int>();
 
-            return Ok(true);
+            if (userId.HasValue)
+            {
+                var user = _dataSource.Users.Get(userId.Value);
+                return Ok(user);
+            }
+            else
+            {
+                var participant = _dataSource.Participants.Get(participantId.Value);
+                return Ok(participant);
+            }
         }
 
         /// <summary>
@@ -125,7 +152,7 @@ namespace Fosol.Schedule.API.Controllers
             var principal = new ClaimsPrincipal(identity);
             await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal);
 
-            return Ok(true);
+            return Ok(user);
         }
 
         /// <summary>
@@ -146,7 +173,7 @@ namespace Fosol.Schedule.API.Controllers
             var principal = new ClaimsPrincipal(identity);
             await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, principal);
 
-            return Ok(true);
+            return Ok(participant);
         }
 
         /// <summary>
@@ -190,7 +217,7 @@ namespace Fosol.Schedule.API.Controllers
             var impersonate = new ClaimsPrincipal(identity);
             await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, impersonate);
 
-            return Ok(true);
+            return Ok(participant);
         }
 
         /// <summary>
@@ -241,7 +268,7 @@ namespace Fosol.Schedule.API.Controllers
             var impersonate = new ClaimsPrincipal(identity);
             await HttpContext.SignInAsync(CookieAuthenticationDefaults.AuthenticationScheme, impersonate);
 
-            return Ok(true);
+            return Ok(user);
         }
         #endregion
     }

@@ -1,5 +1,6 @@
 ﻿using Fosol.Core.Mvc;
 using Fosol.Schedule.DAL.Interfaces;
+using Fosol.Schedule.Models;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Linq;
@@ -68,7 +69,7 @@ namespace Fosol.Schedule.API.Areas.Manage.Controllers
         /// <param name="cevent"></param>
         /// <returns></returns>
         [HttpPost]
-        public IActionResult AddEvent([FromBody] Models.Event cevent)
+        public IActionResult AddEvent([FromBody] Event cevent)
         {
             _dataSource.Events.Add(cevent);
             _dataSource.CommitTransaction();
@@ -82,7 +83,7 @@ namespace Fosol.Schedule.API.Areas.Manage.Controllers
         /// <param name="cevent"></param>
         /// <returns></returns>
         [HttpPut]
-        public IActionResult UpdateEvent([FromBody] Models.Event cevent)
+        public IActionResult UpdateEvent([FromBody] Event cevent)
         {
             _dataSource.Events.Update(cevent);
             _dataSource.CommitTransaction();
@@ -96,7 +97,7 @@ namespace Fosol.Schedule.API.Areas.Manage.Controllers
         /// <param name="cevent"></param>
         /// <returns></returns>
         [HttpDelete]
-        public IActionResult DeleteEvent([FromBody] Models.Event cevent)
+        public IActionResult DeleteEvent([FromBody] Event cevent)
         {
             _dataSource.Events.Remove(cevent);
             _dataSource.CommitTransaction();

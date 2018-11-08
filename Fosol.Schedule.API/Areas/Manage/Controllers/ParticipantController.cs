@@ -1,6 +1,7 @@
 ﻿using Fosol.Core.Mvc;
 using Fosol.Schedule.API.Helpers.Mail;
 using Fosol.Schedule.DAL.Interfaces;
+using Fosol.Schedule.Models;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Threading.Tasks;
@@ -83,7 +84,7 @@ namespace Fosol.Schedule.API.Areas.Manage.Controllers
         /// <param name="participant"></param>
         /// <returns></returns>
         [HttpPost]
-        public IActionResult AddParticipant([FromBody] Models.Participant participant)
+        public IActionResult AddParticipant([FromBody] Participant participant)
         {
             if (this.ModelState.IsValid)
             {
@@ -102,7 +103,7 @@ namespace Fosol.Schedule.API.Areas.Manage.Controllers
         /// <param name="participant"></param>
         /// <returns></returns>
         [HttpPut]
-        public IActionResult UpdateParticipant([FromBody] Models.Participant participant)
+        public IActionResult UpdateParticipant([FromBody] Participant participant)
         {
             if (this.ModelState.IsValid)
             {
@@ -121,7 +122,7 @@ namespace Fosol.Schedule.API.Areas.Manage.Controllers
         /// <param name="participant"></param>
         /// <returns></returns>
         [HttpDelete]
-        public IActionResult DeleteParticipant([FromBody] Models.Participant participant)
+        public IActionResult DeleteParticipant([FromBody] Participant participant)
         {
             if (this.ModelState.IsValid)
             {

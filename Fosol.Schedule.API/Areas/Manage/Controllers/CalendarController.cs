@@ -2,6 +2,7 @@
 using Fosol.Schedule.API.Helpers;
 using Fosol.Schedule.API.Helpers.Mail;
 using Fosol.Schedule.DAL.Interfaces;
+using Fosol.Schedule.Models;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authorization;
@@ -83,7 +84,7 @@ namespace Fosol.Schedule.API.Areas.Manage.Controllers
         /// <param name="calendar"></param>
         /// <returns></returns>
         [HttpPost]
-        public IActionResult AddCalendar([FromBody] Models.Calendar calendar)
+        public IActionResult AddCalendar([FromBody] Calendar calendar)
         {
             _dataSource.Calendars.Add(calendar);
             _dataSource.CommitTransaction();
@@ -97,7 +98,7 @@ namespace Fosol.Schedule.API.Areas.Manage.Controllers
         /// <param name="calendar"></param>
         /// <returns></returns>
         [HttpPut]
-        public IActionResult UpdateCalendar([FromBody] Models.Calendar calendar)
+        public IActionResult UpdateCalendar([FromBody] Calendar calendar)
         {
             _dataSource.Calendars.Update(calendar);
             _dataSource.CommitTransaction();
@@ -111,7 +112,7 @@ namespace Fosol.Schedule.API.Areas.Manage.Controllers
         /// <param name="calendar"></param>
         /// <returns></returns>
         [HttpDelete]
-        public IActionResult DeleteCalendar([FromBody] Models.Calendar calendar)
+        public IActionResult DeleteCalendar([FromBody] Calendar calendar)
         {
             _dataSource.Calendars.Remove(calendar);
             _dataSource.CommitTransaction();

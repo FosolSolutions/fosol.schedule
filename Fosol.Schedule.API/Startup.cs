@@ -1,6 +1,7 @@
 ﻿using FluentValidation.AspNetCore;
 using Fosol.Core.Extensions.ApplicationBuilders;
 using Fosol.Core.Extensions.ServiceCollections;
+using Fosol.Core.Mvc;
 using Fosol.Schedule.API.Helpers;
 using Fosol.Schedule.API.Helpers.Mail;
 using Fosol.Schedule.DAL;
@@ -94,6 +95,7 @@ namespace Fosol.Schedule.API
             {
                 options.DefaultAuthenticateScheme = CookieAuthenticationDefaults.AuthenticationScheme;
                 options.DefaultSignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
+                options.DefaultChallengeScheme = CookieAuthenticationDefaults.AuthenticationScheme;
             })
                 .AddCookie(CookieAuthenticationDefaults.AuthenticationScheme, options =>
                 {
@@ -153,6 +155,7 @@ namespace Fosol.Schedule.API
             {
             })
                 .SetCompatibilityVersion(CompatibilityVersion.Version_2_1)
+                .AddControllersAsServices()
                 .AddJsonOptions(options =>
                 {
                     options.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
@@ -229,6 +232,7 @@ namespace Fosol.Schedule.API
             });
 
             services.AddMailClient();
+            services.AddSingleton<JsonErrorHandler>();
         }
 
         /// <summary>
@@ -238,13 +242,13 @@ namespace Fosol.Schedule.API
         /// <param name="env"></param>
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
-            if (env.IsDevelopment())
+            if (env.IsDevelopment() && false)
             {
                 app.UseDeveloperExceptionPage();
             }
             else
             {
-                app.UseExceptionHandler("/Error");
+                //app.UseExceptionHandler("/Error");
                 app.UseHsts();
             }
             
@@ -261,8 +265,8 @@ namespace Fosol.Schedule.API
             app.UseResponseHeaders();
             app.UseCors(env.EnvironmentName);
             app.UseHttpsRedirection();
-            //app.UseJsonExceptionMiddleware();
-            app.UseStatusCodePagesWithReExecute("/Error/{0}");
+            app.UseJsonExceptionMiddleware();
+            //app.UseStatusCodePagesWithReExecute("/Error/{0}");
             app.UseStaticFiles();
             //app.UseCookiePolicy();
             app.UseAuthentication();

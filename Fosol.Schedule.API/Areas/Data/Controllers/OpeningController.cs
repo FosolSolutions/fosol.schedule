@@ -1,7 +1,5 @@
-﻿using Fosol.Core.Extensions.Principals;
-using Fosol.Core.Mvc;
+﻿using Fosol.Core.Mvc;
 using Fosol.Schedule.DAL.Interfaces;
-using Fosol.Schedule.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Fosol.Schedule.API.Areas.Data.Controllers
@@ -48,7 +46,7 @@ namespace Fosol.Schedule.API.Areas.Data.Controllers
         /// <param name="opening"></param>
         /// <returns></returns>
         [HttpPost]
-        public IActionResult AddOpening([FromBody] Opening opening)
+        public IActionResult AddOpening([FromBody] Schedule.Models.Opening opening)
         {
             _dataSource.Openings.Add(opening);
             _dataSource.CommitTransaction();
@@ -62,7 +60,7 @@ namespace Fosol.Schedule.API.Areas.Data.Controllers
         /// <param name="opening"></param>
         /// <returns></returns>
         [HttpPut]
-        public IActionResult UpdateOpening([FromBody] Opening opening)
+        public IActionResult UpdateOpening([FromBody] Schedule.Models.Opening opening)
         {
             _dataSource.Openings.Update(opening);
             _dataSource.CommitTransaction();
@@ -76,7 +74,7 @@ namespace Fosol.Schedule.API.Areas.Data.Controllers
         /// <param name="opening"></param>
         /// <returns></returns>
         [HttpDelete]
-        public IActionResult DeleteOpening([FromBody] Opening opening)
+        public IActionResult DeleteOpening([FromBody] Schedule.Models.Opening opening)
         {
             _dataSource.Openings.Remove(opening);
             _dataSource.CommitTransaction();
@@ -90,7 +88,7 @@ namespace Fosol.Schedule.API.Areas.Data.Controllers
         /// <param name="opening"></param>
         /// <returns></returns>
         [HttpPut("apply")]
-        public IActionResult Apply([FromBody] Opening opening)
+        public IActionResult Apply([FromBody] Schedule.Models.Opening opening)
         {
             var result = _dataSource.Openings.Apply(opening);
             _dataSource.CommitTransaction();
@@ -104,7 +102,7 @@ namespace Fosol.Schedule.API.Areas.Data.Controllers
         /// <param name="opening"></param>
         /// <returns></returns>
         [HttpPut("unapply")]
-        public IActionResult Unapply([FromBody] Opening opening)
+        public IActionResult Unapply([FromBody] Schedule.Models.Opening opening)
         {
             var result = _dataSource.Openings.Unapply(opening);
             _dataSource.CommitTransaction();

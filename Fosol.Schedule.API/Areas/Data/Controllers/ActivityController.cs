@@ -48,7 +48,7 @@ namespace Fosol.Schedule.API.Areas.Data.Controllers
         /// <param name="activity">The activity to add to the datasource. JSON data object in the body of the request.</param>
         /// <returns>The activity that was added to the datasource.</returns>
         [HttpPost]
-        public IActionResult AddActivity([FromBody] Models.Activity activity)
+        public IActionResult AddActivity([FromBody] Schedule.Models.Activity activity)
         {
             _dataSource.Activities.Add(activity);
             _dataSource.CommitTransaction();
@@ -62,7 +62,7 @@ namespace Fosol.Schedule.API.Areas.Data.Controllers
         /// <param name="activity">The activity to update in the datasource. JSON data object in the body of the request.</param>
         /// <returns>The activity that was updated in the datasource.</returns>
         [HttpPut]
-        public IActionResult UpdateActivity([FromBody] Models.Activity activity)
+        public IActionResult UpdateActivity([FromBody] Schedule.Models.Activity activity)
         {
             _dataSource.Activities.Update(activity);
             _dataSource.CommitTransaction();
@@ -76,7 +76,7 @@ namespace Fosol.Schedule.API.Areas.Data.Controllers
         /// <param name="activity">The activity to delete from the datasource. JSON data object in the body of the request.</param>
         /// <returns>true if successful, or an error JSON object.</returns>
         [HttpDelete]
-        public IActionResult DeleteActivity([FromBody] Models.Activity activity)
+        public IActionResult DeleteActivity([FromBody] Schedule.Models.Activity activity)
         {
             _dataSource.Activities.Remove(activity);
             _dataSource.CommitTransaction();
