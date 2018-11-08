@@ -21,6 +21,7 @@ namespace Fosol.Schedule.API.Areas.Manage.Controllers
     [Produces("application/json")]
     [Area("manage")]
     [Route("[area]/[controller]")]
+    [Authorize]
     public sealed class CalendarController : ApiController
     {
         #region Variables
