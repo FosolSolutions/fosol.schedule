@@ -3,9 +3,6 @@ using Fosol.Schedule.API.Helpers.Mail;
 using Fosol.Schedule.DAL.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Fosol.Schedule.API.Areas.Data.Controllers
 {

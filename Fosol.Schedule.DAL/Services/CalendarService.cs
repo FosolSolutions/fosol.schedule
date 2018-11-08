@@ -74,7 +74,7 @@ namespace Fosol.Schedule.DAL.Services
             var calendar = Get(id);
             var events = this.Context.Events.Where(e => e.CalendarId == id && e.StartOn >= start && e.EndOn <= end);
 
-            calendar.Events = events.Select(e => this.Source.UpdateMapper.Map<Models.Event>(e));
+            calendar.Events = events.Select(e => this.Source.Mapper.Map<Models.Event>(e));
 
             return calendar;
         }

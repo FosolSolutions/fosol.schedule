@@ -8,9 +8,9 @@ using System.Linq;
 namespace Fosol.Schedule.DAL.Maps
 {
     /// <summary>
-    /// AddProfile class, provides a way to map entities and models for add operations.
+    /// ModelProfile class, provides a way to map entities and models.
     /// </summary>
-    public abstract class BaseProfile : Profile, IProfileAddMap
+    public class ModelProfile : Profile
     {
         #region Properties
         protected IDataSource DataSource { get; private set; }
@@ -18,9 +18,9 @@ namespace Fosol.Schedule.DAL.Maps
 
         #region Constructors
         /// <summary>
-        /// Creates a new instance of an AddProfile object, and initializes it with the specified arguments.
+        /// Creates a new instance of an ModelProfile object, and initializes it with the specified arguments.
         /// </summary>
-        public BaseProfile()
+        public ModelProfile()
         {
             CreateMap<Entities.BaseEntity, Models.BaseModel>()
                 .Include<Entities.Subscription, Models.Subscription>()

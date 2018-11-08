@@ -10,7 +10,7 @@ namespace Fosol.Schedule.DAL.Maps
     /// <summary>
     /// UpdateProfile class, provides a way to map entities and models for update operations.
     /// </summary>
-    public class UpdateProfile : Profile, IProfileUpdateMap
+    public class UpdateProfile : Profile
     {
         #region Properties
         protected IDataSource DataSource { get; private set; }

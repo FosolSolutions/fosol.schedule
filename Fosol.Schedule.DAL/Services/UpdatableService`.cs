@@ -113,7 +113,7 @@ namespace Fosol.Schedule.DAL.Services
         /// <param name="model"></param>
         public virtual void Remove(ModelT model)
         {
-            var entity = this.Source.UpdateMapper.Map(model, this.Find<EntityT>(model));
+            var entity = this.Source.Mapper.Map(model, this.Find<EntityT>(model));
             this.Context.Set<EntityT>().Remove(entity);
         }
 
@@ -167,7 +167,7 @@ namespace Fosol.Schedule.DAL.Services
         /// <param name="model"></param>
         public virtual void Update(ModelT model)
         {
-            var entity = this.Source.UpdateMapper.Map(model, this.Find<EntityT>(model));
+            var entity = this.Source.Mapper.Map(model, this.Find<EntityT>(model));
             this.Update(entity);
             Track(entity, model);
         }

@@ -21,8 +21,7 @@ namespace Fosol.Schedule.DAL
             setupAction?.Invoke(builder);
             services.AddSingleton<DbContextOptions>(builder.Options);
             services.AddSingleton(builder.Options);
-            services.AddSingleton<IProfileAddMap, AddProfile>();
-            services.AddSingleton<IProfileUpdateMap, UpdateProfile>();
+            services.AddSingleton<ModelProfile>();
             services.AddScoped<IDataSource, DataSource>();
             return services;
         }
@@ -35,8 +34,7 @@ namespace Fosol.Schedule.DAL
         /// <returns></returns>
         public static IServiceCollection AddDataSourcePool(this IServiceCollection services, Action<DataSourceOptionsBuilder> setupAction)
         {
-            services.AddSingleton<IProfileAddMap, AddProfile>();
-            services.AddSingleton<IProfileUpdateMap, UpdateProfile>();
+            services.AddSingleton<ModelProfile>();
             services.AddScoped<IDataSource, DataSource>();
             services.AddDbContextPool<ScheduleContext>((dbBuilder) =>
             {

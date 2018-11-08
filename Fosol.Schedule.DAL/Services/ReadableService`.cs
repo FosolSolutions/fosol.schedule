@@ -145,7 +145,7 @@ namespace Fosol.Schedule.DAL.Services
         /// <returns></returns>
         protected EntityT AddMap(ModelT source)
         {
-            return this.Source.AddMapper.Map<EntityT>(source);
+            return this.Source.Mapper.Map<EntityT>(source);
         }
 
         /// <summary>
@@ -155,7 +155,7 @@ namespace Fosol.Schedule.DAL.Services
         /// <returns></returns>
         protected EntityT UpdateMap(ModelT source)
         {
-            return this.Source.UpdateMapper.Map<EntityT>(source);
+            return this.Source.Mapper.Map<EntityT>(source);
         }
 
         /// <summary>
@@ -165,7 +165,7 @@ namespace Fosol.Schedule.DAL.Services
         /// <returns></returns>
         protected ModelT Map(EntityT source)
         {
-            return this.Source.UpdateMapper.Map<ModelT>(source);
+            return this.Source.Mapper.Map<ModelT>(source);
         }
 
         /// <summary>
@@ -176,7 +176,7 @@ namespace Fosol.Schedule.DAL.Services
         /// <returns></returns>
         protected ModelT Map(EntityT source, ModelT destination)
         {
-            return this.Source.UpdateMapper.Map(source, destination);
+            return this.Source.Mapper.Map(source, destination);
         }
 
         /// <summary>
@@ -188,7 +188,7 @@ namespace Fosol.Schedule.DAL.Services
         protected virtual T Find<T>(ModelT model) where T : class
         {
             //var keys = ScheduleMapper.Map.GetMap<T>().GetPrimaryKeyValues(this.Source.UpdateMapper.Map<T>(model));
-            var entity = this.Source.UpdateMapper.Map<T>(model);
+            var entity = this.Source.Mapper.Map<T>(model);
             var keys = this.Context.Model.FindEntityType(typeof(T)).FindPrimaryKey().Properties.Select(p => p.PropertyInfo.GetValue(entity)).ToArray();
             return this.Find<T>(keys);
         }

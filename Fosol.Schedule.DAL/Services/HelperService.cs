@@ -268,7 +268,7 @@ namespace Fosol.Schedule.DAL.Services
                 }
             }
 
-            return this.Source.UpdateMapper.Map<Models.Calendar>(calendar);
+            return this.Source.Mapper.Map<Models.Calendar>(calendar);
         }
 
         /// <summary>
@@ -410,7 +410,7 @@ namespace Fosol.Schedule.DAL.Services
                 }
             }
 
-            return participants.Select(p => this.Source.UpdateMapper.Map<Models.Participant>(p));
+            return participants.Select(p => this.Source.Mapper.Map<Models.Participant>(p));
         }
 
         private Participant CreateParticipant(Calendar calendar, User user, string displayName, string firstName, string lastName, string email, Gender gender, string mobile, string phone, string address, string attributes)
