@@ -1,7 +1,5 @@
 ﻿using Fosol.Schedule.DAL.Interfaces;
-using Microsoft.EntityFrameworkCore;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 
 namespace Fosol.Schedule.DAL.Services
@@ -24,7 +22,6 @@ namespace Fosol.Schedule.DAL.Services
         /// <param name="source"></param>
         internal ScheduleService(IDataSource source) : base(source)
         {
-            //Authenticated();
         }
         #endregion
 

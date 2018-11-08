@@ -29,7 +29,6 @@ namespace Fosol.Schedule.DAL.Services
         /// <param name="source"></param>
         internal ParticipantService(IDataSource source) : base(source)
         {
-            //Authenticated();
         }
         #endregion
 

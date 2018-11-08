@@ -143,17 +143,7 @@ namespace Fosol.Schedule.DAL.Services
         /// </summary>
         /// <param name="source"></param>
         /// <returns></returns>
-        protected EntityT AddMap(ModelT source)
-        {
-            return this.Source.Mapper.Map<EntityT>(source);
-        }
-
-        /// <summary>
-        /// Creates a new instance of a <typeparamref name="EntityT"/> by mapping the specified <typeparamref name="ModelT"/>.
-        /// </summary>
-        /// <param name="source"></param>
-        /// <returns></returns>
-        protected EntityT UpdateMap(ModelT source)
+        protected EntityT Map(ModelT source)
         {
             return this.Source.Mapper.Map<EntityT>(source);
         }

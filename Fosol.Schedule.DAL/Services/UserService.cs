@@ -26,7 +26,6 @@ namespace Fosol.Schedule.DAL.Services
         /// <param name="source"></param>
         internal UserService(IDataSource source) : base(source)
         {
-            //Authenticated();
         }
         #endregion
 
@@ -98,7 +97,7 @@ namespace Fosol.Schedule.DAL.Services
         /// <param name="model"></param>
         public override void Add(Models.User model)
         {
-            var entity = this.AddMap(model);
+            var entity = this.Map(model);
             entity.AddedById = this.GetUserId(); // Oauth users will be null.
 
             if (entity.Info != null)

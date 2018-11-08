@@ -2,7 +2,6 @@
 using Fosol.Schedule.DAL.Interfaces;
 using Fosol.Schedule.DAL.Maps;
 using Fosol.Schedule.DAL.Services;
-using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Linq;
@@ -102,11 +101,13 @@ namespace Fosol.Schedule.DAL
         /// <summary>
         /// Creates a new instance of a DataSource object, and initializes it with the specified configuration options.
         /// </summary>
-        /// <param name="httpContext"></param>
+        /// <param name="principalAccessor"></param>
         /// <param name="mapProfile"></param>
-        DataSource(IHttpContextAccessor httpContext, ModelProfile mapProfile)
+        DataSource(IPrincipalAccessor principalAccessor, ModelProfile mapProfile)
         {
-            this.Principal = httpContext.HttpContext?.User;
+            if (principalAccessor == null) throw new ArgumentNullException(nameof(principalAccessor));
+
+            this.Principal = principalAccessor.Principal;
             this.Mapper = new MapperConfiguration(config =>
             {
                 mapProfile.BindDataSource(this);
@@ -130,9 +131,9 @@ namespace Fosol.Schedule.DAL
         /// Creates a new instance of a DataSource object, and initializes it with the specified configuration options.
         /// </summary>
         /// <param name="options"></param>
-        /// <param name="httpContext"></param>
+        /// <param name="principalAccessor"></param>
         /// <param name="mapProfile"></param>
-        internal DataSource(DbContextOptions<ScheduleContext> options, IHttpContextAccessor httpContext, ModelProfile mapProfile) : this(httpContext, mapProfile)
+        internal DataSource(DbContextOptions<ScheduleContext> options, IPrincipalAccessor principalAccessor, ModelProfile mapProfile) : this(principalAccessor, mapProfile)
         {
             this.Context = new ScheduleContext(options);
         }
@@ -141,9 +142,9 @@ namespace Fosol.Schedule.DAL
         /// Creates a new instance of a DataSource object, and initializes it with the specified configuration options.
         /// </summary>
         /// <param name="options"></param>
-        /// <param name="httpContext"></param>
+        /// <param name="principalAccessor"></param>
         /// <param name="mapProfile"></param>
-        public DataSource(DbContextOptions options, IHttpContextAccessor httpContext, ModelProfile mapProfile) : this(httpContext, mapProfile)
+        public DataSource(DbContextOptions options, IPrincipalAccessor principalAccessor, ModelProfile mapProfile) : this(principalAccessor, mapProfile)
         {
             this.Context = new ScheduleContext(options);
         }
