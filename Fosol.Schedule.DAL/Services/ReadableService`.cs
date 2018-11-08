@@ -68,9 +68,9 @@ namespace Fosol.Schedule.DAL.Services
         /// Get the current user or participant's key.
         /// </summary>
         /// <returns></returns>
-        protected Guid GetPrincipalId()
+        protected string GetPrincipalId()
         {
-            Guid.TryParse(this.Source.Principal.GetNameIdentifier()?.Value, out Guid key);
+            var key = this.Source.Principal.GetNameIdentifier()?.Value;
             return key;
         }
 
