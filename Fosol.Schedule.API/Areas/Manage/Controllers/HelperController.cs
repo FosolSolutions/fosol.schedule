@@ -1,11 +1,9 @@
 ﻿using Fosol.Core.Mvc;
 using Fosol.Schedule.API.Helpers.Mail;
 using Fosol.Schedule.DAL.Interfaces;
+using Fosol.Schedule.Models;
 using Microsoft.AspNetCore.Mvc;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Fosol.Schedule.API.Areas.Manage.Controllers
 {
@@ -44,7 +42,7 @@ namespace Fosol.Schedule.API.Areas.Manage.Controllers
         /// <param name="endOn"></param>
         /// <returns>The calendar that was updated and all the newly added events in the datasource.</returns>
         [HttpPost("ecclesia")]
-        public IActionResult AddEcclesialEvents([FromBody] Models.Calendar calendar, [FromQuery] DateTime? startOn, [FromQuery] DateTime? endOn)
+        public IActionResult AddEcclesialEvents([FromBody] Calendar calendar, [FromQuery] DateTime? startOn, [FromQuery] DateTime? endOn)
         {
             var result = _dataSource.Helper.AddEcclesialEvents(calendar.Id, startOn, endOn);
 
@@ -57,7 +55,7 @@ namespace Fosol.Schedule.API.Areas.Manage.Controllers
         /// <param name="calendar">The calendar the will be updated in the datasource. JSON data object in the body of the request.</param>
         /// <returns>An array of participants that were added.</returns>
         [HttpPost("ecclesia/participants")]
-        public IActionResult AddEcclesialParticipants([FromBody] Models.Calendar calendar)
+        public IActionResult AddEcclesialParticipants([FromBody] Calendar calendar)
         {
             var result = _dataSource.Helper.AddParticipants(calendar.Id);
 

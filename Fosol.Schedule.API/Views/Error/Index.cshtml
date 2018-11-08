@@ -1,8 +1,14 @@
-﻿@model Microsoft.AspNetCore.Diagnostics.IExceptionHandlerFeature
+﻿@model Fosol.Core.Mvc.JsonError
 <h2>Error</h2>
 
 <article>
     <p>
         We appologize, but it appears you have found a bug in our software.  We'll look into fixing this for you.
     </p>
+    <div>
+        <h3>Error Details</h3>
+        <p>
+            @Model.Message
+        </p>
+    </div>
 </article>

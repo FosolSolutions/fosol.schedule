@@ -1,4 +1,4 @@
-﻿using Fosol.Core.Exceptions;
+﻿using Fosol.Core.Extensions.Enumerable;
 using Fosol.Schedule.DAL.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using System;
@@ -32,6 +32,16 @@ namespace Fosol.Schedule.DAL.Services
 
         #region Methods
         /// <summary>
+        /// Verify the user, or oauth account with the specified email exists.
+        /// </summary>
+        /// <param name="email"></param>
+        /// <returns></returns>
+        public int Verify(string email)
+        {
+            return this.Context.Users.Where(u => u.Email == email || u.OauthAccounts.Any(a => a.Email == email)).Select(u => u.Id).SingleOrDefault();
+        }
+
+        /// <summary>
         /// Get the user for the specified 'key'.
         /// </summary>
         /// <param name="key"></param>
@@ -63,21 +73,48 @@ namespace Fosol.Schedule.DAL.Services
 
             var claims = new List<Claim>(new[]
             {
-                new Claim(ClaimTypes.NameIdentifier, $"{user.Id}"),
-                new Claim(ClaimTypes.Email, user.Email),
-                new Claim(ClaimTypes.Name, $"{user.Info.FirstName} {user.Info.LastName}"),
-                new Claim(ClaimTypes.Surname, user.Info.LastName ?? ""),
-                new Claim(ClaimTypes.Gender, $"{user.Info.Gender}"),
-                new Claim("Key", $"{user.Key}", typeof(Guid).FullName, "Fosol.Schedule"),
-                new Claim("Account", $"{user.DefaultAccountId ?? user.OwnedAccounts.FirstOrDefault().Id}", typeof(int).FullName, "Fosol.Schedule")
+                new Claim(ClaimTypes.NameIdentifier, $"{user.Key}", typeof(Guid).FullName, "CoEvent"),
+                new Claim(ClaimTypes.Email, user.Email, typeof(string).FullName, "CoEvent"),
+                new Claim(ClaimTypes.Name, $"{user.Info.FirstName} {user.Info.LastName}", typeof(string).FullName, "CoEvent"),
+                new Claim(ClaimTypes.GivenName, user.Info.FirstName, typeof(string).FullName, "CoEvent"),
+                new Claim(ClaimTypes.Surname, user.Info.LastName ?? "", typeof(string).FullName, "CoEvent"),
+                new Claim(ClaimTypes.Gender, $"{user.Info.Gender}", typeof(Entities.Gender).FullName, "CoEvent"),
+                new Claim("User", $"{user.Id}", typeof(int).FullName, "CoEvent"),
+                new Claim("Account", $"{user.DefaultAccountId ?? user.OwnedAccounts.FirstOrDefault().Id}", typeof(int).FullName, "CoEvent")
             });
 
             foreach (var attr in user.Attributes)
             {
-                claims.Add(new Claim(attr.Attribute.Key, attr.Attribute.Value, attr.Attribute.ValueType, "Fosol.Schedule"));
+                claims.Add(new Claim(attr.Attribute.Key, attr.Attribute.Value, attr.Attribute.ValueType, "CoEvent"));
             }
 
             return claims;
+        }
+
+
+        /// <summary>
+        /// Add the specified model to the in-memory collection, so that it can be saved to the datasource on commit.
+        /// </summary>
+        /// <param name="model"></param>
+        public override void Add(Models.User model)
+        {
+            var entity = this.AddMap(model);
+            entity.AddedById = this.GetUserId(); // Oauth users will be null.
+
+            if (entity.Info != null)
+            {
+                entity.Info.AddedBy = entity;
+            }
+            if (entity.OauthAccounts.Count() > 0)
+            {
+                entity.OauthAccounts.ForEach(a =>
+                {
+                    a.User = entity;
+                    a.AddedBy = entity;
+                });
+            }
+            this.Add(entity);
+            Track(entity, model);
         }
         #endregion
     }

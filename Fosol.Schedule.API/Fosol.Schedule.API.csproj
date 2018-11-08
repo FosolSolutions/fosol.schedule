@@ -16,8 +16,6 @@
     <Folder Include="Areas\Manage\Views\" />
     <Folder Include="Models\" />
     <Folder Include="Properties\PublishProfiles\" />
-    <Folder Include="Views\Auth\" />
-    <Folder Include="Views\Shared\" />
     <Folder Include="wwwroot\" />
   </ItemGroup>
 
@@ -25,11 +23,18 @@
     <PackageReference Include="Microsoft.AspNetCore.App" Version="2.1.5" />
     <PackageReference Include="Microsoft.Azure.Services.AppAuthentication" Version="1.0.3" />
     <PackageReference Include="Microsoft.Extensions.Configuration.AzureKeyVault" Version="2.1.1" />
+    <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="2.1.5" />
   </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\Fosol.Schedule.DAL\Fosol.Schedule.DAL.csproj" />
     <ProjectReference Include="..\Fosol.Schedule.Models\Fosol.Schedule.Models.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Update="Views\Auth\AccessDenied.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
   </ItemGroup>
 
 </Project>

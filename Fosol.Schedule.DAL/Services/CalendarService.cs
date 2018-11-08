@@ -41,7 +41,7 @@ namespace Fosol.Schedule.DAL.Services
         /// <returns></returns>
         public IEnumerable<Models.Calendar> Get(int skip, int take)
         {
-            var id = this.GetPrincipalId();
+            var id = this.GetUserId();
             return this.Context.Calendars.Where(c => c.Account.OwnerId == id).Skip(skip).Take(take).ToArray().Select(c => this.Map(c)).ToArray();
         }
 
@@ -152,15 +152,15 @@ namespace Fosol.Schedule.DAL.Services
         /// <returns></returns>
         public IEnumerable<Claim> GetClaims(int calendarId)
         {
-            var userId = this.GetPrincipalId();
+            var id = this.GetParticipantId() ?? this.GetUserId();
             var isParticipant = this.IsPrincipalAParticipant;
-            var calendar = this.Context.Calendars.SingleOrDefault(c => c.Id == calendarId && (isParticipant && c.Participants.Any(p => p.Id == userId) || c.Account.Users.Any(u => u.UserId == userId))) ?? throw new NotAuthorizedException();
-            var participant = this.Context.Participants.SingleOrDefault(p => isParticipant && p.Id == userId || (p.CalendarId == calendarId && p.UserId == userId)) ?? throw new InvalidOperationException($"User must first become a participant in this calendar.");
+            var calendar = this.Context.Calendars.SingleOrDefault(c => c.Id == calendarId && (isParticipant && c.Participants.Any(p => p.Id == id) || c.Account.Users.Any(u => u.UserId == id))) ?? throw new NotAuthorizedException();
+            var participant = this.Context.Participants.SingleOrDefault(p => isParticipant && p.Id == id || (p.CalendarId == calendarId && p.UserId == id)) ?? throw new InvalidOperationException($"User must first become a participant in this calendar."); // TODO: New workflow, if a user isn't a participant it should redirect them to a page to become one.
             var claims = new List<Claim>(new[]
             {
-                new Claim("Calendar", $"{calendarId}", typeof(int).FullName, "Fosol.Schedule"),
-                new Claim("Account", $"{calendar.AccountId}", typeof(int).FullName, "Fosol.Schedule"),
-                new Claim("Participant", $"{participant.Id}", typeof(int).FullName, "Fosol.Schedule")
+                new Claim("Calendar", $"{calendarId}", typeof(int).FullName, "CoEvent"),
+                new Claim("Account", $"{calendar.AccountId}", typeof(int).FullName, "CoEvent"),
+                new Claim("Participant", $"{participant.Id}", typeof(int).FullName, "CoEvent")
             });
 
             return claims;

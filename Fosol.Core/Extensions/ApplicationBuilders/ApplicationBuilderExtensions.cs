@@ -55,52 +55,32 @@ namespace Fosol.Core.Extensions.ApplicationBuilders
         /// <param name="context"></param>
         /// <param name="exception"></param>
         /// <returns></returns>
-        internal static Task HandleExceptionResponse(this HttpContext context, Exception exception)
+        internal static async Task HandleExceptionResponse(this HttpContext context, Exception exception)
         {
             var status = HttpStatusCode.InternalServerError;
             var logger = context.RequestServices.GetService<ILoggerFactory>()?.CreateLogger(exception.GetType().Name);
-            var env = context.RequestServices.GetRequiredService<IHostingEnvironment>();
-            var converter = context.RequestServices.GetRequiredService<JsonOutputFormatter>();
+            var handler = context.RequestServices.GetRequiredService<JsonErrorHandler>();
             logger?.LogError(exception, $"An error occured while executing {context.Request.Path}.");
 
             // Some exceptions are expected and should return their error message.
-            JsonError error;
             if (exception is InvalidOperationException || exception is NoContentException)
             {
                 status = HttpStatusCode.BadRequest;
-                error = new JsonError(status, exception);
             }
             else if (exception is NotAuthenticatedException)
             {
                 status = HttpStatusCode.Unauthorized;
-                error = new JsonError(status, exception);
             }
             else if (exception is NotAuthorizedException)
             {
                 status = HttpStatusCode.Forbidden;
-                error = new JsonError(status, exception);
             }
-            else
-            {
-                // Only include the full message in a development environment.
-                if (!(env?.IsDevelopment() ?? false))
-                {
-                    error = new JsonError(status, "An unhandled error occured.");
-                }
-                else
-                {
-                    error = new JsonError(status, exception);
-                }
-            }
+
+            var error = handler.Serialize(exception, status);
 
             context.Response.ContentType = "application/json";
             context.Response.StatusCode = (int)status;
-            using (var writer = new StringWriter())
-            {
-                converter.WriteObject(writer, error);
-                var response = writer.ToString();
-                return context.Response.WriteAsync(response);
-            }
+            await context.Response.WriteAsync(error);
         }
 
         /// <summary>

@@ -14,7 +14,7 @@ namespace Fosol.Schedule.API.Areas.Data.Controllers
     public sealed class ActivityController : ApiController
     {
         #region Variables
-        private readonly IDataSource _datasource;
+        private readonly IDataSource _dataSource;
         #endregion
 
         #region Constructors
@@ -24,7 +24,7 @@ namespace Fosol.Schedule.API.Areas.Data.Controllers
         /// <param name="datasource"></param>
         public ActivityController(IDataSource datasource)
         {
-            _datasource = datasource;
+            _dataSource = datasource;
         }
         #endregion
 
@@ -38,7 +38,7 @@ namespace Fosol.Schedule.API.Areas.Data.Controllers
         [HttpGet("{id}", Name = "GetActivity")]
         public IActionResult GetActivity(int id)
         {
-            var activity = _datasource.Activities.Get(id);
+            var activity = _dataSource.Activities.Get(id);
             return Ok(activity);
         }
 
@@ -48,10 +48,10 @@ namespace Fosol.Schedule.API.Areas.Data.Controllers
         /// <param name="activity">The activity to add to the datasource. JSON data object in the body of the request.</param>
         /// <returns>The activity that was added to the datasource.</returns>
         [HttpPost]
-        public IActionResult AddActivity([FromBody] Models.Activity activity)
+        public IActionResult AddActivity([FromBody] Schedule.Models.Activity activity)
         {
-            _datasource.Activities.Add(activity);
-            _datasource.CommitTransaction();
+            _dataSource.Activities.Add(activity);
+            _dataSource.CommitTransaction();
 
             return Created(Url.RouteUrl(nameof(GetActivity), new { activity.Id }), activity);
         }
@@ -62,10 +62,10 @@ namespace Fosol.Schedule.API.Areas.Data.Controllers
         /// <param name="activity">The activity to update in the datasource. JSON data object in the body of the request.</param>
         /// <returns>The activity that was updated in the datasource.</returns>
         [HttpPut]
-        public IActionResult UpdateActivity([FromBody] Models.Activity activity)
+        public IActionResult UpdateActivity([FromBody] Schedule.Models.Activity activity)
         {
-            _datasource.Activities.Update(activity);
-            _datasource.CommitTransaction();
+            _dataSource.Activities.Update(activity);
+            _dataSource.CommitTransaction();
 
             return Ok(activity);
         }
@@ -76,10 +76,10 @@ namespace Fosol.Schedule.API.Areas.Data.Controllers
         /// <param name="activity">The activity to delete from the datasource. JSON data object in the body of the request.</param>
         /// <returns>true if successful, or an error JSON object.</returns>
         [HttpDelete]
-        public IActionResult DeleteActivity([FromBody] Models.Activity activity)
+        public IActionResult DeleteActivity([FromBody] Schedule.Models.Activity activity)
         {
-            _datasource.Activities.Remove(activity);
-            _datasource.CommitTransaction();
+            _dataSource.Activities.Remove(activity);
+            _dataSource.CommitTransaction();
 
             return Ok(true);
         }

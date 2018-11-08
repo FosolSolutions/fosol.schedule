@@ -13,7 +13,7 @@ namespace Fosol.Schedule.API.Areas.Data.Controllers
     public sealed class SubscriptionController : ApiController
     {
         #region Variables
-        private readonly IDataSource _datasource;
+        private readonly IDataSource _dataSource;
         #endregion
 
         #region Constructors
@@ -23,7 +23,7 @@ namespace Fosol.Schedule.API.Areas.Data.Controllers
         /// <param name="datasource"></param>
         public SubscriptionController(IDataSource datasource)
         {
-            _datasource = datasource;
+            _dataSource = datasource;
         }
         #endregion
 
@@ -37,7 +37,7 @@ namespace Fosol.Schedule.API.Areas.Data.Controllers
         [HttpGet("{id}")]
         public IActionResult GetSubscription(int id)
         {
-            var subscription = _datasource.Subscriptions.Get(id);
+            var subscription = _dataSource.Subscriptions.Get(id);
             return Ok(subscription);
         }
 
@@ -47,10 +47,10 @@ namespace Fosol.Schedule.API.Areas.Data.Controllers
         /// <param name="subscription"></param>
         /// <returns></returns>
         [HttpPost]
-        public IActionResult AddSubscription([FromBody] Models.Subscription subscription)
+        public IActionResult AddSubscription([FromBody] Schedule.Models.Subscription subscription)
         {
-            _datasource.Subscriptions.Add(subscription);
-            _datasource.CommitTransaction();
+            _dataSource.Subscriptions.Add(subscription);
+            _dataSource.CommitTransaction();
 
             return Created(Url.RouteUrl(nameof(GetSubscription), new { subscription.Id }), subscription);
         }
@@ -61,10 +61,10 @@ namespace Fosol.Schedule.API.Areas.Data.Controllers
         /// <param name="subscription"></param>
         /// <returns></returns>
         [HttpPut]
-        public IActionResult UpdateSubscription([FromBody] Models.Subscription subscription)
+        public IActionResult UpdateSubscription([FromBody] Schedule.Models.Subscription subscription)
         {
-            _datasource.Subscriptions.Update(subscription);
-            _datasource.CommitTransaction();
+            _dataSource.Subscriptions.Update(subscription);
+            _dataSource.CommitTransaction();
 
             return Ok(subscription);
         }
@@ -75,10 +75,10 @@ namespace Fosol.Schedule.API.Areas.Data.Controllers
         /// <param name="subscription"></param>
         /// <returns></returns>
         [HttpDelete]
-        public IActionResult DeleteSubscription([FromBody] Models.Subscription subscription)
+        public IActionResult DeleteSubscription([FromBody] Schedule.Models.Subscription subscription)
         {
-            _datasource.Subscriptions.Remove(subscription);
-            _datasource.CommitTransaction();
+            _dataSource.Subscriptions.Remove(subscription);
+            _dataSource.CommitTransaction();
 
             return Ok();
         }

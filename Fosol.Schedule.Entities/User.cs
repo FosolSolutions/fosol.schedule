@@ -84,6 +84,11 @@ namespace Fosol.Schedule.Entities
         /// get - A collection of settings for this user.
         /// </summary>
         public ICollection<UserSetting> Settings { get; private set; } = new List<UserSetting>();
+
+        /// <summary>
+        /// get - A collection of external oauth accounts associated with this user.
+        /// </summary>
+        public ICollection<OauthAccount> OauthAccounts { get; private set; } = new List<OauthAccount>();
         #endregion
 
         #region Constructors

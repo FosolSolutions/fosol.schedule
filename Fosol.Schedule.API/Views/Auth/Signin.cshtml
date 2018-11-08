@@ -1,0 +1,14 @@
+﻿@model  System.Collections.Generic.List<string>
+@using Fosol.Schedule.API.Controllers
+@{
+    ViewData["Title"] = "Signin";
+}
+
+<h2>Signin</h2>
+
+<ul>
+    @foreach (var provider in Model)
+    {
+        <li>@Html.Raw(provider)</li>
+    }
+</ul>

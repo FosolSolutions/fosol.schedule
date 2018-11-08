@@ -81,6 +81,16 @@ namespace Fosol.Core.Extensions.Principals
         }
 
         /// <summary>
+        /// Get the current principal claim user.
+        /// </summary>
+        /// <param name="principal"></param>
+        /// <returns></returns>
+        public static Claim GetUser(this IPrincipal principal)
+        {
+            return (principal as ClaimsPrincipal)?.Claims.FirstOrDefault(c => c.Type == "User");
+        }
+
+        /// <summary>
         /// Get the current principal claim whether they are a participant account instead of a user account.
         /// </summary>
         /// <param name="principal"></param>

@@ -48,8 +48,7 @@ namespace Fosol.Schedule.API.Areas.Data.Controllers
             // TODO: Configurable 'take'.
             // TODO: no tracking.
             var calendars = _dataSource.Calendars.Get(skip, 10);
-
-            return calendars.Count() != 0 ? Ok(calendars) : (IActionResult)NoContent();
+            return Ok(calendars);
         }
 
         /// <summary>

@@ -21,7 +21,7 @@ namespace Fosol.Core.Extensions.Exceptions
             var ex = exception;
             while (ex.InnerException != null)
             {
-                message.AppendLine(ex.InnerException.Message);
+                message.AppendLine($"{ex.InnerException.Message} ");
                 ex = ex.InnerException;
             }
             return message.ToString();

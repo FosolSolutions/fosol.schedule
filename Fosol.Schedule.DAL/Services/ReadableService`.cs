@@ -45,9 +45,9 @@ namespace Fosol.Schedule.DAL.Services
         {
             get
             {
-                var userId = this.GetPrincipalId();
-                int.TryParse(this.Source.Principal.GetParticipant()?.Value, out int participantId);
-                return userId == participantId;
+                var userId = this.GetUserId();
+                var participantId = this.GetParticipantId();
+                return userId == null && participantId != null;
             }
         }
         #endregion
@@ -65,13 +65,13 @@ namespace Fosol.Schedule.DAL.Services
 
         #region Methods
         /// <summary>
-        /// Get the current user or participant's id.
+        /// Get the current user or participant's key.
         /// </summary>
         /// <returns></returns>
-        protected int GetPrincipalId()
+        protected Guid GetPrincipalId()
         {
-            int.TryParse(this.Source.Principal.GetNameIdentifier()?.Value, out int id);
-            return id;
+            Guid.TryParse(this.Source.Principal.GetNameIdentifier()?.Value, out Guid key);
+            return key;
         }
 
         /// <summary>
@@ -81,10 +81,8 @@ namespace Fosol.Schedule.DAL.Services
         /// <returns></returns>
         protected int? GetUserId()
         {
-            if (this.IsPrincipalAParticipant)
-                return null;
-
-            return this.GetPrincipalId();
+            int.TryParse(this.Source.Principal.GetUser()?.Value, out int id);
+            return id == 0 ? (int?)null : id;
         }
 
         /// <summary>
@@ -94,12 +92,8 @@ namespace Fosol.Schedule.DAL.Services
         /// <returns></returns>
         protected int? GetParticipantId()
         {
-            var participantId = this.Source.Principal.GetParticipant()?.Value;
-
-            if (participantId == null) return null;
-
-            int.TryParse(participantId, out int id);
-            return id;
+            int.TryParse(this.Source.Principal.GetParticipant()?.Value, out int id);
+            return id == 0 ? (int?)null : id;
         }
 
         /// <summary>

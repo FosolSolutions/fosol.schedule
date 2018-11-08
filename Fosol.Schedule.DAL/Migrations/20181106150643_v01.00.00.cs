@@ -322,6 +322,43 @@ namespace Fosol.Schedule.DAL.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "OauthAccounts",
+                columns: table => new
+                {
+                    AddedById = table.Column<int>(nullable: false),
+                    AddedOn = table.Column<DateTime>(type: "DATETIME2", nullable: false, defaultValueSql: "GETUTCDATE()"),
+                    UpdatedById = table.Column<int>(nullable: true),
+                    UpdatedOn = table.Column<DateTime>(nullable: true),
+                    RowVersion = table.Column<byte[]>(rowVersion: true, nullable: true),
+                    UserId = table.Column<int>(nullable: false),
+                    Email = table.Column<string>(maxLength: 150, nullable: false),
+                    Key = table.Column<string>(nullable: false),
+                    Issuer = table.Column<string>(maxLength: 100, nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_OauthAccounts", x => new { x.UserId, x.Email });
+                    table.ForeignKey(
+                        name: "FK_OauthAccounts_Users_AddedById",
+                        column: x => x.AddedById,
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_OauthAccounts_Users_UpdatedById",
+                        column: x => x.UpdatedById,
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_OauthAccounts_Users_UserId",
+                        column: x => x.UserId,
+                        principalTable: "Users",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Subscriptions",
                 columns: table => new
                 {
@@ -1283,6 +1320,28 @@ namespace Fosol.Schedule.DAL.Migrations
                 columns: new[] { "TagKey", "TagValue" });
 
             migrationBuilder.CreateIndex(
+                name: "IX_OauthAccounts_AddedById",
+                table: "OauthAccounts",
+                column: "AddedById");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_OauthAccounts_Email",
+                table: "OauthAccounts",
+                column: "Email",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_OauthAccounts_Key",
+                table: "OauthAccounts",
+                column: "Key",
+                unique: true);
+
+            migrationBuilder.CreateIndex(
+                name: "IX_OauthAccounts_UpdatedById",
+                table: "OauthAccounts",
+                column: "UpdatedById");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_OpeningCriteria_CriteriaId",
                 table: "OpeningCriteria",
                 column: "CriteriaId");
@@ -1675,6 +1734,9 @@ namespace Fosol.Schedule.DAL.Migrations
 
             migrationBuilder.DropTable(
                 name: "EventTags");
+
+            migrationBuilder.DropTable(
+                name: "OauthAccounts");
 
             migrationBuilder.DropTable(
                 name: "OpeningCriteria");

@@ -7,6 +7,13 @@ namespace Fosol.Schedule.DAL.Interfaces
     public interface IUserService : IUpdatableService<Models.User>
     {
         /// <summary>
+        /// Verify the user with the specified key or email exists.
+        /// </summary>
+        /// <param name="email"></param>
+        /// <returns></returns>
+        int Verify(string email);
+
+        /// <summary>
         /// Get the calendar for the specified 'id'.
         /// </summary>
         /// <param name="id"></param>

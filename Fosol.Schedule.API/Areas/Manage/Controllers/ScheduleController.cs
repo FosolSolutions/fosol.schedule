@@ -1,6 +1,7 @@
 ﻿using Fosol.Core.Extensions.Enumerable;
 using Fosol.Core.Mvc;
 using Fosol.Schedule.DAL.Interfaces;
+using Fosol.Schedule.Models;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -70,7 +71,7 @@ namespace Fosol.Schedule.API.Areas.Manage.Controllers
         /// <param name="schedule"></param>
         /// <returns></returns>
         [HttpPost]
-        public IActionResult AddSchedule([FromBody] Models.Schedule schedule)
+        public IActionResult AddSchedule([FromBody] Schedule.Models.Schedule schedule)
         {
             _dataSource.Schedules.Add(schedule);
             _dataSource.CommitTransaction();
@@ -84,7 +85,7 @@ namespace Fosol.Schedule.API.Areas.Manage.Controllers
         /// <param name="schedule"></param>
         /// <returns></returns>
         [HttpPut]
-        public IActionResult UpdateSchedule([FromBody] Models.Schedule schedule)
+        public IActionResult UpdateSchedule([FromBody] Schedule.Models.Schedule schedule)
         {
             _dataSource.Schedules.Update(schedule);
             _dataSource.CommitTransaction();
@@ -98,7 +99,7 @@ namespace Fosol.Schedule.API.Areas.Manage.Controllers
         /// <param name="schedule"></param>
         /// <returns></returns>
         [HttpDelete]
-        public IActionResult DeleteSchedule([FromBody] Models.Schedule schedule)
+        public IActionResult DeleteSchedule([FromBody] Schedule.Models.Schedule schedule)
         {
             _dataSource.Schedules.Remove(schedule);
             _dataSource.CommitTransaction();
@@ -114,7 +115,7 @@ namespace Fosol.Schedule.API.Areas.Manage.Controllers
         /// <param name="events"></param>
         /// <returns></returns>
         [HttpPost("/{scheduleId}/events")]
-        public IActionResult AddEventsToSchedule(int scheduleId, [FromBody] Models.Event[] events)
+        public IActionResult AddEventsToSchedule(int scheduleId, [FromBody] Event[] events)
         {
             var schedule = _dataSource.Schedules.Get(scheduleId);
 

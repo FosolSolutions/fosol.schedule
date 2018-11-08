@@ -15,7 +15,7 @@ namespace Fosol.Schedule.API.Areas.Data.Controllers
     public sealed class EventController : ApiController
     {
         #region Variables
-        private readonly IDataSource _datasource;
+        private readonly IDataSource _dataSource;
         #endregion
 
         #region Constructors
@@ -25,7 +25,7 @@ namespace Fosol.Schedule.API.Areas.Data.Controllers
         /// <param name="datasource"></param>
         public EventController(IDataSource datasource)
         {
-            _datasource = datasource;
+            _dataSource = datasource;
         }
         #endregion
 
@@ -39,7 +39,7 @@ namespace Fosol.Schedule.API.Areas.Data.Controllers
         [HttpGet("{id}")]
         public IActionResult GetEvent(int id)
         {
-            var cevent = _datasource.Events.Get(id);
+            var cevent = _dataSource.Events.Get(id);
             return Ok(cevent);
         }
 
@@ -58,7 +58,7 @@ namespace Fosol.Schedule.API.Areas.Data.Controllers
             start = start.DayOfWeek == DayOfWeek.Sunday ? start : start.AddDays(-1 * (int)start.DayOfWeek);
             var end = endOn ?? start.AddDays(7);
 
-            var cevents = _datasource.Events.Get(id, start, end);
+            var cevents = _dataSource.Events.Get(id, start, end);
             return cevents.Count() != 0 ? Ok(cevents) : (IActionResult)NoContent();
         }
         #endregion
