@@ -84,7 +84,7 @@ namespace Fosol.Schedule.API.Controllers
             if (identity == null)
                 return Unauthorized();
 
-            var id = int.Parse(identity.GetNameIdentifier().Value);
+            var id = identity.GetParticipant().Value.ConvertTo<int>();
             _logger.LogInformation($"Participant '{id}' signed in.");
 
             var principal = new ClaimsPrincipal(identity);
@@ -191,7 +191,7 @@ namespace Fosol.Schedule.API.Controllers
             if (User.GetParticipant() != null) return Unauthorized();
 
             // TODO: Verify that the user is allowed to perform this action.
-            var userId = int.Parse(User.GetNameIdentifier().Value);
+            var userId = User.GetUser().Value.ConvertTo<int>();
             var participant = _dataSource.Participants.Get(key);
             if (participant == null)
                 return BadRequest();
@@ -235,7 +235,7 @@ namespace Fosol.Schedule.API.Controllers
             if (User.GetParticipant() != null) return Unauthorized();
 
             // TODO: Verify that the user is allowed to perform this action.
-            var userId = int.Parse(User.GetNameIdentifier().Value);
+            var userId = User.GetUser().Value.ConvertTo<int>();
             var user = _dataSource.Users.Get(key);
             if (user == null)
                 return BadRequest();

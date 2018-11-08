@@ -69,7 +69,7 @@ namespace Fosol.Schedule.DAL.Services
         {
             if (this.IsPrincipalAParticipant) throw new NotAuthorizedException();
 
-            var userId = this.Source.Principal.GetNameIdentifier().Value.ConvertTo<int>();
+            var userId = this.Source.Principal.GetUser().Value.ConvertTo<int>();
             var user = this.Context.Users.Include(u => u.Info).SingleOrDefault(u => u.Id == userId) ?? throw new NotAuthorizedException();
             var calendar = this.Context.Calendars.SingleOrDefault(c => c.Id == calendarId) ?? throw new NoContentException(typeof(Calendar));
 
@@ -280,7 +280,7 @@ namespace Fosol.Schedule.DAL.Services
         {
             if (this.IsPrincipalAParticipant) throw new NotAuthorizedException();
 
-            var userId = this.Source.Principal.GetNameIdentifier().Value.ConvertTo<int>();
+            var userId = this.Source.Principal.GetUser().Value.ConvertTo<int>();
             var user = this.Context.Users.Include(u => u.Info).SingleOrDefault(u => u.Id == userId) ?? throw new NotAuthorizedException();
             var calendar = this.Context.Calendars.SingleOrDefault(c => c.Id == calendarId) ?? throw new NoContentException(typeof(Calendar));
 

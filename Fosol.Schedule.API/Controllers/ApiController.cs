@@ -7,8 +7,7 @@ namespace Fosol.Schedule.API.Controllers
     /// ApiController class, provides API endpoints that describe all other endpoints in this application.
     /// </summary>
     [Produces("application/json")]
-    [Area("api")]
-    [Route("[area]")]
+    [Route("[controller]")]
     public class ApiController : Controller
     {
         #region Methods
