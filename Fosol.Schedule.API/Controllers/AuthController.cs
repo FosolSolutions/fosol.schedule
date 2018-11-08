@@ -44,15 +44,18 @@ namespace Fosol.Schedule.API.Controllers
 
         #region Endpoints
         /// <summary>
-        /// Returns a view for signin.
+        /// If the query does not contain an 'authSchema' it will return a view with a signin form.
+        /// If the query contains an 'authSchema' it will redirect to the 3rd party oauth provider authentication form.
         /// </summary>
+        /// <param name="authScheme">The 3rd party oauth provider name [Microsoft|Google|Facebook|...].</param>
+        /// <param name="redirectUrl">The URL to redirec to after successfully signing in.</param>
         /// <returns></returns>
         [HttpGet("signin")]
-        public async Task<IActionResult> Signin([FromQuery] string authScheme)
+        public async Task<IActionResult> Signin([FromQuery] string authScheme, [FromQuery] string redirectUrl = "/api/endpoints")
         {
             if (!String.IsNullOrWhiteSpace(authScheme))
             {
-                var authProperties = new AuthenticationProperties() { RedirectUri = "/api/endpoints" };
+                var authProperties = new AuthenticationProperties() { RedirectUri = redirectUrl };
                 return new ChallengeResult(authScheme, authProperties);
             }
 
