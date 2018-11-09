@@ -28,7 +28,6 @@ namespace Fosol.Schedule.DAL.Services
         /// <param name="source"></param>
         internal CalendarService(IDataSource source) : base(source)
         {
-            //Authenticated();
         }
         #endregion
 
@@ -74,7 +73,7 @@ namespace Fosol.Schedule.DAL.Services
             var calendar = Get(id);
             var events = this.Context.Events.Where(e => e.CalendarId == id && e.StartOn >= start && e.EndOn <= end);
 
-            calendar.Events = events.Select(e => this.Source.UpdateMapper.Map<Models.Event>(e));
+            calendar.Events = events.Select(e => this.Source.Mapper.Map<Models.Event>(e));
 
             return calendar;
         }
@@ -87,7 +86,6 @@ namespace Fosol.Schedule.DAL.Services
         public override void Add(Models.Calendar model)
         {
             if (model == null) throw new ArgumentNullException(nameof(model));
-            this.VerifyPrincipal(true);
 
             // Must own the account.
             // TODO: Permission based action.
@@ -106,7 +104,6 @@ namespace Fosol.Schedule.DAL.Services
         public override void Update(Models.Calendar model)
         {
             if (model == null) throw new ArgumentNullException(nameof(model));
-            this.VerifyPrincipal(true);
 
             // Must own the account.
             // TODO: Permission based action.
@@ -129,7 +126,6 @@ namespace Fosol.Schedule.DAL.Services
         public override void Remove(Models.Calendar model)
         {
             if (model == null) throw new ArgumentNullException(nameof(model));
-            this.VerifyPrincipal(true);
 
             // Must own the account.
             // TODO: Permission based action.

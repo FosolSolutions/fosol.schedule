@@ -1,5 +1,6 @@
 ﻿using Fosol.Core.Mvc;
 using Fosol.Schedule.DAL.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Fosol.Schedule.API.Areas.Data.Controllers
@@ -10,6 +11,7 @@ namespace Fosol.Schedule.API.Areas.Data.Controllers
     [Produces("application/json")]
     [Area("admin")]
     [Route("[area]/subscription/[controller]")]
+    [Authorize]
     public sealed class SubscriptionController : ApiController
     {
         #region Variables

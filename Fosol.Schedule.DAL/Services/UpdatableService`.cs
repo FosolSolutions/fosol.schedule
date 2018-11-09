@@ -1,12 +1,9 @@
 ﻿using Fosol.Core.Extensions.Enumerable;
-using Fosol.Schedule.DAL.Helpers;
 using Fosol.Schedule.DAL.Interfaces;
 using System;
-using System.Collections;
 using System.Collections.Concurrent;
 using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 
 namespace Fosol.Schedule.DAL.Services
 {
@@ -61,19 +58,13 @@ namespace Fosol.Schedule.DAL.Services
             });
         }
 
-        private void Transform(EntityT entity)
-        {
-            var type = typeof(EntityT);
-            var collections = type.GetProperties(BindingFlags.Instance | BindingFlags.Public).Where(p => typeof(IEnumerable).IsAssignableFrom(p.PropertyType)).ToArray();
-            var entities = type.GetProperties(BindingFlags.Instance | BindingFlags.Public).Where(p => p.PropertyType.IsClass && p.PropertyType != typeof(string)).ToArray();
-        }
-
         /// <summary>
         /// Add the specified entity to the in-memory collection, so that it can be saved to the datasource on commit.
         /// </summary>
         /// <param name="entity"></param>
-        protected virtual void Add(EntityT entity)
+        protected void Add(EntityT entity)
         {
+            this.VerifyPrincipal(true);
             this.Context.Set<EntityT>().Add(entity);
         }
 
@@ -83,7 +74,7 @@ namespace Fosol.Schedule.DAL.Services
         /// <param name="model"></param>
         public virtual void Add(ModelT model)
         {
-            var entity = this.AddMap(model);
+            var entity = this.Map(model);
             this.Add(entity);
             Track(entity, model);
         }
@@ -94,7 +85,10 @@ namespace Fosol.Schedule.DAL.Services
         /// <param name="models"></param>
         public virtual void AddRange(IEnumerable<ModelT> models)
         {
-            models.ForEach(m => this.Add(m));
+            this.VerifyPrincipal(true);
+            var entities = models.Select(m => new Tuple<EntityT, ModelT>(this.Map(m), m));
+            entities.ForEach(e => Track(e.Item1, e.Item2));
+            this.Context.Set<EntityT>().AddRange(entities.Select(t => t.Item1));
         }
 
         /// <summary>
@@ -103,34 +97,45 @@ namespace Fosol.Schedule.DAL.Services
         /// <param name="models"></param>
         public virtual void AddRange(params ModelT[] models)
         {
-            models.ForEach(m => this.Add(m));
+            this.AddRange(models.AsEnumerable());
+        }
+        
+        /// <summary>
+        /// Remove the entity from the in-memory collection, so that it can be removed from the datasource on commit.
+        /// </summary>
+        /// <param name="entity"></param>
+        protected void Remove(EntityT entity)
+        {
+            this.VerifyPrincipal(true);
+            this.Context.Set<EntityT>().Remove(entity);
         }
 
         /// <summary>
-        /// Remove the specified model from the in-memory collection, so that it can be saved to the datasource on commit.
+        /// Remove the specified model from the in-memory collection, so that it can be removed to the datasource on commit.
         /// </summary>
         /// <exception cref="NoContentException">If the entity could not be found in the datasource.</exception>
         /// <param name="model"></param>
         public virtual void Remove(ModelT model)
         {
-            var entity = this.Source.UpdateMapper.Map(model, this.Find<EntityT>(model));
-            this.Context.Set<EntityT>().Remove(entity);
+            var entity = this.Source.Mapper.Map(model, this.Find<EntityT>(model));
+            Remove(entity);
         }
 
         /// <summary>
-        /// Remove the specified models from the in-memory collection, so that it can be saved to the datasource on commit.
+        /// Remove the specified models from the in-memory collection, so that it can be removed to the datasource on commit.
         /// </summary>
         /// <exception cref="NoContentException">If the entity could not be found in the datasource.</exception>
         /// <param name="models"></param>
         public virtual void RemoveRange(IEnumerable<ModelT> models)
         {
+            this.VerifyPrincipal(true);
             // TODO: Need to rewrite because this will make a separate request for each model.
             var entities = models.Select(m => this.Find<EntityT>(m));
             this.Context.Set<EntityT>().RemoveRange(entities);
         }
 
         /// <summary>
-        /// Remove the specified models from the in-memory collection, so that it can be saved to the datasource on commit.
+        /// Remove the specified models from the in-memory collection, so that it can be removed to the datasource on commit.
         /// </summary>
         /// <exception cref="NoContentException">If the entity could not be found in the datasource.</exception>
         /// <param name="models"></param>
@@ -144,15 +149,18 @@ namespace Fosol.Schedule.DAL.Services
         /// </summary>
         /// <exception cref="NoContentException">If the entity could not be found in the datasource.</exception>
         /// <param name="entity"></param>
-        protected virtual void Update(EntityT entity)
+        protected void Update(EntityT entity)
         {
+            this.VerifyPrincipal(true);
             this.Context.Set<EntityT>().Update(entity);
 
-            // This is required because EF is broken.
             var baseEntity = entity as Entities.BaseEntity;
             if (baseEntity != null)
             {
+                // This is required because EF is broken.
                 this.Context.Entry(entity).Property(nameof(Entities.BaseEntity.RowVersion)).OriginalValue = (entity as Entities.BaseEntity).RowVersion;
+
+                // Updates are not allowed to change who added and when it was added.
                 var addedById = this.Context.Entry(entity).Property(nameof(Entities.BaseEntity.AddedById));
                 addedById.CurrentValue = addedById.OriginalValue;
                 var addedOn = this.Context.Entry(entity).Property(nameof(Entities.BaseEntity.AddedOn));
@@ -167,7 +175,7 @@ namespace Fosol.Schedule.DAL.Services
         /// <param name="model"></param>
         public virtual void Update(ModelT model)
         {
-            var entity = this.Source.UpdateMapper.Map(model, this.Find<EntityT>(model));
+            var entity = this.Source.Mapper.Map(model, this.Find<EntityT>(model));
             this.Update(entity);
             Track(entity, model);
         }
@@ -179,10 +187,11 @@ namespace Fosol.Schedule.DAL.Services
         /// <param name="models"></param>
         public virtual void UpdateRange(IEnumerable<ModelT> models)
         {
+            this.VerifyPrincipal(true);
             // TODO: Need to rewrite because this will make a separate request for each model.
-            var entities = models.Select(m => new Tuple<EntityT, ModelT>(this.UpdateMap(m), m));
-            this.Context.Set<EntityT>().UpdateRange(entities.Select(t => t.Item1));
+            var entities = models.Select(m => new Tuple<EntityT, ModelT>(this.Map(m), m));
             entities.ForEach(t => Track(t.Item1, t.Item2));
+            this.Context.Set<EntityT>().UpdateRange(entities.Select(t => t.Item1));
         }
 
         /// <summary>

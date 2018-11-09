@@ -1,5 +1,6 @@
 ﻿using Fosol.Core.Mvc;
 using Fosol.Schedule.DAL.Interfaces;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
 
@@ -11,6 +12,7 @@ namespace Fosol.Schedule.API.Areas.Data.Controllers
     [Produces("application/json")]
     [Area("data")]
     [Route("[area]/calendar/event/[controller]")]
+    [Authorize]
     public sealed class ActivityController : ApiController
     {
         #region Variables

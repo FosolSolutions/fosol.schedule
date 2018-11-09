@@ -54,6 +54,17 @@ namespace Fosol.Schedule.API.Helpers
         }
 
         /// <summary>
+        /// When an unauthenticated user is redirect to the signin page it will instead just return a 401.
+        /// </summary>
+        /// <param name="context"></param>
+        /// <returns></returns>
+        public static Task HandleOnRedirectToLogin(RedirectContext<CookieAuthenticationOptions> context)
+        {
+            context.Response.StatusCode = (int)HttpStatusCode.Unauthorized;
+            return Task.CompletedTask;
+        }
+
+        /// <summary>
         /// Creates an identity object for a participant that matches the specified 'key'.
         /// </summary>
         /// <param name="service"></param>

@@ -2,7 +2,6 @@
 using Fosol.Schedule.DAL.Interfaces;
 using Fosol.Schedule.DAL.Maps;
 using Fosol.Schedule.DAL.Services;
-using Microsoft.AspNetCore.Http;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Linq;
@@ -40,12 +39,7 @@ namespace Fosol.Schedule.DAL
         /// <summary>
         /// get - The AutoMapper used to cast objects that will be added to the datasource.
         /// </summary>
-        public IMapper AddMapper { get; }
-
-        /// <summary>
-        /// get - The AutoMapper used to cast objects that will be updated in the datasource.
-        /// </summary>
-        public IMapper UpdateMapper { get; }
+        public IMapper Mapper { get; }
 
         /// <summary>
         /// get - The current principal using the datasource.
@@ -107,21 +101,17 @@ namespace Fosol.Schedule.DAL
         /// <summary>
         /// Creates a new instance of a DataSource object, and initializes it with the specified configuration options.
         /// </summary>
-        /// <param name="httpContext"></param>
-        /// <param name="addProfile"></param>
-        /// <param name="updateProfile"></param>
-        DataSource(IHttpContextAccessor httpContext, IProfileAddMap addProfile, IProfileUpdateMap updateProfile)
+        /// <param name="principalAccessor"></param>
+        /// <param name="mapProfile"></param>
+        DataSource(IPrincipalAccessor principalAccessor, ModelProfile mapProfile)
         {
-            this.Principal = httpContext.HttpContext?.User;
-            this.AddMapper = new MapperConfiguration(config =>
+            if (principalAccessor == null) throw new ArgumentNullException(nameof(principalAccessor));
+
+            this.Principal = principalAccessor.Principal;
+            this.Mapper = new MapperConfiguration(config =>
             {
-                addProfile.BindDataSource(this);
-                config.AddProfile((Profile)addProfile);
-            }).CreateMapper();
-            this.UpdateMapper = new MapperConfiguration(config =>
-            {
-                updateProfile.BindDataSource(this);
-                config.AddProfile((Profile)updateProfile);
+                mapProfile.BindDataSource(this);
+                config.AddProfile((Profile)mapProfile);
             }).CreateMapper();
 
             // TODO: reflection to auto initialize the services.
@@ -141,10 +131,9 @@ namespace Fosol.Schedule.DAL
         /// Creates a new instance of a DataSource object, and initializes it with the specified configuration options.
         /// </summary>
         /// <param name="options"></param>
-        /// <param name="httpContext"></param>
-        /// <param name="addProfile"></param>
-        /// <param name="updateProfile"></param>
-        internal DataSource(DbContextOptions<ScheduleContext> options, IHttpContextAccessor httpContext, IProfileAddMap addProfile, IProfileUpdateMap updateProfile) : this(httpContext, addProfile, updateProfile)
+        /// <param name="principalAccessor"></param>
+        /// <param name="mapProfile"></param>
+        internal DataSource(DbContextOptions<ScheduleContext> options, IPrincipalAccessor principalAccessor, ModelProfile mapProfile) : this(principalAccessor, mapProfile)
         {
             this.Context = new ScheduleContext(options);
         }
@@ -153,10 +142,9 @@ namespace Fosol.Schedule.DAL
         /// Creates a new instance of a DataSource object, and initializes it with the specified configuration options.
         /// </summary>
         /// <param name="options"></param>
-        /// <param name="httpContext"></param>
-        /// <param name="addProfile"></param>
-        /// <param name="updateProfile"></param>
-        public DataSource(DbContextOptions options, IHttpContextAccessor httpContext, IProfileAddMap addProfile, IProfileUpdateMap updateProfile) : this(httpContext, addProfile, updateProfile)
+        /// <param name="principalAccessor"></param>
+        /// <param name="mapProfile"></param>
+        public DataSource(DbContextOptions options, IPrincipalAccessor principalAccessor, ModelProfile mapProfile) : this(principalAccessor, mapProfile)
         {
             this.Context = new ScheduleContext(options);
         }

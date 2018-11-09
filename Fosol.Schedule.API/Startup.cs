@@ -5,11 +5,9 @@ using Fosol.Core.Mvc;
 using Fosol.Schedule.API.Helpers;
 using Fosol.Schedule.API.Helpers.Mail;
 using Fosol.Schedule.DAL;
-using Fosol.Schedule.DAL.Interfaces;
 using Fosol.Schedule.Models.Validation;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Authentication.MicrosoftAccount;
 using Microsoft.AspNetCore.Authentication.OAuth;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -25,8 +23,6 @@ using Newtonsoft.Json.Converters;
 using Newtonsoft.Json.Serialization;
 using System;
 using System.Data.SqlClient;
-using System.Text.Encodings.Web;
-using System.Threading.Tasks;
 
 namespace Fosol.Schedule.API
 {
@@ -106,6 +102,7 @@ namespace Fosol.Schedule.API
                     options.Cookie.SameSite = SameSiteMode.None;
                     options.AccessDeniedPath = "/auth/access/denied";
                     options.ClaimsIssuer = "CoEvent";
+                    options.Events.OnRedirectToLogin = AuthenticationHelper.HandleOnRedirectToLogin;
                 })
                 .AddMicrosoftAccount(options =>
                 {
@@ -140,16 +137,16 @@ namespace Fosol.Schedule.API
                     //options.ClaimActions.Remove(ClaimTypes.GivenName);
                 });
 
-            services.ConfigureApplicationCookie(options =>
-            {
-                options.Cookie.Name = "CoEvent";
-                options.LoginPath = "/auth/signin";
-                options.LogoutPath = "/auth/signoff";
-                options.Cookie.SecurePolicy = CookieSecurePolicy.SameAsRequest;
-                options.Cookie.SameSite = SameSiteMode.None;
-                options.AccessDeniedPath = "/auth/access/denied";
-                options.ClaimsIssuer = "CoEvent";
-            });
+            //services.ConfigureApplicationCookie(options =>
+            //{
+            //    options.Cookie.Name = "CoEvent";
+            //    options.LoginPath = "/auth/signin";
+            //    options.LogoutPath = "/auth/signoff";
+            //    options.Cookie.SecurePolicy = CookieSecurePolicy.SameAsRequest;
+            //    options.Cookie.SameSite = SameSiteMode.None;
+            //    options.AccessDeniedPath = "/auth/access/denied";
+            //    options.ClaimsIssuer = "CoEvent";
+            //});
 
             services.AddMvc(options =>
             {
@@ -195,6 +192,7 @@ namespace Fosol.Schedule.API
 
             services.AddDataSource(optionsBuilder =>
             {
+                optionsBuilder.AddPrincipalAccessor<PrincipalAccessor>(services);
                 if (this.HostingEnvironment.IsDevelopment())
                 {
                     optionsBuilder.EnableSensitiveDataLogging();

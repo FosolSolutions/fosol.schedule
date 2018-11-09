@@ -13,11 +13,7 @@ namespace Fosol.Schedule.DAL.Interfaces
         /// <summary>
         /// get - The AutoMapper used to cast objects that are being added to the datasource.
         /// </summary>
-        IMapper AddMapper { get; }
-        /// <summary>
-        /// get - The AutoMapper used to cast objects that are being updated in the datasource.
-        /// </summary>
-        IMapper UpdateMapper { get; }
+        IMapper Mapper { get; }
 
         /// <summary>
         /// get - The current principal using the datasource.
