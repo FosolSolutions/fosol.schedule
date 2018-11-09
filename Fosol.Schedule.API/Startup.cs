@@ -266,16 +266,16 @@ namespace Fosol.Schedule.API
             app.UseJsonExceptionMiddleware();
             //app.UseStatusCodePagesWithReExecute("/Error/{0}");
             app.UseStaticFiles();
-            //app.UseCookiePolicy();
+            app.UseCookiePolicy();
             app.UseAuthentication();
-            app.UseMvc(options =>
+            app.UseMvc(config =>
             {
-                options.MapRoute(
+                config.MapRoute(
                     name: "areaRoute",
                     template: "{area:exists}/{controller}/{action}/{id?}",
                     defaults: new { controller = "Calendar", action = "Index" }
                 );
-                options.MapRoute(
+                config.MapRoute(
                     name: "default",
                     template: "{controller}/{action}/{id?}",
                     defaults: new { controller = "Home", action = "Index" });

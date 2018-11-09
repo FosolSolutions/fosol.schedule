@@ -15,6 +15,7 @@ connectionstrings.*.json
 
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs
+*.usertasks
 
 # Build results
 [Dd]ebug/
