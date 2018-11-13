@@ -169,7 +169,7 @@ namespace Fosol.Schedule.API.Controllers
             if (participant == null)
                 return BadRequest();
 
-            var identity = _dataSource.Users.CreateIdentity(participant.Key);
+            var identity = _dataSource.Participants.CreateIdentity(participant.Key);
             if (identity == null)
                 return Unauthorized();
 

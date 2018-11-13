@@ -1,4 +1,5 @@
-﻿using Fosol.Core.Mvc;
+﻿using Fosol.Core.Extensions.Strings;
+using Fosol.Core.Mvc;
 using Fosol.Schedule.DAL.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -61,7 +62,22 @@ namespace Fosol.Schedule.API.Areas.Data.Controllers
             var end = endOn ?? start.AddDays(7);
 
             var cevents = _dataSource.Events.Get(id, start, end);
-            return cevents.Count() != 0 ? Ok(cevents) : (IActionResult)NoContent();
+            return Ok(cevents);
+        }
+
+        /// <summary>
+        /// Returns an array of events for the specified event 'ids'.
+        /// This will include all activities and openings.
+        /// Only returns events for the currently selected calendar.
+        /// </summary>
+        /// <param name="ids">A comma-separated list of event 'id' values (i.e. ids=1,2,3,4).</param>
+        /// <returns></returns>
+        [HttpGet("/[area]/calendar/events")]
+        public IActionResult GetEvents([FromQuery] string ids)
+        {
+            var values = ids?.Split(',').Select(v => v.Trim().ConvertTo<int>()).Distinct().ToArray();
+            var cevents = _dataSource.Events.Get(values);
+            return Ok(cevents);
         }
         #endregion
     }
