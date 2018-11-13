@@ -9,16 +9,13 @@ using Microsoft.Extensions.Logging;
 namespace Fosol.Schedule.API
 {
     /// <summary>
-    /// 
+    /// Program class, the CoEvent web API application.
     /// </summary>
     public class Program
     {
-        #region Variables
-        #endregion
-
         #region Methods
         /// <summary>
-        /// 
+        /// The default method that is called to start the application.
         /// </summary>
         /// <param name="args"></param>
         public static void Main(string[] args)
@@ -28,7 +25,7 @@ namespace Fosol.Schedule.API
         }
 
         /// <summary>
-        /// 
+        /// Configure the web application.
         /// </summary>
         /// <param name="args"></param>
         /// <returns></returns>

@@ -69,6 +69,26 @@ namespace Fosol.Schedule.DAL.Services
         {
             return this.Context.Schedules.Where(s => s.Id == scheduleId).SelectMany(s => s.Events.Select(e => e.EventId)).ToArray();
         }
+
+        /// <summary>
+        /// Get all the events, their activies and openings for the specified event ids.
+        /// Only returns events for the currently selected calendar.
+        /// </summary>
+        /// <param name="ids"></param>
+        /// <returns></returns>
+        public IEnumerable<Models.Event> Get(int[] ids)
+        {
+            // TODO: configure limit to ids.
+            var calendarId = this.GetCalendarId();
+
+            var events = this.Context.Events
+                .Include(e => e.Criteria)
+                .Include(e => e.Activities).ThenInclude(a => a.Criteria).ThenInclude(c => c.Criteria)
+                .Include(e => e.Activities).ThenInclude(a => a.Openings).ThenInclude(o => o.Criteria).ThenInclude(c => c.Criteria)
+                .Where(e => e.CalendarId == calendarId && ids.Contains(e.Id));
+
+            return events.Select(e => this.Map(e)).ToArray();
+        }
         #endregion
     }
 }

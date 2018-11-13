@@ -28,5 +28,12 @@ namespace Fosol.Schedule.DAL.Interfaces
         /// <param name="scheduleId"></param>
         /// <returns></returns>
         IEnumerable<int> GetEventIdsForSchedule(int scheduleId);
+
+        /// <summary>
+        /// Get all the events, their activies and openings for the specified event ids.
+        /// </summary>
+        /// <param name="ids"></param>
+        /// <returns></returns>
+        IEnumerable<Models.Event> Get(int[] ids);
     }
 }
