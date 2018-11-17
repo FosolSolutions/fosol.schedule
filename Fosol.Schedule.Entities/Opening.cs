@@ -72,11 +72,6 @@ namespace Fosol.Schedule.Entities
         public ICollection<OpeningParticipant> Participants { get; private set; } = new List<OpeningParticipant>();
 
         /// <summary>
-        /// get/set - A collection of applications.  These are participants that are apply for the opening.
-        /// </summary>
-        public ICollection<OpeningParticipantApplication> Applications { get; private set; } = new List<OpeningParticipantApplication>();
-
-        /// <summary>
         /// get/set - A collection of criteria for this opening.
         /// </summary>
         public ICollection<OpeningCriteria> Criteria { get; private set; } = new List<OpeningCriteria>();
@@ -85,6 +80,11 @@ namespace Fosol.Schedule.Entities
         /// get - A collection of tags for this opening.
         /// </summary>
         public ICollection<OpeningTag> Tags { get; private set; } = new List<OpeningTag>();
+
+        /// <summary>
+        /// get - A collection of questions asked when a participant applies for this opening.
+        /// </summary>
+        public ICollection<OpeningQuestion> Questions { get; private set; } = new List<OpeningQuestion>();
         #endregion
 
         #region Constructors

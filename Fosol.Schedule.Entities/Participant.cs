@@ -137,14 +137,9 @@ namespace Fosol.Schedule.Entities
         public ICollection<ParticipantAttribute> Attributes { get; private set; } = new List<ParticipantAttribute>(); // TODO: Need to limit the number.
 
         /// <summary>
-        /// get - A collection of openings this participant is participating in.
+        /// get - A collection of openings this participant has applied to, and/or is participating in.
         /// </summary>
         public ICollection<OpeningParticipant> Openings { get; private set; } = new List<OpeningParticipant>();
-
-        /// <summary>
-        /// get - A collection of openings this participant is applied to.
-        /// </summary>
-        public ICollection<OpeningParticipantApplication> Applications { get; private set; } = new List<OpeningParticipantApplication>();
         #endregion
 
         #region Constructors

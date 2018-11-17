@@ -34,29 +34,51 @@
         - has Criterias
         - has Participants
           - may be a User
-          - has Qualities
+          - has Attributes
 - Criteria "a way to identify and filter qualifying criteria"
-  - has Qualities
+  - has Attributes
   - has Rules
-- Quality "an attribute which identifies a qualification of a user"
+- Attribute "an attribute which identifies a qualification of a user"
   - has key|value pair
 - User "a user who has access to the application"
   - has Roles
   - has Accounts
   - has Calendars
-  - has Qualities
+  - has Attributes
   - is many Participants
     - each Calendar will have it's own participants
 - Participant "a person particating in an opening"
   - may be a User
-  - has Qualities
+  - has Attributes
     - are Calendar specific
 - Account "an account which is owned by a user"
   - has Users
   - has Calendars
 - Schedule "a way to filter events from calendars"
-  - has Calendar with date range
+  - has Events
+  - StartOn
+  - EndOn
+  - belongs to Account
+- Opening
+  - has Questions
+    - has QuestionOption
+      - Sequence
+      - belongs to a Question
+      - Value
+    - Caption (i.e. Title)
+    - IsRequired
+    - Text (i.e. What is the title of your Bible talk?)
+    - AnswerType [string,int,float,decimal,bool,checkbox,list,select]
+    - MaxLength
+    - Sequence
+    - belong to an Account
+    - has OpeningParticipantAnswer
+      - OpeningParticipant
+      - Question
+      - QuestionOption
+      - Text
 
+---
 # Calendar
 A calendar provides a way to manage events.
 
