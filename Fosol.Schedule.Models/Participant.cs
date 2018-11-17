@@ -99,12 +99,12 @@ namespace Fosol.Schedule.Models
         /// <summary>
         /// get - A collection of information about the participant.
         /// </summary>
-        public IList<ContactInfo> ContactInfo { get; set; } = new List<ContactInfo>();
+        public IList<ContactInfo> ContactInfo { get; set; }
 
         /// <summary>
         /// get - A collection of attributes for the participant.
         /// </summary>
-        public IList<Attribute> Attributes { get; set; } = new List<Attribute>();
+        public IList<Attribute> Attributes { get; set; }
         #endregion
     }
 }
