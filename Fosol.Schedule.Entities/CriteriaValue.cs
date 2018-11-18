@@ -4,6 +4,9 @@ using System.Linq;
 
 namespace Fosol.Schedule.Entities
 {
+	/// <summary>
+	/// CriteriaValue class, provides a way to manage a single criteria statement.
+	/// </summary>
 	public class CriteriaValue : Criteria
 	{
 		#region Propeties
@@ -29,15 +32,31 @@ namespace Fosol.Schedule.Entities
 		#endregion
 
 		#region Constructors
+		/// <summary>
+		/// Creates a new instance of a CriteriaValue object.
+		/// </summary>
 		public CriteriaValue()
 		{
 
 		}
 
+		/// <summary>
+		/// Creates a new instance of a CriteriaValue object, and initializes it with the specified properties.
+		/// </summary>
+		/// <param name="key"></param>
+		/// <param name="value"></param>
+		/// <param name="type"></param>
 		public CriteriaValue(string key, string value, Type type) : this(LogicalOperator.And, key, value, type)
 		{
 		}
 
+		/// <summary>
+		/// Creates a new instance of a CriteriaValue object, and initializes it with the specified properties.
+		/// </summary>
+		/// <param name="logicalOperator"></param>
+		/// <param name="key"></param>
+		/// <param name="value"></param>
+		/// <param name="type"></param>
 		public CriteriaValue(LogicalOperator logicalOperator, string key, string value, Type type)
 		{
 			this.LogicalOperator = LogicalOperator;
@@ -46,10 +65,21 @@ namespace Fosol.Schedule.Entities
 			this.ValueType = type.FullName;
 		}
 
+		/// <summary>
+		/// Creates a new instance of a CriteriaValue object, and initializes it with the specified properties.
+		/// </summary>
+		/// <param name="key"></param>
+		/// <param name="value"></param>
 		public CriteriaValue(string key, object value) : this(LogicalOperator.And, key, value)
 		{
 		}
 
+		/// <summary>
+		/// Creates a new instance of a CriteriaValue object, and initializes it with the specified properties.
+		/// </summary>
+		/// <param name="logicalOperator"></param>
+		/// <param name="key"></param>
+		/// <param name="value"></param>
 		public CriteriaValue(LogicalOperator logicalOperator, string key, object value)
 		{
 			this.LogicalOperator = LogicalOperator;
@@ -58,11 +88,19 @@ namespace Fosol.Schedule.Entities
 			this.ValueType = value?.GetType().FullName;
 		}
 
-		public CriteriaValue(CriteriaObject criteria) : this(criteria.Criteria)
+		/// <summary>
+		/// Creates a new instance of a CriteriaValue object, and initializes it with the specified properties.
+		/// </summary>
+		/// <param name="criteria"></param>
+		public CriteriaValue(CriteriaObject criteria) : this(criteria.Statement)
 		{
 			this.Id = criteria.Id;
 		}
 
+		/// <summary>
+		/// Creates a new instance of a CriteriaValue object, and initializes it with the specified properties.
+		/// </summary>
+		/// <param name="criteria"></param>
 		public CriteriaValue(string criteria)
 		{
 			var values = criteria.Split(',');

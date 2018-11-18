@@ -6,6 +6,9 @@ using System.Linq;
 
 namespace Fosol.Schedule.Entities
 {
+	/// <summary>
+	/// CriteriaGroup class, provides a way to manage a group of criteria.
+	/// </summary>
 	public class CriteriaGroup : Criteria
 	{
 		#region Properties
@@ -14,25 +17,40 @@ namespace Fosol.Schedule.Entities
 		/// </summary>
 		public int Id { get; set; }
 
+		/// <summary>
+		/// get/set - A collection of criteria.
+		/// </summary>
 		public IList<Criteria> Criteria { get; set; } = new List<Criteria>();
 		#endregion
 
 		#region Constructors
+		/// <summary>
+		/// Creates a new instance of a CriteriaGroup object.
+		/// </summary>
 		public CriteriaGroup()
 		{
 
 		}
 
+		/// <summary>
+		/// Creates a new instance of a CriteriaGroup object, and initializes it with the specified properties.
+		/// </summary>
+		/// <param name="logicalOperator"></param>
+		/// <param name="criteria"></param>
 		public CriteriaGroup(LogicalOperator logicalOperator, params Criteria[] criteria)
 		{
 			this.LogicalOperator = LogicalOperator;
 			criteria.AddRange(criteria);
 		}
 
+		/// <summary>
+		/// Creates a new instance of a CriteriaGroup object, and initializes it with the specified properties.
+		/// </summary>
+		/// <param name="criteria"></param>
 		public CriteriaGroup(CriteriaObject criteria)
 		{
 			this.Id = criteria.Id;
-			var values = criteria.Criteria.Split(';');
+			var values = criteria.Statement.Split(';');
 			values.ForEach(c => this.Criteria.Add(new CriteriaValue(c)));
 		}
 		#endregion

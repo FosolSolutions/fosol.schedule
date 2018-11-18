@@ -461,14 +461,12 @@ namespace Fosol.Schedule.DAL.Migrations
                         .HasColumnType("DATETIME2")
                         .HasDefaultValueSql("GETUTCDATE()");
 
-                    b.Property<string>("Criteria")
-                        .IsRequired();
-
-                    b.Property<bool>("IsGroup");
-
                     b.Property<byte[]>("RowVersion")
                         .IsConcurrencyToken()
                         .ValueGeneratedOnAddOrUpdate();
+
+                    b.Property<string>("Statement")
+                        .IsRequired();
 
                     b.Property<int?>("UpdatedById");
 

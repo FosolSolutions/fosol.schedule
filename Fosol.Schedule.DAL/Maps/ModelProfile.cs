@@ -3,6 +3,7 @@ using Fosol.Core.Extensions.Principals;
 using Fosol.Core.Extensions.Strings;
 using Fosol.Schedule.DAL.Interfaces;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace Fosol.Schedule.DAL.Maps
@@ -195,9 +196,44 @@ namespace Fosol.Schedule.DAL.Maps
 
 			// Criteria
 			CreateMap<Entities.CriteriaObject, Models.Criteria>()
-				.ForMember(dest => dest.Criterion, opt => opt.MapFrom(src => src.ToString()))
-				.ReverseMap()
-				.ForMember(dest => dest.Criteria, opt => opt.MapFrom(src => src.Criterion));
+				.ConvertUsing(src =>
+				{
+					var criteria = (Entities.Criteria)src;
+
+					if (criteria is Entities.CriteriaGroup)
+					{
+						var group = criteria as Entities.CriteriaGroup;
+						return new Models.Criteria()
+						{
+							Id = src.Id,
+							Conditions = new List<Models.CriteriaValue>(group.Criteria.Select(c => (Entities.CriteriaValue)c).Select(c => new Models.CriteriaValue() { LogicalOperator = c.LogicalOperator, Key = c.Key, Value = c.Value, ValueType = c.ValueType }))
+						};
+					}
+
+					var value = criteria as Entities.CriteriaValue;
+					return new Models.Criteria()
+					{
+						Id = src.Id,
+						Conditions = new List<Models.CriteriaValue>( new[] { new Models.CriteriaValue() { LogicalOperator = value.LogicalOperator, Key = value.Key, Value = value.Value, ValueType = value.ValueType } })
+					};
+				});
+			CreateMap<Models.Criteria, Entities.CriteriaObject>()
+				.ConvertUsing(src =>
+				{
+					if (src.Conditions.Count > 1)
+					{
+						var group = new Entities.CriteriaGroup(src.Conditions.First().LogicalOperator, src.Conditions.Select(c => new Entities.CriteriaValue(c.LogicalOperator, c.Key, c.Value, Type.GetType(c.ValueType))).ToArray()) { Id = src.Id };
+						return new Entities.CriteriaObject(group);
+					}
+
+					var criteria = src.Conditions.FirstOrDefault();
+
+					if (criteria == null) return null;
+					return new Entities.CriteriaObject(new Entities.CriteriaValue(criteria.LogicalOperator, criteria.Key, criteria.Value, Type.GetType(criteria.ValueType)) { Id = src.Id });
+				});
+				//.ForMember(dest => dest.Criterion, opt => opt.MapFrom(src => src.ToString()))
+				//.ReverseMap()
+				//.ForMember(dest => dest.Criteria, opt => opt.MapFrom(src => src.Criterion));
 
 			// Tags
 			CreateMap<Entities.Tag, Models.Tag>()

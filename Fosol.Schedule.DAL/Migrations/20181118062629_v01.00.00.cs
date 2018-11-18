@@ -273,8 +273,7 @@ namespace Fosol.Schedule.DAL.Migrations
 					RowVersion = table.Column<byte[]>(rowVersion: true, nullable: true),
 					Id = table.Column<int>(nullable: false)
 						.Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
-					Criteria = table.Column<string>(nullable: false),
-					IsGroup = table.Column<bool>(nullable: false)
+					Statement = table.Column<string>(nullable: false)
 				},
 				constraints: table =>
 				{
