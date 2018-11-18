@@ -133,14 +133,22 @@ namespace Fosol.Schedule.DAL.Maps
 
 			// Events
 			CreateMap<Entities.Event, Models.Event>()
-				.ForPath(dest => dest.Criteria, opt => opt.MapFrom(src => src.Criteria.Select(c => c.Criteria)))
+				.ForPath(dest => dest.Criteria, opt =>
+				{
+					opt.Condition(param => param.Source != null);
+					opt.MapFrom(src => src.Criteria.Select(c => c.Criteria));
+				})
 				.ForPath(dest => dest.Tags, opt => opt.MapFrom(src => src.Tags.Select(a => a.Tag)))
 				.ReverseMap()
 				.ForMember(dest => dest.Key, opt => opt.MapFrom(src => (src.Id == 0 && src.Key != Guid.Empty) ? src.Key : Guid.NewGuid()));
 
 			// Activities
 			CreateMap<Entities.Activity, Models.Activity>()
-				.ForPath(dest => dest.Criteria, opt => opt.MapFrom(src => src.Criteria.Select(c => c.Criteria)))
+				.ForPath(dest => dest.Criteria, opt =>
+				{
+					opt.Condition(param => param.Source.Criteria != null);
+					opt.MapFrom(src => src.Criteria.Select(c => c.Criteria));
+				})
 				.ForPath(dest => dest.Tags, opt => opt.MapFrom(src => src.Tags.Select(a => a.Tag)))
 				.ReverseMap()
 				.ForMember(dest => dest.Key, opt => opt.MapFrom(src => (src.Id == 0 && src.Key != Guid.Empty) ? src.Key : Guid.NewGuid()));
@@ -198,6 +206,8 @@ namespace Fosol.Schedule.DAL.Maps
 			CreateMap<Entities.CriteriaObject, Models.Criteria>()
 				.ConvertUsing(src =>
 				{
+					if (src == null) return null;
+
 					var criteria = (Entities.Criteria)src;
 
 					if (criteria is Entities.CriteriaGroup)
@@ -206,6 +216,7 @@ namespace Fosol.Schedule.DAL.Maps
 						return new Models.Criteria()
 						{
 							Id = src.Id,
+							LogicalOperator = group.LogicalOperator,
 							Conditions = new List<Models.CriteriaValue>(group.Criteria.Select(c => (Entities.CriteriaValue)c).Select(c => new Models.CriteriaValue() { LogicalOperator = c.LogicalOperator, Key = c.Key, Value = c.Value, ValueType = c.ValueType }))
 						};
 					}
@@ -220,9 +231,11 @@ namespace Fosol.Schedule.DAL.Maps
 			CreateMap<Models.Criteria, Entities.CriteriaObject>()
 				.ConvertUsing(src =>
 				{
+					if (src == null) return null;
+
 					if (src.Conditions.Count > 1)
 					{
-						var group = new Entities.CriteriaGroup(src.Conditions.First().LogicalOperator, src.Conditions.Select(c => new Entities.CriteriaValue(c.LogicalOperator, c.Key, c.Value, Type.GetType(c.ValueType))).ToArray()) { Id = src.Id };
+						var group = new Entities.CriteriaGroup(src.LogicalOperator.Value, src.Conditions.Select(c => new Entities.CriteriaValue(c.LogicalOperator, c.Key, c.Value, Type.GetType(c.ValueType))).ToArray()) { Id = src.Id };
 						return new Entities.CriteriaObject(group);
 					}
 

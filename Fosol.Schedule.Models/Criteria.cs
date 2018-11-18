@@ -13,6 +13,11 @@ namespace Fosol.Schedule.Models
 		public int Id { get; set; }
 
 		/// <summary>
+		/// get/set - When this is a group it can have its own logical operator.
+		/// </summary>
+		public Entities.LogicalOperator? LogicalOperator { get; set; }
+
+		/// <summary>
 		/// get/set - A collection of criteria conditions.
 		/// </summary>
 		public IList<CriteriaValue> Conditions { get; set; }
