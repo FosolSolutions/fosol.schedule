@@ -13,7 +13,7 @@ namespace Fosol.Schedule.Entities.Configuration
             builder.HasKey(m => m.Id);
 
             builder.Property(m => m.Id).ValueGeneratedOnAdd();
-            builder.Property(m => m.Criteria).IsRequired();
+            builder.Property(m => m.Statement).IsRequired();
             builder.Property(m => m.RowVersion).IsRowVersion();
 
             builder.HasOne(m => m.AddedBy).WithMany().HasForeignKey(m => m.AddedById).OnDelete(DeleteBehavior.ClientSetNull);

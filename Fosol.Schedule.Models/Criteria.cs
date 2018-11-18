@@ -4,14 +4,18 @@ using System.Text;
 
 namespace Fosol.Schedule.Models
 {
-    public class Criteria
-    {
-        #region Properties
-        public int Id { get; set; }
+	public class Criteria
+	{
+		#region Properties
+		/// <summary>
+		/// get/set - Primary key uses IDENTITY.
+		/// </summary>
+		public int Id { get; set; }
 
-        public string Criterion { get; set; }
-
-        public bool IsGroup { get; set; }
-        #endregion
-    }
+		/// <summary>
+		/// get/set - A collection of criteria conditions.
+		/// </summary>
+		public IList<CriteriaValue> Conditions { get; set; }
+		#endregion
+	}
 }
