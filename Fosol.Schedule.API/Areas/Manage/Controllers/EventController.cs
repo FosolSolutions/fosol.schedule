@@ -70,7 +70,7 @@ namespace Fosol.Schedule.API.Areas.Manage.Controllers
         /// </summary>
         /// <param name="cevent"></param>
         /// <returns></returns>
-        [HttpPost]
+        [HttpPost("/[area]/[controller]")]
         public IActionResult AddEvent([FromBody] Event cevent)
         {
             _dataSource.Events.Add(cevent);
@@ -84,7 +84,7 @@ namespace Fosol.Schedule.API.Areas.Manage.Controllers
         /// </summary>
         /// <param name="cevent"></param>
         /// <returns></returns>
-        [HttpPut]
+        [HttpPut("/[area]/[controller]")]
         public IActionResult UpdateEvent([FromBody] Event cevent)
         {
             _dataSource.Events.Update(cevent);
@@ -98,7 +98,7 @@ namespace Fosol.Schedule.API.Areas.Manage.Controllers
         /// </summary>
         /// <param name="cevent"></param>
         /// <returns></returns>
-        [HttpDelete]
+        [HttpDelete("/[area]/[controller]")]
         public IActionResult DeleteEvent([FromBody] Event cevent)
         {
             _dataSource.Events.Remove(cevent);

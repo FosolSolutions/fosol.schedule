@@ -49,7 +49,7 @@ namespace Fosol.Schedule.API.Areas.Data.Controllers
         /// </summary>
         /// <param name="account"></param>
         /// <returns></returns>
-        [HttpPost]
+        [HttpPost("/[area]/[controller]")]
         public IActionResult AddAccount([FromBody] Account account)
         {
             _dataSource.Accounts.Add(account);
@@ -63,7 +63,7 @@ namespace Fosol.Schedule.API.Areas.Data.Controllers
         /// </summary>
         /// <param name="account"></param>
         /// <returns></returns>
-        [HttpPut]
+        [HttpPut("/[area]/[controller]")]
         public IActionResult UpdateAccount([FromBody] Account account)
         {
             _dataSource.Accounts.Update(account);
@@ -77,7 +77,7 @@ namespace Fosol.Schedule.API.Areas.Data.Controllers
         /// </summary>
         /// <param name="account"></param>
         /// <returns></returns>
-        [HttpDelete]
+        [HttpDelete("/[area]/[controller]")]
         public IActionResult DeleteAccount([FromBody] Account account)
         {
             _dataSource.Accounts.Remove(account);

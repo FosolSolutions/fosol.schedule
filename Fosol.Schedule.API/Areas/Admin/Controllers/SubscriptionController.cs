@@ -48,7 +48,7 @@ namespace Fosol.Schedule.API.Areas.Data.Controllers
         /// </summary>
         /// <param name="subscription"></param>
         /// <returns></returns>
-        [HttpPost]
+        [HttpPost("/[area]/[controller]")]
         public IActionResult AddSubscription([FromBody] Schedule.Models.Subscription subscription)
         {
             _dataSource.Subscriptions.Add(subscription);
@@ -62,7 +62,7 @@ namespace Fosol.Schedule.API.Areas.Data.Controllers
         /// </summary>
         /// <param name="subscription"></param>
         /// <returns></returns>
-        [HttpPut]
+        [HttpPut("/[area]/[controller]")]
         public IActionResult UpdateSubscription([FromBody] Schedule.Models.Subscription subscription)
         {
             _dataSource.Subscriptions.Update(subscription);
@@ -76,7 +76,7 @@ namespace Fosol.Schedule.API.Areas.Data.Controllers
         /// </summary>
         /// <param name="subscription"></param>
         /// <returns></returns>
-        [HttpDelete]
+        [HttpDelete("/[area]/[controller]")]
         public IActionResult DeleteSubscription([FromBody] Schedule.Models.Subscription subscription)
         {
             _dataSource.Subscriptions.Remove(subscription);

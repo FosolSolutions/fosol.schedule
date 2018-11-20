@@ -272,12 +272,12 @@ namespace Fosol.Schedule.API
             {
                 config.MapRoute(
                     name: "areaRoute",
-                    template: "{area:exists}/{controller}/{action}/{id?}",
+                    template: "{area:exists}/{controller}/{action}",
                     defaults: new { controller = "Calendar", action = "Index" }
                 );
                 config.MapRoute(
                     name: "default",
-                    template: "{controller}/{action}/{id?}",
+                    template: "{controller}/{action}",
                     defaults: new { controller = "Home", action = "Index" });
             });
         }

@@ -72,7 +72,7 @@ namespace Fosol.Schedule.API.Areas.Manage.Controllers
         /// </summary>
         /// <param name="schedule"></param>
         /// <returns></returns>
-        [HttpPost]
+        [HttpPost("/[area]/[controller]")]
         public IActionResult AddSchedule([FromBody] Schedule.Models.Schedule schedule)
         {
             _dataSource.Schedules.Add(schedule);
@@ -86,7 +86,7 @@ namespace Fosol.Schedule.API.Areas.Manage.Controllers
         /// </summary>
         /// <param name="schedule"></param>
         /// <returns></returns>
-        [HttpPut]
+        [HttpPut("/[area]/[controller]")]
         public IActionResult UpdateSchedule([FromBody] Schedule.Models.Schedule schedule)
         {
             _dataSource.Schedules.Update(schedule);
@@ -100,7 +100,7 @@ namespace Fosol.Schedule.API.Areas.Manage.Controllers
         /// </summary>
         /// <param name="schedule"></param>
         /// <returns></returns>
-        [HttpDelete]
+        [HttpDelete("/[area]/[controller]")]
         public IActionResult DeleteSchedule([FromBody] Schedule.Models.Schedule schedule)
         {
             _dataSource.Schedules.Remove(schedule);

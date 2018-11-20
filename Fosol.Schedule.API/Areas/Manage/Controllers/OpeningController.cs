@@ -47,7 +47,7 @@ namespace Fosol.Schedule.API.Areas.Manage.Controllers
         /// </summary>
         /// <param name="opening"></param>
         /// <returns></returns>
-        [HttpPost]
+        [HttpPost("/[area]/[controller]")]
         public IActionResult AddOpening([FromBody] Schedule.Models.Opening opening)
         {
             _dataSource.Openings.Add(opening);
@@ -61,7 +61,7 @@ namespace Fosol.Schedule.API.Areas.Manage.Controllers
         /// </summary>
         /// <param name="opening"></param>
         /// <returns></returns>
-        [HttpPut]
+        [HttpPut("/[area]/[controller]")]
         public IActionResult UpdateOpening([FromBody] Schedule.Models.Opening opening)
         {
             _dataSource.Openings.Update(opening);
@@ -75,7 +75,7 @@ namespace Fosol.Schedule.API.Areas.Manage.Controllers
         /// </summary>
         /// <param name="opening"></param>
         /// <returns></returns>
-        [HttpDelete]
+        [HttpDelete("/[area]/[controller]")]
         public IActionResult DeleteOpening([FromBody] Schedule.Models.Opening opening)
         {
             _dataSource.Openings.Remove(opening);

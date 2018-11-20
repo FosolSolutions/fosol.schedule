@@ -84,7 +84,7 @@ namespace Fosol.Schedule.API.Areas.Manage.Controllers
         /// </summary>
         /// <param name="calendar"></param>
         /// <returns></returns>
-        [HttpPost]
+        [HttpPost("/[area]/[controller]")]
         public IActionResult AddCalendar([FromBody] Calendar calendar)
         {
             _dataSource.Calendars.Add(calendar);
@@ -98,7 +98,7 @@ namespace Fosol.Schedule.API.Areas.Manage.Controllers
         /// </summary>
         /// <param name="calendar"></param>
         /// <returns></returns>
-        [HttpPut]
+        [HttpPut("/[area]/[controller]")]
         public IActionResult UpdateCalendar([FromBody] Calendar calendar)
         {
             _dataSource.Calendars.Update(calendar);
@@ -112,7 +112,7 @@ namespace Fosol.Schedule.API.Areas.Manage.Controllers
         /// </summary>
         /// <param name="calendar"></param>
         /// <returns></returns>
-        [HttpDelete]
+        [HttpDelete("/[area]/[controller]")]
         public IActionResult DeleteCalendar([FromBody] Calendar calendar)
         {
             _dataSource.Calendars.Remove(calendar);
