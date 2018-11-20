@@ -85,7 +85,7 @@ namespace Fosol.Schedule.API.Areas.Manage.Controllers
         /// </summary>
         /// <param name="participant"></param>
         /// <returns></returns>
-        [HttpPost]
+        [HttpPost("/[area]/[controller]")]
         public IActionResult AddParticipant([FromBody] Participant participant)
         {
             if (this.ModelState.IsValid)
@@ -104,7 +104,7 @@ namespace Fosol.Schedule.API.Areas.Manage.Controllers
         /// </summary>
         /// <param name="participant"></param>
         /// <returns></returns>
-        [HttpPut]
+        [HttpPut("/[area]/[controller]")]
         public IActionResult UpdateParticipant([FromBody] Participant participant)
         {
             if (this.ModelState.IsValid)
@@ -123,7 +123,7 @@ namespace Fosol.Schedule.API.Areas.Manage.Controllers
         /// </summary>
         /// <param name="participant"></param>
         /// <returns></returns>
-        [HttpDelete]
+        [HttpDelete("/[area]/[controller]")]
         public IActionResult DeleteParticipant([FromBody] Participant participant)
         {
             if (this.ModelState.IsValid)
