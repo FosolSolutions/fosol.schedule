@@ -16,7 +16,8 @@ namespace Fosol.Schedule.API.Helpers
 	static class ApiHelper
 	{
 		#region Variables
-		public static readonly IEnumerable<dynamic> _endpoints;
+		private static readonly IEnumerable<dynamic> _endpoints;
+		private static readonly IDictionary<Type, object> _models = new Dictionary<Type, object>();
 		#endregion
 
 		#region Constructors
@@ -55,9 +56,16 @@ namespace Fosol.Schedule.API.Helpers
 			return ((IEnumerable<dynamic>)ctrl.FirstOrDefault()?.Endpoints).FirstOrDefault(e => String.Compare(e.Name, name) == 0);
 		}
 
+		/// <summary>
+		/// Get the model definition of the specified type.
+		/// </summary>
+		/// <param name="type"></param>
+		/// <returns></returns>
 		public static dynamic GetModel(Type type)
 		{
 			ExpandoObject model = new ExpandoObject();
+
+			if (_models.ContainsKey(type)) return _models[type];
 
 			if (type.IsEnum)
 			{
@@ -67,23 +75,98 @@ namespace Fosol.Schedule.API.Helpers
 			{
 				foreach (var prop in type.GetProperties(BindingFlags.Instance | BindingFlags.Public))
 				{
-					var isNullable = prop.PropertyType.IsNullable();
-					var isEnumerable = prop.PropertyType.IsEnumerable() && prop.PropertyType != typeof(string);
-					var data = new
-					{
-						Type = (isNullable || isEnumerable) ? prop.PropertyType.GetGenericArguments()[0].Name : prop.PropertyType.Name,
-						IsEnum = prop.PropertyType.IsEnum,
-						IsNullable = isNullable || prop.PropertyType.IsClass,
-						IsArray = prop.PropertyType.IsArray || isEnumerable,
-						IsPrimitive = prop.PropertyType.IsPrimitive
-					};
-					model.TryAdd(prop.Name, data);
+					model.TryAdd(prop.Name, new ModelPropertyInfo(prop.PropertyType));
 				}
 			}
+
+			if (!_models.TryAdd(type, model)) throw new InvalidOperationException($"Unable to create a model for the specified type '{type.Name}'.");
 
 			return model;
 		}
 
+		public struct ModelPropertyInfo
+		{
+			#region Properties
+			public string Type { get; }
+
+			public bool IsEnum { get; }
+
+			public bool IsNullable { get; }
+
+			public bool IsArray { get; }
+
+			public bool IsPrimitive { get; }
+			#endregion
+
+			#region Constructors
+			public ModelPropertyInfo(Type type)
+			{
+				this.Type = type.IsGenericType ? type.GetGenericArguments()[0].Name : type.Name;
+				this.IsEnum = type.IsEnum;
+				this.IsNullable = type.IsNullable();
+				this.IsArray = type.IsArray || type.IsEnumerable() && type != typeof(string);
+				this.IsPrimitive = type.IsPrimitive;
+			}
+			#endregion
+		}
+
+		/// <summary>
+		/// Creates an example object of the specified model type.
+		/// </summary>
+		/// <param name="type"></param>
+		/// <returns></returns>
+		public static object GetModelExample(Type type)
+		{
+			var model = GetModel(type);
+			if (type.IsEnum) return model;
+
+			var gmodel = (IDictionary<string, object>)model;
+			var example = Activator.CreateInstance(type);
+			var garray = typeof(List<>);
+
+			foreach (var prop in type.GetProperties(BindingFlags.Instance | BindingFlags.Public))
+			{
+				var info = (ModelPropertyInfo)gmodel[prop.Name];
+
+				object pexample;
+				if (info.IsArray)
+				{
+					var agtype = Assembly.GetAssembly(typeof(Models.Calendar)).GetType($"Fosol.Schedule.Models.{info.Type}") ?? Assembly.GetAssembly(typeof(Entities.Calendar)).GetType($"Fosol.Schedule.Entities.{info.Type}") ?? throw new InvalidOperationException($"Unable to create a default property for type '{prop.Name}'='{info.Type}'.");
+					var atype = garray.MakeGenericType(agtype);
+					pexample = Activator.CreateInstance(atype);
+					//atype.GetMethod("Add").Invoke(pexample, new[] { Activator.CreateInstance(agtype) });
+				}
+				else if (prop.PropertyType == typeof(string))
+				{
+					if (prop.Name == "RowVersion")
+					{
+						pexample = "Ax34ldjk34k4";
+					}
+					else
+					{
+						pexample = "Example text";
+					}
+				}
+				else if (prop.PropertyType.IsNullableType())
+				{
+					var gtype = prop.PropertyType.GetGenericArguments()[0];
+					pexample = Activator.CreateInstance(gtype);
+				}
+				else
+				{
+					pexample = Activator.CreateInstance(prop.PropertyType);
+				}
+				prop.SetValue(example, pexample);
+			}
+
+			return example;
+		}
+
+		/// <summary>
+		/// Get the model definition containing the enum values.
+		/// </summary>
+		/// <param name="type"></param>
+		/// <returns></returns>
 		private static dynamic GetEnum(Type type)
 		{
 			ExpandoObject model = new ExpandoObject();
@@ -134,7 +217,7 @@ namespace Fosol.Schedule.API.Helpers
 		private static string GetParameterType(ParameterInfo parameterInfo)
 		{
 			var type = parameterInfo.ParameterType;
-			if (type.IsNullable())
+			if (type.IsNullableType())
 				return $"System.Nullable{{{type.GetGenericArguments()[0]}}}";
 
 			return type.FullName;

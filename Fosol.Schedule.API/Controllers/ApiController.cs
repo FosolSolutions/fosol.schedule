@@ -28,7 +28,7 @@ namespace Fosol.Schedule.API.Controllers
 		/// </summary>
 		/// <param name="path">The name of the controller.</param>
 		/// <param name="name">The name of the endpoint.</param>
-		/// <returns></returns>
+		/// <returns>An object containing the endpoint information.</returns>
 		[HttpGet("endpoint/{path}/{name}")]
 		public IActionResult Endpoint(string path, string name)
 		{
@@ -37,10 +37,10 @@ namespace Fosol.Schedule.API.Controllers
 		}
 
 		/// <summary>
-		/// Get the model definition.
+		/// Get the model definition of the specified type.
 		/// </summary>
-		/// <param name="name">The full name of the model.</param>
-		/// <returns></returns>
+		/// <param name="name">The name of the mode type.</param>
+		/// <returns>An object containing the model type definition.</returns>
 		[HttpGet("model/{name}")]
 		public IActionResult Model(string name)
 		{
@@ -49,6 +49,21 @@ namespace Fosol.Schedule.API.Controllers
 			if (type == null) return BadRequest();
 
 			return Ok(ApiHelper.GetModel(type));
+		}
+
+		/// <summary>
+		/// Get a model example of the specified type.
+		/// </summary>
+		/// <param name="name">The name of the mode type.</param>
+		/// <returns>An object with default example values.</returns>
+		[HttpGet("model/{name}/example")]
+		public IActionResult ModelExample(string name)
+		{
+			var type = Assembly.GetAssembly(typeof(Models.Calendar)).GetType($"Fosol.Schedule.Models.{name}", false, true) ?? Assembly.GetAssembly(typeof(Entities.Calendar)).GetType($"Fosol.Schedule.Entities.{name}", false, true);
+
+			if (type == null) return BadRequest();
+
+			return Ok(ApiHelper.GetModelExample(type));
 		}
 		#endregion
 	}
