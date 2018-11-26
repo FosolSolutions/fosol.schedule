@@ -1,4 +1,5 @@
-﻿using Fosol.Schedule.DAL.Interfaces;
+﻿using Fosol.Core.Exceptions;
+using Fosol.Schedule.DAL.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -50,7 +51,9 @@ namespace Fosol.Schedule.DAL.Services
 		/// <returns></returns>
 		public IEnumerable<Models.Event> GetForCalendar(int calendarId, DateTime startOn, DateTime endOn)
 		{
-			// TODO: Is user allowed ot see calendar?
+			var participantId = this.GetParticipantId();
+			var isAuthorized = this.Context.Calendars.Any(c => c.Id == calendarId && c.Participants.Any(p => p.Id == participantId));
+			if (!isAuthorized) throw new NotAuthorizedException();
 
 			// Convert datetime to utc.
 			var start = startOn.ToUniversalTime();

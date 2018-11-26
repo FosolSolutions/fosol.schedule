@@ -86,7 +86,7 @@ namespace Fosol.Schedule.DAL.Services
 		{
 			var participantId = this.GetParticipantId();
 			var isAuthorized = this.Context.Calendars.Any(c => c.Id == calendarId && c.Participants.Any(p => p.Id == participantId));
-			if (isAuthorized) throw new NotAuthorizedException();
+			if (!isAuthorized) throw new NotAuthorizedException();
 			
 			// Convert datetime to utc.
 			var start = startOn.ToUniversalTime();
