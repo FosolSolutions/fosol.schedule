@@ -61,7 +61,7 @@ namespace Fosol.Schedule.API.Areas.Manage.Controllers
             start = start.DayOfWeek == DayOfWeek.Sunday ? start : start.AddDays(-1 * (int)start.DayOfWeek);
             var end = endOn ?? start.AddDays(7);
 
-            var cevents = _dataSource.Events.Get(id, start, end);
+            var cevents = _dataSource.Events.GetForCalendar(id, start, end);
             return cevents.Count() != 0 ? Ok(cevents) : (IActionResult)NoContent();
         }
 

@@ -20,7 +20,7 @@ namespace Fosol.Schedule.DAL.Interfaces
         /// <param name="startOn"></param>
         /// <param name="endOn"></param>
         /// <returns></returns>
-        IEnumerable<Models.Event> Get(int calendarId, DateTime startOn, DateTime endOn);
+        IEnumerable<Models.Event> GetForCalendar(int calendarId, DateTime startOn, DateTime endOn);
 
         /// <summary>
         /// Get the event Ids for the specified schedule.
