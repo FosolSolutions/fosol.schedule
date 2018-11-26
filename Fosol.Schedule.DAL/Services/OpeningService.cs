@@ -73,6 +73,7 @@ namespace Fosol.Schedule.DAL.Services
 				from o in this.Context.Openings
 					.Include(a => a.Criteria)
 					.Include(o => o.Tags)
+					.Include(o => o.Participants)
 				where o.Activity.Event.CalendarId == calendarId
 					&& o.Activity.StartOn >= startOn
 					&& o.Activity.EndOn <= endOn
