@@ -52,6 +52,39 @@ namespace Fosol.Schedule.DAL.Services
 		}
 
 		/// <summary>
+		/// Get the openings for the specified 'calendard' and within the specified timeframe.
+		/// Validates whether the current use is authorized to view the calendar.
+		/// </summary>
+		/// <param name="calendarId"></param>
+		/// <param name="startOn"></param>
+		/// <param name="endOn"></param>
+		/// <returns></returns>
+		public IEnumerable<Models.Opening> GetForCalendar(int calendarId, DateTime startOn, DateTime endOn)
+		{
+			var participantId = this.GetParticipantId();
+			var isAuthorized = this.Context.Calendars.Any(c => c.Id == calendarId && c.Participants.Any(p => p.Id == participantId));
+			if (isAuthorized) throw new NotAuthorizedException();
+
+			// Convert datetime to utc.
+			var start = startOn.ToUniversalTime();
+			var end = endOn.ToUniversalTime();
+
+			var openings = (
+				from o in this.Context.Openings
+					.Include(a => a.Criteria)
+					.Include(o => o.Tags)
+				where o.Activity.Event.CalendarId == calendarId
+					&& o.Activity.StartOn >= startOn
+					&& o.Activity.EndOn <= endOn
+				orderby o.Activity.StartOn, o.Activity.Sequence
+				select o
+				).ToArray()
+				.Select(o => this.Map(o));
+
+			return openings;
+		}
+
+		/// <summary>
 		/// The participant is apply for the opening.
 		/// </summary>
 		/// <param name="application"></param>
@@ -135,7 +168,11 @@ namespace Fosol.Schedule.DAL.Services
 				participants = new[] { new Models.Participant() { Id = participant.Id } };
 			}
 
-			var eopening = this.Find((set) => set.Include(o => o.Participants).SingleOrDefault(o => o.Id == opening.Id));
+			var eopening = this.Find((set) => set
+				.Include(o => o.Participants)
+				.Include(o => o.Questions).ThenInclude(oq => oq.Question)
+				.Include(o => o.Criteria).ThenInclude(c => c.Criteria)
+				.SingleOrDefault(o => o.Id == opening.Id));
 			if (Convert.ToBase64String(eopening.RowVersion) != opening.RowVersion) throw new InvalidOperationException($"The opening has been updated recently.  Please resync your version before unapplying.");
 
 			var applicationIds = participants.Select(a => a.Id).ToArray();

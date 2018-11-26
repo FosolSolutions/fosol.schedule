@@ -2,6 +2,7 @@
 using Fosol.Schedule.DAL.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using System;
 
 namespace Fosol.Schedule.API.Areas.Data.Controllers
 {
@@ -40,6 +41,25 @@ namespace Fosol.Schedule.API.Areas.Data.Controllers
 		{
 			var opening = _dataSource.Openings.Get(id);
 			return Ok(opening);
+		}
+
+		/// <summary>
+		/// Returns an array of openings for the calendar specified by the 'id'.
+		/// </summary>
+		/// <param name="id">The calendar id.</param>
+		/// <param name="startOn">The start date for the calendar to return.  Defaults to now.</param>
+		/// <param name="endOn">The end date for the calendar to return.</param>
+		/// <returns>An array of events.</returns>
+		[HttpGet("/[area]/calendar/{id}/openings")]
+		public IActionResult GetOpeningsForCalendar(int id, DateTime? startOn = null, DateTime? endOn = null)
+		{
+			var start = startOn ?? DateTime.UtcNow;
+			// Start at the beginning of the week.
+			start = start.DayOfWeek == DayOfWeek.Sunday ? start : start.AddDays(-1 * (int)start.DayOfWeek);
+			var end = endOn ?? start.AddDays(7);
+
+			var openings = _dataSource.Openings.GetForCalendar(id, start, end);
+			return Ok(openings);
 		}
 
 		/// <summary>

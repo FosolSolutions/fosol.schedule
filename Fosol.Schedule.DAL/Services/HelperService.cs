@@ -258,6 +258,7 @@ namespace Fosol.Schedule.DAL.Services
 				var cleaning = new Activity(cleanHall, "Cleaning") { AddedById = userId };
 				cleaning.Openings.Add(new Opening(cleaning, "Cleaner", 2, 6, OpeningType.Application, ApplicationProcess.Accept, CriteriaRule.Visibility) { AddedById = userId });
 				cleaning.Criteria.Add(new ActivityCriteria(cleaning, clean));
+				cleanHall.Activities.Add(cleaning);
 
 				calendar.Events.Add(cleanHall);
 

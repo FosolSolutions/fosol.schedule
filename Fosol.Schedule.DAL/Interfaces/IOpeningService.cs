@@ -1,4 +1,7 @@
-﻿namespace Fosol.Schedule.DAL.Interfaces
+﻿using System;
+using System.Collections.Generic;
+
+namespace Fosol.Schedule.DAL.Interfaces
 {
 	public interface IOpeningService : IUpdatableService<Models.Opening>
 	{
@@ -9,6 +12,16 @@
 		/// <param name="id"></param>
 		/// <returns></returns>
 		Models.Opening Get(int id);
+
+		/// <summary>
+		/// Get the openings for the specified 'calendarId' and within the specified timeframe.
+		/// Validates whether the current use is authorized to view the calendar.
+		/// </summary>
+		/// <param name="calendarId"></param>
+		/// <param name="startOn"></param>
+		/// <param name="endOn"></param>
+		/// <returns></returns>
+		IEnumerable<Models.Opening> GetForCalendar(int calendarId, DateTime startOn, DateTime endOn);
 
 		/// <summary>
 		/// The participant is apply for the opening.
