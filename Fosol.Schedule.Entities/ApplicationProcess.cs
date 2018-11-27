@@ -6,9 +6,9 @@
     public enum ApplicationProcess
     {
         /// <summary>
-        /// Accept - The participant application is immediately accepted.
+        /// AutoAccept - The participant application is immediately accepted.
         /// </summary>
-        Accept = 0,
+        AutoAccept = 0,
 
         /// <summary>
         /// Review - The participant application must be reviewed before being accepted.

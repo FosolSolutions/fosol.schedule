@@ -80,6 +80,25 @@ namespace Fosol.Schedule.DAL.Migrations
 				});
 
 			migrationBuilder.CreateTable(
+				name: "CalendarTags",
+				columns: table => new
+				{
+					CalendarId = table.Column<int>(nullable: false),
+					Key = table.Column<string>(nullable: false),
+					Value = table.Column<string>(nullable: false)
+				},
+				constraints: table =>
+				{
+					table.PrimaryKey("PK_CalendarTags", x => new { x.CalendarId, x.Key, x.Value });
+					table.ForeignKey(
+						name: "FK_CalendarTags_Calendars_CalendarId",
+						column: x => x.CalendarId,
+						principalTable: "Calendars",
+						principalColumn: "Id",
+						onDelete: ReferentialAction.Cascade);
+				});
+
+			migrationBuilder.CreateTable(
 				name: "Questions",
 				columns: table => new
 				{
@@ -454,35 +473,6 @@ namespace Fosol.Schedule.DAL.Migrations
 				});
 
 			migrationBuilder.CreateTable(
-				name: "Tags",
-				columns: table => new
-				{
-					AddedById = table.Column<int>(nullable: false),
-					AddedOn = table.Column<DateTime>(type: "DATETIME2", nullable: false, defaultValueSql: "GETUTCDATE()"),
-					UpdatedById = table.Column<int>(nullable: true),
-					UpdatedOn = table.Column<DateTime>(nullable: true),
-					RowVersion = table.Column<byte[]>(rowVersion: true, nullable: true),
-					Key = table.Column<string>(maxLength: 50, nullable: false),
-					Value = table.Column<string>(maxLength: 100, nullable: false)
-				},
-				constraints: table =>
-				{
-					table.PrimaryKey("PK_Tags", x => new { x.Key, x.Value });
-					table.ForeignKey(
-						name: "FK_Tags_Users_AddedById",
-						column: x => x.AddedById,
-						principalTable: "Users",
-						principalColumn: "Id",
-						onDelete: ReferentialAction.Restrict);
-					table.ForeignKey(
-						name: "FK_Tags_Users_UpdatedById",
-						column: x => x.UpdatedById,
-						principalTable: "Users",
-						principalColumn: "Id",
-						onDelete: ReferentialAction.Restrict);
-				});
-
-			migrationBuilder.CreateTable(
 				name: "UserSettings",
 				columns: table => new
 				{
@@ -795,6 +785,25 @@ namespace Fosol.Schedule.DAL.Migrations
 				});
 
 			migrationBuilder.CreateTable(
+				name: "EventTags",
+				columns: table => new
+				{
+					EventId = table.Column<int>(nullable: false),
+					Key = table.Column<string>(nullable: false),
+					Value = table.Column<string>(nullable: false)
+				},
+				constraints: table =>
+				{
+					table.PrimaryKey("PK_EventTags", x => new { x.EventId, x.Key, x.Value });
+					table.ForeignKey(
+						name: "FK_EventTags_Events_EventId",
+						column: x => x.EventId,
+						principalTable: "Events",
+						principalColumn: "Id",
+						onDelete: ReferentialAction.Cascade);
+				});
+
+			migrationBuilder.CreateTable(
 				name: "ScheduleEvents",
 				columns: table => new
 				{
@@ -873,56 +882,6 @@ namespace Fosol.Schedule.DAL.Migrations
 						principalTable: "Users",
 						principalColumn: "Id",
 						onDelete: ReferentialAction.Restrict);
-				});
-
-			migrationBuilder.CreateTable(
-				name: "CalendarTags",
-				columns: table => new
-				{
-					CalendarId = table.Column<int>(nullable: false),
-					TagKey = table.Column<string>(nullable: false),
-					TagValue = table.Column<string>(nullable: false)
-				},
-				constraints: table =>
-				{
-					table.PrimaryKey("PK_CalendarTags", x => new { x.CalendarId, x.TagKey, x.TagValue });
-					table.ForeignKey(
-						name: "FK_CalendarTags_Calendars_CalendarId",
-						column: x => x.CalendarId,
-						principalTable: "Calendars",
-						principalColumn: "Id",
-						onDelete: ReferentialAction.Cascade);
-					table.ForeignKey(
-						name: "FK_CalendarTags_Tags_TagKey_TagValue",
-						columns: x => new { x.TagKey, x.TagValue },
-						principalTable: "Tags",
-						principalColumns: new[] { "Key", "Value" },
-						onDelete: ReferentialAction.Cascade);
-				});
-
-			migrationBuilder.CreateTable(
-				name: "EventTags",
-				columns: table => new
-				{
-					EventId = table.Column<int>(nullable: false),
-					TagKey = table.Column<string>(nullable: false),
-					TagValue = table.Column<string>(nullable: false)
-				},
-				constraints: table =>
-				{
-					table.PrimaryKey("PK_EventTags", x => new { x.EventId, x.TagKey, x.TagValue });
-					table.ForeignKey(
-						name: "FK_EventTags_Events_EventId",
-						column: x => x.EventId,
-						principalTable: "Events",
-						principalColumn: "Id",
-						onDelete: ReferentialAction.Cascade);
-					table.ForeignKey(
-						name: "FK_EventTags_Tags_TagKey_TagValue",
-						columns: x => new { x.TagKey, x.TagValue },
-						principalTable: "Tags",
-						principalColumns: new[] { "Key", "Value" },
-						onDelete: ReferentialAction.Cascade);
 				});
 
 			migrationBuilder.CreateTable(
@@ -1009,23 +968,17 @@ namespace Fosol.Schedule.DAL.Migrations
 				columns: table => new
 				{
 					ActivityId = table.Column<int>(nullable: false),
-					TagKey = table.Column<string>(nullable: false),
-					TagValue = table.Column<string>(nullable: false)
+					Key = table.Column<string>(nullable: false),
+					Value = table.Column<string>(nullable: false)
 				},
 				constraints: table =>
 				{
-					table.PrimaryKey("PK_ActivityTags", x => new { x.ActivityId, x.TagKey, x.TagValue });
+					table.PrimaryKey("PK_ActivityTags", x => new { x.ActivityId, x.Key, x.Value });
 					table.ForeignKey(
 						name: "FK_ActivityTags_Activities_ActivityId",
 						column: x => x.ActivityId,
 						principalTable: "Activities",
 						principalColumn: "Id",
-						onDelete: ReferentialAction.Cascade);
-					table.ForeignKey(
-						name: "FK_ActivityTags_Tags_TagKey_TagValue",
-						columns: x => new { x.TagKey, x.TagValue },
-						principalTable: "Tags",
-						principalColumns: new[] { "Key", "Value" },
 						onDelete: ReferentialAction.Cascade);
 				});
 
@@ -1068,6 +1021,45 @@ namespace Fosol.Schedule.DAL.Migrations
 						onDelete: ReferentialAction.Restrict);
 					table.ForeignKey(
 						name: "FK_Openings_Users_UpdatedById",
+						column: x => x.UpdatedById,
+						principalTable: "Users",
+						principalColumn: "Id",
+						onDelete: ReferentialAction.Restrict);
+				});
+
+			migrationBuilder.CreateTable(
+				name: "OpeningActions",
+				columns: table => new
+				{
+					AddedById = table.Column<int>(nullable: false),
+					AddedOn = table.Column<DateTime>(type: "DATETIME2", nullable: false, defaultValueSql: "GETUTCDATE()"),
+					UpdatedById = table.Column<int>(nullable: true),
+					UpdatedOn = table.Column<DateTime>(nullable: true),
+					RowVersion = table.Column<byte[]>(rowVersion: true, nullable: true),
+					Id = table.Column<int>(nullable: false)
+						.Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+					OpeningId = table.Column<int>(nullable: false),
+					Trigger = table.Column<int>(nullable: false),
+					Action = table.Column<string>(maxLength: 250, nullable: false),
+					Sequence = table.Column<int>(nullable: false)
+				},
+				constraints: table =>
+				{
+					table.PrimaryKey("PK_OpeningActions", x => x.Id);
+					table.ForeignKey(
+						name: "FK_OpeningActions_Users_AddedById",
+						column: x => x.AddedById,
+						principalTable: "Users",
+						principalColumn: "Id",
+						onDelete: ReferentialAction.Restrict);
+					table.ForeignKey(
+						name: "FK_OpeningActions_Openings_OpeningId",
+						column: x => x.OpeningId,
+						principalTable: "Openings",
+						principalColumn: "Id",
+						onDelete: ReferentialAction.Cascade);
+					table.ForeignKey(
+						name: "FK_OpeningActions_Users_UpdatedById",
 						column: x => x.UpdatedById,
 						principalTable: "Users",
 						principalColumn: "Id",
@@ -1169,23 +1161,17 @@ namespace Fosol.Schedule.DAL.Migrations
 				columns: table => new
 				{
 					OpeningId = table.Column<int>(nullable: false),
-					TagKey = table.Column<string>(nullable: false),
-					TagValue = table.Column<string>(nullable: false)
+					Key = table.Column<string>(nullable: false),
+					Value = table.Column<string>(nullable: false)
 				},
 				constraints: table =>
 				{
-					table.PrimaryKey("PK_OpeningTags", x => new { x.OpeningId, x.TagKey, x.TagValue });
+					table.PrimaryKey("PK_OpeningTags", x => new { x.OpeningId, x.Key, x.Value });
 					table.ForeignKey(
 						name: "FK_OpeningTags_Openings_OpeningId",
 						column: x => x.OpeningId,
 						principalTable: "Openings",
 						principalColumn: "Id",
-						onDelete: ReferentialAction.Cascade);
-					table.ForeignKey(
-						name: "FK_OpeningTags_Tags_TagKey_TagValue",
-						columns: x => new { x.TagKey, x.TagValue },
-						principalTable: "Tags",
-						principalColumns: new[] { "Key", "Value" },
 						onDelete: ReferentialAction.Cascade);
 				});
 
@@ -1373,11 +1359,6 @@ namespace Fosol.Schedule.DAL.Migrations
 				column: "CriteriaId");
 
 			migrationBuilder.CreateIndex(
-				name: "IX_ActivityTags_TagKey_TagValue",
-				table: "ActivityTags",
-				columns: new[] { "TagKey", "TagValue" });
-
-			migrationBuilder.CreateIndex(
 				name: "IX_Addresses_AddedById",
 				table: "Addresses",
 				column: "AddedById");
@@ -1439,11 +1420,6 @@ namespace Fosol.Schedule.DAL.Migrations
 				columns: new[] { "Name", "State", "CriteriaRule" });
 
 			migrationBuilder.CreateIndex(
-				name: "IX_CalendarTags_TagKey_TagValue",
-				table: "CalendarTags",
-				columns: new[] { "TagKey", "TagValue" });
-
-			migrationBuilder.CreateIndex(
 				name: "IX_ContactInfo_AddedById",
 				table: "ContactInfo",
 				column: "AddedById");
@@ -1500,11 +1476,6 @@ namespace Fosol.Schedule.DAL.Migrations
 				columns: new[] { "CalendarId", "State", "StartOn", "EndOn", "CriteriaRule", "Name" });
 
 			migrationBuilder.CreateIndex(
-				name: "IX_EventTags_TagKey_TagValue",
-				table: "EventTags",
-				columns: new[] { "TagKey", "TagValue" });
-
-			migrationBuilder.CreateIndex(
 				name: "IX_OauthAccounts_AddedById",
 				table: "OauthAccounts",
 				column: "AddedById");
@@ -1524,6 +1495,21 @@ namespace Fosol.Schedule.DAL.Migrations
 			migrationBuilder.CreateIndex(
 				name: "IX_OauthAccounts_UpdatedById",
 				table: "OauthAccounts",
+				column: "UpdatedById");
+
+			migrationBuilder.CreateIndex(
+				name: "IX_OpeningActions_AddedById",
+				table: "OpeningActions",
+				column: "AddedById");
+
+			migrationBuilder.CreateIndex(
+				name: "IX_OpeningActions_OpeningId",
+				table: "OpeningActions",
+				column: "OpeningId");
+
+			migrationBuilder.CreateIndex(
+				name: "IX_OpeningActions_UpdatedById",
+				table: "OpeningActions",
 				column: "UpdatedById");
 
 			migrationBuilder.CreateIndex(
@@ -1616,11 +1602,6 @@ namespace Fosol.Schedule.DAL.Migrations
 				name: "IX_Openings_ActivityId_State_CriteriaRule_OpeningType_ApplicationProcess_Name",
 				table: "Openings",
 				columns: new[] { "ActivityId", "State", "CriteriaRule", "OpeningType", "ApplicationProcess", "Name" });
-
-			migrationBuilder.CreateIndex(
-				name: "IX_OpeningTags_TagKey_TagValue",
-				table: "OpeningTags",
-				columns: new[] { "TagKey", "TagValue" });
 
 			migrationBuilder.CreateIndex(
 				name: "IX_ParticipantAttributes_AttributeId",
@@ -1765,16 +1746,6 @@ namespace Fosol.Schedule.DAL.Migrations
 				name: "IX_Subscriptions_Name_State",
 				table: "Subscriptions",
 				columns: new[] { "Name", "State" });
-
-			migrationBuilder.CreateIndex(
-				name: "IX_Tags_AddedById",
-				table: "Tags",
-				column: "AddedById");
-
-			migrationBuilder.CreateIndex(
-				name: "IX_Tags_UpdatedById",
-				table: "Tags",
-				column: "UpdatedById");
 
 			migrationBuilder.CreateIndex(
 				name: "IX_UserAccountRoles_AccountRoleId",
@@ -2038,6 +2009,9 @@ namespace Fosol.Schedule.DAL.Migrations
 				name: "OauthAccounts");
 
 			migrationBuilder.DropTable(
+				name: "OpeningActions");
+
+			migrationBuilder.DropTable(
 				name: "OpeningAnswerQuestionOptions");
 
 			migrationBuilder.DropTable(
@@ -2078,9 +2052,6 @@ namespace Fosol.Schedule.DAL.Migrations
 
 			migrationBuilder.DropTable(
 				name: "Criteria");
-
-			migrationBuilder.DropTable(
-				name: "Tags");
 
 			migrationBuilder.DropTable(
 				name: "Schedules");

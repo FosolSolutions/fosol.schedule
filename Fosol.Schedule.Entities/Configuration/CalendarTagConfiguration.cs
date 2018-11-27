@@ -10,10 +10,9 @@ namespace Fosol.Schedule.Entities.Configuration
         {
             builder.ToTable("CalendarTags");
 
-            builder.HasKey(m => new { m.CalendarId, m.TagKey, m.TagValue });
+            builder.HasKey(m => new { m.CalendarId, m.Key, m.Value });
 
             builder.HasOne(m => m.Calendar).WithMany(m => m.Tags).HasForeignKey(m => m.CalendarId).OnDelete(DeleteBehavior.Cascade);
-            builder.HasOne(m => m.Tag).WithMany(m => m.Calendars).HasForeignKey(m => new { m.TagKey, m.TagValue }).OnDelete(DeleteBehavior.Cascade);
         }
         #endregion
     }

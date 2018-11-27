@@ -73,7 +73,7 @@ namespace Fosol.Schedule.DAL.Services
 				from o in this.Context.Openings
 					.Include(a => a.Criteria)
 					.Include(o => o.Tags)
-					.Include(o => o.Participants)
+					.Include(o => o.Participants).ThenInclude(op => op.Participant)
 				where o.Activity.Event.CalendarId == calendarId
 					&& o.Activity.StartOn >= startOn
 					&& o.Activity.EndOn <= endOn
@@ -148,7 +148,16 @@ namespace Fosol.Schedule.DAL.Services
 			opening.Participants.Add(op);
 			this.Context.OpeningParticipants.Add(op);
 
-			return this.Map(opening);
+			PerformAction(op, ActionTrigger.Apply);
+
+			if (opening.ApplicationProcess == ApplicationProcess.AutoAccept)
+			{
+				PerformAction(op, ActionTrigger.Accept);
+			}
+
+			var result = this.Map(opening);
+			Track(opening, result);
+			return result;
 		}
 
 		/// <summary>
@@ -178,21 +187,30 @@ namespace Fosol.Schedule.DAL.Services
 
 			var applicationIds = participants.Select(a => a.Id).ToArray();
 			var applications = eopening.Participants.Where(a => applicationIds.Contains(a.ParticipantId));
-			applications.ForEach(a =>
+			applications.ForEach(op =>
 			{
-				eopening.Participants.Remove(a);
-				
-				a.Answers.ForEach(aa =>
+				PerformAction(op, ActionTrigger.Unapply);
+				eopening.Participants.Remove(op);
+
+				op.Answers.ForEach(aa =>
 				{
 					aa.Options.ForEach(o => this.Context.OpeningAnswerQuestionOptions.Remove(o)); // Delete OpeningAnswerQuestionOption.
 					aa.Options.Clear();
 					this.Context.OpeningAnswers.Remove(aa); // Delete OpeningAnswer.
 				});
-				a.Answers.Clear();
+				op.Answers.Clear();
 			});
 			this.Context.OpeningParticipants.RemoveRange(applications);
 
-			return this.Map(eopening);
+			var result = this.Map(eopening);
+			Track(eopening, result);
+			return result;
+		}
+
+		private void PerformAction(Entities.OpeningParticipant openingParticipant, ActionTrigger trigger)
+		{
+			var processes = this.Context.Processes.Where(oa => oa.OpeningId == openingParticipant.OpeningId && oa.Trigger == trigger).OrderBy(oa => oa.Sequence);
+			processes.ForEach(p => this.Source.Actions.Add(new Helpers.OpeningAction(p, openingParticipant)));
 		}
 		#endregion
 	}
