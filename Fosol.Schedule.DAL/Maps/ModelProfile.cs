@@ -34,12 +34,12 @@ namespace Fosol.Schedule.DAL.Maps
 				.Include<Entities.Opening, Models.Opening>()
 				.Include<Entities.Attribute, Models.Attribute>()
 				.Include<Entities.Schedule, Models.Schedule>()
-				.Include<Entities.Tag, Models.Tag>()
 				.Include<Entities.OauthAccount, Models.OauthAccount>()
 				.Include<Entities.Question, Models.Question>()
 				.Include<Entities.QuestionOption, Models.QuestionOption>()
 				.Include<Entities.OpeningParticipant, Models.OpeningApplication>()
 				.Include<Entities.OpeningAnswer, Models.Answer>()
+				.Include<Entities.Process, Models.Process>()
 				.ForMember(dest => dest.RowVersion, opt => opt.MapFrom(src => Convert.ToBase64String(src.RowVersion)))
 				.ReverseMap()
 				.ForMember(dest => dest.AddedById, opt => opt.MapFrom(src => src.RowVersion == null ? this.DataSource.Principal.GetUser().Value.ConvertTo<int>() : src.AddedById))
@@ -119,9 +119,12 @@ namespace Fosol.Schedule.DAL.Maps
 			// Calendars
 			CreateMap<Entities.Calendar, Models.Calendar>()
 				.ForPath(dest => dest.Criteria, opt => opt.MapFrom(src => src.Criteria.Select(c => c.Criteria)))
-				.ForPath(dest => dest.Tags, opt => opt.MapFrom(src => src.Tags.Select(a => a.Tag)))
+				.ForPath(dest => dest.Tags, opt => opt.MapFrom(src => src.Tags))
 				.ReverseMap()
 				.ForMember(dest => dest.Key, opt => opt.MapFrom(src => (src.Id == 0 && src.Key != Guid.Empty) ? src.Key : Guid.NewGuid()));
+
+			CreateMap<Entities.CalendarTag, Models.Tag>()
+				.ReverseMap();
 
 			// Participants
 			CreateMap<Entities.Participant, Models.Participant>()
@@ -138,9 +141,12 @@ namespace Fosol.Schedule.DAL.Maps
 					opt.Condition(param => param.Source != null);
 					opt.MapFrom(src => src.Criteria.Select(c => c.Criteria));
 				})
-				.ForPath(dest => dest.Tags, opt => opt.MapFrom(src => src.Tags.Select(a => a.Tag)))
+				.ForPath(dest => dest.Tags, opt => opt.MapFrom(src => src.Tags))
 				.ReverseMap()
 				.ForMember(dest => dest.Key, opt => opt.MapFrom(src => (src.Id == 0 && src.Key != Guid.Empty) ? src.Key : Guid.NewGuid()));
+
+			CreateMap<Entities.EventTag, Models.Tag>()
+				.ReverseMap();
 
 			// Activities
 			CreateMap<Entities.Activity, Models.Activity>()
@@ -149,15 +155,19 @@ namespace Fosol.Schedule.DAL.Maps
 					opt.Condition(param => param.Source.Criteria != null);
 					opt.MapFrom(src => src.Criteria.Select(c => c.Criteria));
 				})
-				.ForPath(dest => dest.Tags, opt => opt.MapFrom(src => src.Tags.Select(a => a.Tag)))
+				.ForPath(dest => dest.Tags, opt => opt.MapFrom(src => src.Tags))
 				.ReverseMap()
 				.ForMember(dest => dest.Key, opt => opt.MapFrom(src => (src.Id == 0 && src.Key != Guid.Empty) ? src.Key : Guid.NewGuid()));
+
+			CreateMap<Entities.ActivityTag, Models.Tag>()
+				.ReverseMap();
 
 			// Openings
 			CreateMap<Entities.Opening, Models.Opening>()
 				.ForPath(dest => dest.Criteria, opt => opt.MapFrom(src => src.Criteria.Select(c => c.Criteria)))
 				.ForPath(dest => dest.Applications, opt => opt.MapFrom(src => src.Participants))
-				.ForPath(dest => dest.Tags, opt => opt.MapFrom(src => src.Tags.Select(a => a.Tag)))
+				.ForPath(dest => dest.Participants, opt => opt.MapFrom(src => src.Participants.Where(p => p.State == Entities.OpeningApplicationState.Accepted).Select(p => p.Participant)))
+				.ForPath(dest => dest.Tags, opt => opt.MapFrom(src => src.Tags))
 				.ReverseMap()
 				.ForMember(dest => dest.Key, opt => opt.MapFrom(src => (src.Id == 0 && src.Key != Guid.Empty) ? src.Key : Guid.NewGuid()));
 
@@ -192,7 +202,14 @@ namespace Fosol.Schedule.DAL.Maps
 					return new Entities.OpeningQuestion() { Question = question, QuestionId = question.Id };
 				});
 
+			CreateMap<Entities.OpeningTag, Models.Tag>()
+				.ReverseMap();
+
 			CreateMap<Entities.OpeningAnswer, Models.Answer>()
+				.ReverseMap();
+
+			// Process
+			CreateMap<Entities.Process, Models.Process>()
 				.ReverseMap();
 
 			// Questions
@@ -247,74 +264,6 @@ namespace Fosol.Schedule.DAL.Maps
 				//.ForMember(dest => dest.Criterion, opt => opt.MapFrom(src => src.ToString()))
 				//.ReverseMap()
 				//.ForMember(dest => dest.Criteria, opt => opt.MapFrom(src => src.Criterion));
-
-			// Tags
-			CreateMap<Entities.Tag, Models.Tag>()
-				.ReverseMap();
-			CreateMap<Entities.CalendarTag, Models.Tag>()
-				.ReverseMap()
-				.ConvertUsing(src =>
-				{
-					var tag = new Entities.Tag()
-					{
-						Key = src.Key,
-						Value = src.Value,
-						AddedById = src.RowVersion == null ? this.DataSource.Principal.GetUser().Value.ConvertTo<int>() : src.AddedById.Value,
-						AddedOn = src.RowVersion == null ? DateTime.UtcNow : src.AddedOn,
-						UpdatedById = src.RowVersion == null ? (int?)null : this.DataSource.Principal.GetUser().Value.ConvertTo<int>(),
-						UpdatedOn = src.RowVersion == null ? (DateTime?)null : DateTime.UtcNow,
-						RowVersion = Convert.FromBase64String(src.RowVersion)
-					};
-					return new Entities.CalendarTag() { TagKey = src.Key, TagValue = src.Value, Tag = tag };
-				});
-			CreateMap<Entities.EventTag, Models.Tag>()
-				.ReverseMap()
-				.ConvertUsing(src =>
-				{
-					var tag = new Entities.Tag()
-					{
-						Key = src.Key,
-						Value = src.Value,
-						AddedById = src.RowVersion == null ? this.DataSource.Principal.GetUser().Value.ConvertTo<int>() : src.AddedById.Value,
-						AddedOn = src.RowVersion == null ? DateTime.UtcNow : src.AddedOn,
-						UpdatedById = src.RowVersion == null ? (int?)null : this.DataSource.Principal.GetUser().Value.ConvertTo<int>(),
-						UpdatedOn = src.RowVersion == null ? (DateTime?)null : DateTime.UtcNow,
-						RowVersion = Convert.FromBase64String(src.RowVersion)
-					};
-					return new Entities.EventTag() { TagKey = src.Key, TagValue = src.Value, Tag = tag };
-				});
-			CreateMap<Entities.ActivityTag, Models.Tag>()
-				.ReverseMap()
-				.ConvertUsing(src =>
-				{
-					var tag = new Entities.Tag()
-					{
-						Key = src.Key,
-						Value = src.Value,
-						AddedById = src.RowVersion == null ? this.DataSource.Principal.GetUser().Value.ConvertTo<int>() : src.AddedById.Value,
-						AddedOn = src.RowVersion == null ? DateTime.UtcNow : src.AddedOn,
-						UpdatedById = src.RowVersion == null ? (int?)null : this.DataSource.Principal.GetUser().Value.ConvertTo<int>(),
-						UpdatedOn = src.RowVersion == null ? (DateTime?)null : DateTime.UtcNow,
-						RowVersion = Convert.FromBase64String(src.RowVersion)
-					};
-					return new Entities.ActivityTag() { TagKey = src.Key, TagValue = src.Value, Tag = tag };
-				});
-			CreateMap<Entities.OpeningTag, Models.Tag>()
-				.ReverseMap()
-				.ConvertUsing(src =>
-				{
-					var tag = new Entities.Tag()
-					{
-						Key = src.Key,
-						Value = src.Value,
-						AddedById = src.RowVersion == null ? this.DataSource.Principal.GetUser().Value.ConvertTo<int>() : src.AddedById.Value,
-						AddedOn = src.RowVersion == null ? DateTime.UtcNow : src.AddedOn,
-						UpdatedById = src.RowVersion == null ? (int?)null : this.DataSource.Principal.GetUser().Value.ConvertTo<int>(),
-						UpdatedOn = src.RowVersion == null ? (DateTime?)null : DateTime.UtcNow,
-						RowVersion = Convert.FromBase64String(src.RowVersion)
-					};
-					return new Entities.OpeningTag() { TagKey = src.Key, TagValue = src.Value, Tag = tag };
-				});
 
 			// Attributes
 			CreateMap<Entities.Attribute, Models.Attribute>().ReverseMap();

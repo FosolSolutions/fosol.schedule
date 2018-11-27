@@ -20,7 +20,6 @@ namespace Fosol.Schedule.DAL
 		public DbSet<Account> Accounts { get; set; }
 		public DbSet<AccountRole> AccountRoles { get; set; }
 
-
 		public DbSet<Activity> Activities { get; set; }
 		public DbSet<ActivityCriteria> ActivityCriteria { get; set; }
 		public DbSet<ActivityTag> ActivityTags { get; set; }
@@ -46,6 +45,8 @@ namespace Fosol.Schedule.DAL
 		public DbSet<OpeningQuestion> OpeningQuestions { get; set; }
 		public DbSet<OpeningAnswer> OpeningAnswers { get; set; }
 		public DbSet<OpeningAnswerQuestionOption> OpeningAnswerQuestionOptions { get; set; }
+
+		public DbSet<Process> Processes { get; set; }
 
 		public DbSet<Question> Questions { get; set; }
 		public DbSet<QuestionOption> QuestionOptions { get; set; }

@@ -1,12 +1,15 @@
 ﻿using AutoMapper;
+using Fosol.Core.Extensions.Enumerable;
 using Fosol.Schedule.DAL.Interfaces;
 using Fosol.Schedule.DAL.Maps;
 using Fosol.Schedule.DAL.Services;
 using Microsoft.EntityFrameworkCore;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Security.Principal;
+using System.Text.RegularExpressions;
 
 namespace Fosol.Schedule.DAL
 {
@@ -18,6 +21,7 @@ namespace Fosol.Schedule.DAL
 	public sealed class DataSource : IDataSource
 	{
 		#region Variables
+		private static readonly Regex _regex = new Regex(@"(?<method>.*(?=\()){1}\((?<args>.+?(,\s?|\)))*;?");
 		private readonly Lazy<IHelperService> _helperService;
 		private readonly Lazy<ISubscriptionService> _subscriptionService;
 		private readonly Lazy<IUserService> _userService;
@@ -46,6 +50,12 @@ namespace Fosol.Schedule.DAL
 		/// </summary>
 		public IPrincipal Principal { get; }
 
+		/// <summary>
+		/// get - A collection actions to perform if the commit is successful.
+		/// </summary>
+		internal List<Helpers.OpeningAction> Actions { get; } = new List<Helpers.OpeningAction>();
+
+		#region Services
 		/// <summary>
 		/// get - A helper service with various functions.
 		/// </summary>
@@ -95,6 +105,7 @@ namespace Fosol.Schedule.DAL
 		/// get - The service to manage schedules.
 		/// </summary>
 		public IScheduleService Schedules { get { return _scheduleService.Value; } }
+		#endregion
 		#endregion
 
 		#region Constructors
@@ -206,6 +217,8 @@ namespace Fosol.Schedule.DAL
 		/// <returns></returns>
 		public int CommitTransaction(Func<int> action)
 		{
+			var success = false;
+			var actions = this.Actions.Count() > 0;
 			int result;
 			using (var transaction = this.Context.Database.BeginTransaction())
 			{
@@ -215,12 +228,41 @@ namespace Fosol.Schedule.DAL
 
 					transaction.Commit();
 
-					Sync();
+					if (!actions) Sync();
+
+					success = true;
 				}
 				catch (DbUpdateException)
 				{
 					transaction.Rollback();
 					throw;
+				}
+			}
+
+			if (success && actions)
+			{
+				using (var transaction = this.Context.Database.BeginTransaction())
+				{
+					try
+					{
+						this.Actions.ForEach(a => PerformAction(a.Process, a.OpeningParticipant));
+						this.Context.SaveChanges();
+
+						transaction.Commit();
+
+						Sync();
+
+						success = true;
+					}
+					catch (DbUpdateException)
+					{
+						transaction.Rollback();
+						throw;
+					}
+					finally
+					{
+						this.Actions.Clear();
+					}
 				}
 			}
 			return result;
@@ -234,6 +276,87 @@ namespace Fosol.Schedule.DAL
 		public void CommitTransaction(Action action)
 		{
 			this.CommitTransaction(() => { action(); return 0; });
+		}
+
+		/// <summary>
+		/// Execute the process action.
+		/// </summary>
+		/// <param name="process"></param>
+		/// <param name="openingParticipant"></param>
+		private void PerformAction(Entities.Process process, Entities.OpeningParticipant openingParticipant) // TODO: Create custom syntax and parser for actions.
+		{
+			// Perform any actions based on the event.
+			//oLecture.Actions.Add(new OpeningAction(oLecture, OpeningActionEvent.Accept, "Insert(Participant.Answers, Opening.Tags, Question.Caption=\"Title\");"));
+			//oLecture.Actions.Add(new OpeningAction(oLecture, OpeningActionEvent.Unapply, "Delete(Opening.Tags, Tag.Key=\"Title\");"));
+
+			var matches = _regex.Matches(process.Action);
+			var opening = process.Opening;
+
+			foreach (Match match in matches)
+			{
+				var method = match.Groups["method"];
+				switch (method.Value)
+				{
+					case ("Add"):
+						{
+							var source = match.Groups["args"]?.Captures[0]?.Value?.Replace(", ", "");
+							var destination = match.Groups["args"]?.Captures[1]?.Value?.Replace(", ", "");
+							var condition = match.Groups["args"]?.Captures[2]?.Value?.Replace(")", "");
+
+							if (source == "Participant.Answers")
+							{
+								if (!String.IsNullOrWhiteSpace(condition))
+								{
+									if (condition.StartsWith("Question.Caption"))
+									{
+										var cval = condition.Substring(18, condition.Length - 19);
+										var answers = (
+											from p in this.Context.Processes
+											join oq in this.Context.OpeningQuestions on p.OpeningId equals oq.OpeningId
+											join op in this.Context.OpeningParticipants on p.OpeningId equals op.OpeningId
+											join oan in this.Context.OpeningAnswers on new { p.OpeningId, op.ParticipantId, oq.QuestionId } equals new { oan.OpeningId, oan.ParticipantId, oan.QuestionId }
+											where p.Id == process.Id
+												&& op.ParticipantId == openingParticipant.ParticipantId
+												&& oq.Question.Caption == cval
+											select oan.Text);
+										
+										answers.ForEach(a =>
+										{
+											var tag = new Entities.OpeningTag(opening, cval, a);
+											opening.Tags.Add(tag);
+											this.Context.OpeningTags.Add(tag);
+										});
+									}
+								}
+							}
+						}
+						break;
+					case ("Delete"):
+						{
+							var source = match.Groups["args"]?.Captures[0]?.Value?.Replace(", ", "");
+							var condition = match.Groups["args"]?.Captures[1]?.Value?.Replace(")", "");
+
+							if (source == "Opening.Tags")
+							{
+								if (!String.IsNullOrWhiteSpace(condition))
+								{
+									if (condition.StartsWith("Tag.Key"))
+									{
+										var cval = condition.Substring(9, condition.Length - 10);
+										var tags = this.Context.OpeningTags.Where(ot => ot.Key == cval).ToArray();
+
+										tags.ForEach(t => {
+											opening.Tags.Remove(t);
+											this.Context.OpeningTags.Remove(t);
+										});
+									}
+								}
+							}
+						}
+						break;
+				}
+				match.NextMatch();
+			}
 		}
 
 		/// <summary>

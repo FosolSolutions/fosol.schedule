@@ -10,7 +10,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Fosol.Schedule.DAL.Migrations
 {
     [DbContext(typeof(ScheduleContext))]
-    [Migration("20181118062629_v01.00.00")]
+    [Migration("20181127042653_v01.00.00")]
     partial class v010000
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -218,13 +218,11 @@ namespace Fosol.Schedule.DAL.Migrations
                 {
                     b.Property<int>("ActivityId");
 
-                    b.Property<string>("TagKey");
+                    b.Property<string>("Key");
 
-                    b.Property<string>("TagValue");
+                    b.Property<string>("Value");
 
-                    b.HasKey("ActivityId", "TagKey", "TagValue");
-
-                    b.HasIndex("TagKey", "TagValue");
+                    b.HasKey("ActivityId", "Key", "Value");
 
                     b.ToTable("ActivityTags");
                 });
@@ -395,13 +393,11 @@ namespace Fosol.Schedule.DAL.Migrations
                 {
                     b.Property<int>("CalendarId");
 
-                    b.Property<string>("TagKey");
+                    b.Property<string>("Key");
 
-                    b.Property<string>("TagValue");
+                    b.Property<string>("Value");
 
-                    b.HasKey("CalendarId", "TagKey", "TagValue");
-
-                    b.HasIndex("TagKey", "TagValue");
+                    b.HasKey("CalendarId", "Key", "Value");
 
                     b.ToTable("CalendarTags");
                 });
@@ -566,13 +562,11 @@ namespace Fosol.Schedule.DAL.Migrations
                 {
                     b.Property<int>("EventId");
 
-                    b.Property<string>("TagKey");
+                    b.Property<string>("Key");
 
-                    b.Property<string>("TagValue");
+                    b.Property<string>("Value");
 
-                    b.HasKey("EventId", "TagKey", "TagValue");
-
-                    b.HasIndex("TagKey", "TagValue");
+                    b.HasKey("EventId", "Key", "Value");
 
                     b.ToTable("EventTags");
                 });
@@ -807,13 +801,11 @@ namespace Fosol.Schedule.DAL.Migrations
                 {
                     b.Property<int>("OpeningId");
 
-                    b.Property<string>("TagKey");
+                    b.Property<string>("Key");
 
-                    b.Property<string>("TagValue");
+                    b.Property<string>("Value");
 
-                    b.HasKey("OpeningId", "TagKey", "TagValue");
-
-                    b.HasIndex("TagKey", "TagValue");
+                    b.HasKey("OpeningId", "Key", "Value");
 
                     b.ToTable("OpeningTags");
                 });
@@ -937,6 +929,48 @@ namespace Fosol.Schedule.DAL.Migrations
                     b.HasIndex("ContactInfoId");
 
                     b.ToTable("ParticipantContactInfo");
+                });
+
+            modelBuilder.Entity("Fosol.Schedule.Entities.Process", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasAnnotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn);
+
+                    b.Property<string>("Action")
+                        .IsRequired()
+                        .HasMaxLength(250);
+
+                    b.Property<int>("AddedById");
+
+                    b.Property<DateTime>("AddedOn")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("DATETIME2")
+                        .HasDefaultValueSql("GETUTCDATE()");
+
+                    b.Property<int>("OpeningId");
+
+                    b.Property<byte[]>("RowVersion")
+                        .IsConcurrencyToken()
+                        .ValueGeneratedOnAddOrUpdate();
+
+                    b.Property<int>("Sequence");
+
+                    b.Property<int>("Trigger");
+
+                    b.Property<int?>("UpdatedById");
+
+                    b.Property<DateTime?>("UpdatedOn");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("AddedById");
+
+                    b.HasIndex("OpeningId");
+
+                    b.HasIndex("UpdatedById");
+
+                    b.ToTable("OpeningActions");
                 });
 
             modelBuilder.Entity("Fosol.Schedule.Entities.Question", b =>
@@ -1146,38 +1180,6 @@ namespace Fosol.Schedule.DAL.Migrations
                     b.HasIndex("Name", "State");
 
                     b.ToTable("Subscriptions");
-                });
-
-            modelBuilder.Entity("Fosol.Schedule.Entities.Tag", b =>
-                {
-                    b.Property<string>("Key")
-                        .HasMaxLength(50);
-
-                    b.Property<string>("Value")
-                        .HasMaxLength(100);
-
-                    b.Property<int>("AddedById");
-
-                    b.Property<DateTime>("AddedOn")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("DATETIME2")
-                        .HasDefaultValueSql("GETUTCDATE()");
-
-                    b.Property<byte[]>("RowVersion")
-                        .IsConcurrencyToken()
-                        .ValueGeneratedOnAddOrUpdate();
-
-                    b.Property<int?>("UpdatedById");
-
-                    b.Property<DateTime?>("UpdatedOn");
-
-                    b.HasKey("Key", "Value");
-
-                    b.HasIndex("AddedById");
-
-                    b.HasIndex("UpdatedById");
-
-                    b.ToTable("Tags");
                 });
 
             modelBuilder.Entity("Fosol.Schedule.Entities.User", b =>
@@ -1469,11 +1471,6 @@ namespace Fosol.Schedule.DAL.Migrations
                         .WithMany("Tags")
                         .HasForeignKey("ActivityId")
                         .OnDelete(DeleteBehavior.Cascade);
-
-                    b.HasOne("Fosol.Schedule.Entities.Tag", "Tag")
-                        .WithMany("Activities")
-                        .HasForeignKey("TagKey", "TagValue")
-                        .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("Fosol.Schedule.Entities.Address", b =>
@@ -1532,11 +1529,6 @@ namespace Fosol.Schedule.DAL.Migrations
                     b.HasOne("Fosol.Schedule.Entities.Calendar", "Calendar")
                         .WithMany("Tags")
                         .HasForeignKey("CalendarId")
-                        .OnDelete(DeleteBehavior.Cascade);
-
-                    b.HasOne("Fosol.Schedule.Entities.Tag", "Tag")
-                        .WithMany("Calendars")
-                        .HasForeignKey("TagKey", "TagValue")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
@@ -1600,11 +1592,6 @@ namespace Fosol.Schedule.DAL.Migrations
                     b.HasOne("Fosol.Schedule.Entities.Event", "Event")
                         .WithMany("Tags")
                         .HasForeignKey("EventId")
-                        .OnDelete(DeleteBehavior.Cascade);
-
-                    b.HasOne("Fosol.Schedule.Entities.Tag", "Tag")
-                        .WithMany("Events")
-                        .HasForeignKey("TagKey", "TagValue")
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
@@ -1750,11 +1737,6 @@ namespace Fosol.Schedule.DAL.Migrations
                         .WithMany("Tags")
                         .HasForeignKey("OpeningId")
                         .OnDelete(DeleteBehavior.Cascade);
-
-                    b.HasOne("Fosol.Schedule.Entities.Tag", "Tag")
-                        .WithMany("Openings")
-                        .HasForeignKey("TagKey", "TagValue")
-                        .OnDelete(DeleteBehavior.Cascade);
                 });
 
             modelBuilder.Entity("Fosol.Schedule.Entities.Participant", b =>
@@ -1814,6 +1796,22 @@ namespace Fosol.Schedule.DAL.Migrations
                         .WithMany("ContactInfo")
                         .HasForeignKey("ParticipantId")
                         .OnDelete(DeleteBehavior.Cascade);
+                });
+
+            modelBuilder.Entity("Fosol.Schedule.Entities.Process", b =>
+                {
+                    b.HasOne("Fosol.Schedule.Entities.User", "AddedBy")
+                        .WithMany()
+                        .HasForeignKey("AddedById");
+
+                    b.HasOne("Fosol.Schedule.Entities.Opening", "Opening")
+                        .WithMany("Actions")
+                        .HasForeignKey("OpeningId")
+                        .OnDelete(DeleteBehavior.Cascade);
+
+                    b.HasOne("Fosol.Schedule.Entities.User", "UpdatedBy")
+                        .WithMany()
+                        .HasForeignKey("UpdatedById");
                 });
 
             modelBuilder.Entity("Fosol.Schedule.Entities.Question", b =>
@@ -1876,17 +1874,6 @@ namespace Fosol.Schedule.DAL.Migrations
                 });
 
             modelBuilder.Entity("Fosol.Schedule.Entities.Subscription", b =>
-                {
-                    b.HasOne("Fosol.Schedule.Entities.User", "AddedBy")
-                        .WithMany()
-                        .HasForeignKey("AddedById");
-
-                    b.HasOne("Fosol.Schedule.Entities.User", "UpdatedBy")
-                        .WithMany()
-                        .HasForeignKey("UpdatedById");
-                });
-
-            modelBuilder.Entity("Fosol.Schedule.Entities.Tag", b =>
                 {
                     b.HasOne("Fosol.Schedule.Entities.User", "AddedBy")
                         .WithMany()

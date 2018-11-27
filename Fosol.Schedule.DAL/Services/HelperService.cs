@@ -139,40 +139,40 @@ namespace Fosol.Schedule.DAL.Services
 					RepetitionSize = 1
 				};
 				var aPreside = new Activity(memorial, "Preside") { AddedById = userId };
-				aPreside.Openings.Add(new Opening(aPreside, "Presider", 1, 1, OpeningType.Application, ApplicationProcess.Accept, CriteriaRule.Visibility) { AddedById = userId });
+				aPreside.Openings.Add(new Opening(aPreside, "Presider", 1, 1, OpeningType.Application, ApplicationProcess.AutoAccept, CriteriaRule.Visibility) { AddedById = userId });
 				aPreside.Criteria.Add(new ActivityCriteria(aPreside, presider));
 				memorial.Activities.Add(aPreside);
 
 				var aExhort = new Activity(memorial, "Exhortation") { AddedById = userId };
-				aExhort.Openings.Add(new Opening(aExhort, "Exhort", 1, 1, OpeningType.Application, ApplicationProcess.Accept, CriteriaRule.Visibility) { AddedById = userId });
+				aExhort.Openings.Add(new Opening(aExhort, "Exhort", 1, 1, OpeningType.Application, ApplicationProcess.AutoAccept, CriteriaRule.Visibility) { AddedById = userId });
 				aExhort.Criteria.Add(new ActivityCriteria(aExhort, exhorter));
 				memorial.Activities.Add(aExhort);
 
 				var aDoor = new Activity(memorial, "Door") { AddedById = userId };
-				aDoor.Openings.Add(new Opening(aDoor, "Door", 1, 1, OpeningType.Application, ApplicationProcess.Accept, CriteriaRule.Visibility) { AddedById = userId });
+				aDoor.Openings.Add(new Opening(aDoor, "Door", 1, 1, OpeningType.Application, ApplicationProcess.AutoAccept, CriteriaRule.Visibility) { AddedById = userId });
 				aDoor.Criteria.Add(new ActivityCriteria(aDoor, door));
 				memorial.Activities.Add(aDoor);
 
 				var aReadings = new Activity(memorial, "Readings") { AddedById = userId };
-				aReadings.Openings.Add(new Opening(aReadings, "1st Reading", 1, 1, OpeningType.Application, ApplicationProcess.Accept, CriteriaRule.Visibility) { AddedById = userId });
-				aReadings.Openings.Add(new Opening(aReadings, "2nd Reading", 1, 1, OpeningType.Application, ApplicationProcess.Accept, CriteriaRule.Visibility) { AddedById = userId });
+				aReadings.Openings.Add(new Opening(aReadings, "1st Reading", 1, 1, OpeningType.Application, ApplicationProcess.AutoAccept, CriteriaRule.Visibility) { AddedById = userId });
+				aReadings.Openings.Add(new Opening(aReadings, "2nd Reading", 1, 1, OpeningType.Application, ApplicationProcess.AutoAccept, CriteriaRule.Visibility) { AddedById = userId });
 				aReadings.Criteria.Add(new ActivityCriteria(aReadings, reader));
 				memorial.Activities.Add(aReadings);
 
 				var aPrayers = new Activity(memorial, "Prayers") { AddedById = userId };
-				aPrayers.Openings.Add(new Opening(aPrayers, "Bread", 1, 1, OpeningType.Application, ApplicationProcess.Accept, CriteriaRule.Visibility) { AddedById = userId });
-				aPrayers.Openings.Add(new Opening(aPrayers, "Wine", 1, 1, OpeningType.Application, ApplicationProcess.Accept, CriteriaRule.Visibility) { AddedById = userId });
-				aPrayers.Openings.Add(new Opening(aPrayers, "Close", 1, 1, OpeningType.Application, ApplicationProcess.Accept, CriteriaRule.Visibility) { AddedById = userId });
+				aPrayers.Openings.Add(new Opening(aPrayers, "Bread", 1, 1, OpeningType.Application, ApplicationProcess.AutoAccept, CriteriaRule.Visibility) { AddedById = userId });
+				aPrayers.Openings.Add(new Opening(aPrayers, "Wine", 1, 1, OpeningType.Application, ApplicationProcess.AutoAccept, CriteriaRule.Visibility) { AddedById = userId });
+				aPrayers.Openings.Add(new Opening(aPrayers, "Close", 1, 1, OpeningType.Application, ApplicationProcess.AutoAccept, CriteriaRule.Visibility) { AddedById = userId });
 				aPrayers.Criteria.Add(new ActivityCriteria(aPrayers, prayer));
 				memorial.Activities.Add(aPrayers);
 
 				var aPianist = new Activity(memorial, "Pianist") { AddedById = userId };
-				aPianist.Openings.Add(new Opening(aPianist, "Pianist", 1, 1, OpeningType.Application, ApplicationProcess.Accept, CriteriaRule.Visibility) { AddedById = userId });
+				aPianist.Openings.Add(new Opening(aPianist, "Pianist", 1, 1, OpeningType.Application, ApplicationProcess.AutoAccept, CriteriaRule.Visibility) { AddedById = userId });
 				aPianist.Criteria.Add(new ActivityCriteria(aPianist, pianist));
 				memorial.Activities.Add(aPianist);
 
 				var aServe = new Activity(memorial, "Serve") { AddedById = userId };
-				aServe.Openings.Add(new Opening(aServe, "Servers", 4, 4, OpeningType.Application, ApplicationProcess.Accept, CriteriaRule.Visibility) { AddedById = userId });
+				aServe.Openings.Add(new Opening(aServe, "Servers", 4, 4, OpeningType.Application, ApplicationProcess.AutoAccept, CriteriaRule.Visibility) { AddedById = userId });
 				aServe.Criteria.Add(new ActivityCriteria(aServe, server));
 				memorial.Activities.Add(aServe);
 
@@ -185,12 +185,14 @@ namespace Fosol.Schedule.DAL.Services
 					AddedById = userId
 				};
 				var aPreside2 = new Activity(lecture, "Preside") { AddedById = userId };
-				aPreside2.Openings.Add(new Opening(aPreside2, "Presider", 1, 1, OpeningType.Application, ApplicationProcess.Accept, CriteriaRule.Visibility) { AddedById = userId });
+				aPreside2.Openings.Add(new Opening(aPreside2, "Presider", 1, 1, OpeningType.Application, ApplicationProcess.AutoAccept, CriteriaRule.Visibility) { AddedById = userId });
 				aPreside2.Criteria.Add(new ActivityCriteria(aPreside2, presider));
 				lecture.Activities.Add(aPreside2);
 
 				var aLecture = new Activity(lecture, "Lecture") { AddedById = userId };
-				var oLecture = new Opening(aLecture, "Speaker", 1, 1, OpeningType.Application, ApplicationProcess.Accept, CriteriaRule.Visibility) { AddedById = userId };
+				var oLecture = new Opening(aLecture, "Speaker", 1, 1, OpeningType.Application, ApplicationProcess.AutoAccept, CriteriaRule.Visibility) { AddedById = userId };
+				oLecture.Actions.Add(new Process(oLecture, ActionTrigger.Accept, "Add(Participant.Answers, Opening.Tags, Question.Caption=\"Title\");") { AddedById = userId });
+				oLecture.Actions.Add(new Process(oLecture, ActionTrigger.Unapply, "Delete(Opening.Tags, Tag.Key=\"Title\");") { AddedById = userId });
 				oLecture.Questions.Add(new OpeningQuestion(oLecture, qTitle));
 				aLecture.Openings.Add(oLecture);
 				aLecture.Criteria.Add(new ActivityCriteria(aLecture, lecturer));
@@ -221,12 +223,14 @@ namespace Fosol.Schedule.DAL.Services
 					RepetitionSize = 1
 				};
 				var aPreside = new Activity(bibleClass, "Preside") { AddedById = userId };
-				aPreside.Openings.Add(new Opening(aPreside, "Presider", 1, 1, OpeningType.Application, ApplicationProcess.Accept, CriteriaRule.Visibility) { AddedById = userId });
+				aPreside.Openings.Add(new Opening(aPreside, "Presider", 1, 1, OpeningType.Application, ApplicationProcess.AutoAccept, CriteriaRule.Visibility) { AddedById = userId });
 				aPreside.Criteria.Add(new ActivityCriteria(aPreside, presider));
 				bibleClass.Activities.Add(aPreside);
 
 				var aSpeak = new Activity(bibleClass, "Speak") { AddedById = userId };
-				var oSpeak = new Opening(aSpeak, "Speaker", 1, 1, OpeningType.Application, ApplicationProcess.Accept, CriteriaRule.Visibility) { AddedById = userId };
+				var oSpeak = new Opening(aSpeak, "Speaker", 1, 1, OpeningType.Application, ApplicationProcess.AutoAccept, CriteriaRule.Visibility) { AddedById = userId };
+				oSpeak.Actions.Add(new Process(oSpeak, ActionTrigger.Accept, "Add(Participant.Answers, Opening.Tags, Question.Caption=\"Title\");") { AddedById = userId });
+				oSpeak.Actions.Add(new Process(oSpeak, ActionTrigger.Unapply, "Delete(Opening.Tags, Tag.Key=\"Title\");") { AddedById = userId });
 				oSpeak.Questions.Add(new OpeningQuestion(oSpeak, qTitle));
 				aSpeak.Openings.Add(oSpeak);
 				aSpeak.Criteria.Add(new ActivityCriteria(aSpeak, study));
@@ -256,7 +260,7 @@ namespace Fosol.Schedule.DAL.Services
 					RepetitionSize = 1
 				};
 				var cleaning = new Activity(cleanHall, "Cleaning") { AddedById = userId };
-				cleaning.Openings.Add(new Opening(cleaning, "Cleaner", 2, 6, OpeningType.Application, ApplicationProcess.Accept, CriteriaRule.Visibility) { AddedById = userId });
+				cleaning.Openings.Add(new Opening(cleaning, "Cleaner", 2, 6, OpeningType.Application, ApplicationProcess.AutoAccept, CriteriaRule.Visibility) { AddedById = userId });
 				cleaning.Criteria.Add(new ActivityCriteria(cleaning, clean));
 				cleanHall.Activities.Add(cleaning);
 
