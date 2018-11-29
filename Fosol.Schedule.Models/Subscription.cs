@@ -5,12 +5,12 @@ namespace Fosol.Schedule.Models
     public class Subscription : BaseModel
     {
         #region Properties
-        public int Id { get; set; }
+        public int? Id { get; set; }
 
         /// <summary>
         /// get/set - A unique key to identify this subscription.
         /// </summary>
-        public Guid Key { get; set; }
+        public Guid? Key { get; set; }
 
         public string Name { get; set; }
 

@@ -134,7 +134,7 @@ namespace Fosol.Schedule.API.Areas.Manage.Controllers
                 {
                     errors.Add($"Event [{e.Id}] \"{e.Name}\" occurs after the schedule and therefore will not be included.");
                 }
-                else if (eventIds.Contains(e.Id))
+                else if (eventIds.Contains(e.Id.Value))
                 {
                     errors.Add($"Event [{e.Id}] \"{e.Name}\" has already been included in the schedule.");
                 }

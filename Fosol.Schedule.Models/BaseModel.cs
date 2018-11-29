@@ -17,7 +17,7 @@ namespace Fosol.Schedule.Models
         /// <summary>
         /// get/set - When this entity was created.
         /// </summary>
-        public DateTime AddedOn { get; set; } = DateTime.UtcNow;
+        public DateTime? AddedOn { get; set; } = DateTime.UtcNow;
 
         /// <summary>
         /// get/set - Foreign key identifying which user updated this entity last.

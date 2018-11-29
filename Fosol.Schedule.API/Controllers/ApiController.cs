@@ -1,4 +1,5 @@
-﻿using Fosol.Schedule.API.Helpers;
+﻿using Fosol.Core.Mvc.Filters;
+using Fosol.Schedule.API.Helpers;
 using Microsoft.AspNetCore.Mvc;
 using System.Reflection;
 
@@ -9,6 +10,7 @@ namespace Fosol.Schedule.API.Controllers
 	/// </summary>
 	[Produces("application/json")]
 	[Route("[controller]")]
+	[ValidateModelFilter]
 	public class ApiController : Controller
 	{
 		#region Methods

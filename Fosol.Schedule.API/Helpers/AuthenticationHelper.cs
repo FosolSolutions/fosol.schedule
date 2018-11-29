@@ -76,7 +76,7 @@ namespace Fosol.Schedule.API.Helpers
                 return null;
 
             var participant = service.Get(key);
-            var claims = service.GetClaims(participant.Id);
+            var claims = service.GetClaims(participant.Id.Value);
             return new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
         }
 
@@ -92,7 +92,7 @@ namespace Fosol.Schedule.API.Helpers
                 return null;
 
             var user = service.Get(key);
-            var claims = service.GetClaims(user.Id);
+            var claims = service.GetClaims(user.Id.Value);
             return new ClaimsIdentity(claims, CookieAuthenticationDefaults.AuthenticationScheme);
         }
 
