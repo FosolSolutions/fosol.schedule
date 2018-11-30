@@ -1,4 +1,5 @@
 ﻿using Fosol.Core.Mvc;
+using Fosol.Core.Mvc.Filters;
 using Fosol.Schedule.API.Helpers;
 using Fosol.Schedule.API.Helpers.Mail;
 using Fosol.Schedule.DAL.Interfaces;
@@ -22,6 +23,7 @@ namespace Fosol.Schedule.API.Areas.Manage.Controllers
 	[Area("manage")]
 	[Route("[area]/[controller]")]
 	[Authorize]
+	[ValidateModelFilter]
 	public sealed class CalendarController : ApiController
 	{
 		#region Variables

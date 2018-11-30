@@ -52,6 +52,19 @@ namespace Fosol.Core.Extensions.Types
 			return type.GetInterfaces().Any(t => t.IsGenericType && t.GetGenericTypeDefinition() == typeof(IEnumerable<>));
 		}
 
+		/// <summary>
+		/// Returns the generic type parameter at the specified index.
+		/// </summary>
+		/// <exception cref="InvalidOperationException">If the type is not a generic type.</exception>
+		/// <param name="type"></param>
+		/// <param name="index"></param>
+		/// <returns></returns>
+		public static Type GetGenericTypeParameter(this Type type, int index = 0)
+		{
+			if (!type.IsGenericType) throw new InvalidOperationException($"The type '{type.FullName}' is not a generic type.");
+
+			return type.GetGenericTypeDefinition().GetGenericArguments()[index];
+		}
 		#endregion
 	}
 }

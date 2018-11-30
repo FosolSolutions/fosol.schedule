@@ -10,7 +10,6 @@ namespace Fosol.Schedule.API.Controllers
 	/// </summary>
 	[Produces("application/json")]
 	[Route("[controller]")]
-	[ValidateModelFilter]
 	public class ApiController : Controller
 	{
 		#region Methods
