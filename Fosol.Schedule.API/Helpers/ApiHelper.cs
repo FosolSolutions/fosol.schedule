@@ -67,7 +67,7 @@ namespace Fosol.Schedule.API.Helpers
 
 			if (_models.ContainsKey(type)) return _models[type];
 
-			if (type.IsEnum)
+			if (type.IsEnum || type.IsNullableType() && type.GetGenericArguments()[0].IsEnum)
 			{
 				model = GetEnum(type);
 			}
@@ -102,7 +102,7 @@ namespace Fosol.Schedule.API.Helpers
 			public ModelPropertyInfo(Type type)
 			{
 				this.Type = type.IsGenericType ? type.GetGenericArguments()[0].Name : type.Name;
-				this.IsEnum = type.IsEnum;
+				this.IsEnum = type.IsEnum || type.IsNullableType() && type.GetGenericArguments()[0].IsEnum;
 				this.IsNullable = type.IsNullable();
 				this.IsArray = type.IsArray || type.IsEnumerable() && type != typeof(string);
 				this.IsPrimitive = type.IsPrimitive;

@@ -51,21 +51,21 @@ namespace Fosol.Schedule.DAL.Maps
 			// Subscriptions
 			CreateMap<Entities.Subscription, Models.Subscription>()
 				.ReverseMap()
-				.ForMember(dest => dest.Key, opt => opt.MapFrom(src => (src.Id == 0 && src.Id == 0 && src.Key != Guid.Empty) ? src.Key : Guid.NewGuid()));
+				.ForMember(dest => dest.Key, opt => opt.MapFrom(src => (src.Id == 0 && src.Id.HasValue || src.Key != Guid.Empty) ? src.Key : Guid.NewGuid()));
 
 			// Schedules
 			CreateMap<Entities.Schedule, Models.Schedule>()
 				.ForPath(dest => dest.Events, opt => opt.MapFrom(src => src.Events.Select(a => a.Event)))
 				.ReverseMap()
-				.ForMember(dest => dest.Key, opt => opt.MapFrom(src => (src.Id == 0 && src.Key != Guid.Empty) ? src.Key : Guid.NewGuid()));
+				.ForMember(dest => dest.Key, opt => opt.MapFrom(src => (src.Id.HasValue || src.Key != Guid.Empty) ? src.Key : Guid.NewGuid()));
 			CreateMap<Entities.ScheduleEvent, Models.Event>()
 				.ReverseMap()
 				.ConvertUsing(src =>
 				{
 					var cevent = new Entities.Event() 
 					{
-						Id = src.Id,
-						Key = src.Key,
+						Id = src.Id.Value,
+						Key = src.Key.Value,
 						Name = src.Name,
 						Description = src.Description,
 						CalendarId = src.CalendarId,
@@ -74,12 +74,12 @@ namespace Fosol.Schedule.DAL.Maps
 						State = src.State,
 						CriteriaRule = src.CriteriaRule,
 						AddedById = src.Id == 0 ? this.DataSource.Principal.GetUser().Value.ConvertTo<int>() : src.AddedById.Value,
-						AddedOn = src.Id == 0 ? DateTime.UtcNow : src.AddedOn,
+						AddedOn = src.Id == 0 ? DateTime.UtcNow : src.AddedOn.Value,
 						UpdatedById = src.Id == 0 ? (int?)null : this.DataSource.Principal.GetUser().Value.ConvertTo<int>(),
 						UpdatedOn = src.Id == 0 ? (DateTime?)null : DateTime.UtcNow,
 						RowVersion = Convert.FromBase64String(src.RowVersion)
 					};
-					return new Entities.ScheduleEvent() { EventId = src.Id, Event = cevent };
+					return new Entities.ScheduleEvent() { EventId = src.Id.Value, Event = cevent };
 				});
 
 			// Users
@@ -106,7 +106,7 @@ namespace Fosol.Schedule.DAL.Maps
 				.ForPath(dest => dest.Info.HomePhone, opt => opt.MapFrom(src => src.HomePhone))
 				.ForPath(dest => dest.Info.MobilePhone, opt => opt.MapFrom(src => src.MobilePhone))
 				.ForPath(dest => dest.Info.WorkPhone, opt => opt.MapFrom(src => src.WorkPhone))
-				.ForMember(dest => dest.Key, opt => opt.MapFrom(src => (src.Id == 0 && src.Key != Guid.Empty) ? src.Key : Guid.NewGuid()));
+				.ForMember(dest => dest.Key, opt => opt.MapFrom(src => (src.Id.HasValue || src.Key != Guid.Empty) ? src.Key : Guid.NewGuid()));
 
 			CreateMap<Entities.OauthAccount, Models.OauthAccount>()
 				.ReverseMap();
@@ -114,14 +114,14 @@ namespace Fosol.Schedule.DAL.Maps
 			// Accounts
 			CreateMap<Entities.Account, Models.Account>()
 				.ReverseMap()
-				.ForMember(dest => dest.Key, opt => opt.MapFrom(src => (src.Id == 0 && src.Key != Guid.Empty) ? src.Key : Guid.NewGuid()));
+				.ForMember(dest => dest.Key, opt => opt.MapFrom(src => (src.Id.HasValue || src.Key != Guid.Empty) ? src.Key : Guid.NewGuid()));
 
 			// Calendars
 			CreateMap<Entities.Calendar, Models.Calendar>()
 				.ForPath(dest => dest.Criteria, opt => opt.MapFrom(src => src.Criteria.Select(c => c.Criteria)))
 				.ForPath(dest => dest.Tags, opt => opt.MapFrom(src => src.Tags))
 				.ReverseMap()
-				.ForMember(dest => dest.Key, opt => opt.MapFrom(src => (src.Id == 0 && src.Key != Guid.Empty) ? src.Key : Guid.NewGuid()));
+				.ForMember(dest => dest.Key, opt => opt.MapFrom(src => (src.Id.HasValue || src.Key != Guid.Empty) ? src.Key : Guid.NewGuid()));
 
 			CreateMap<Entities.CalendarTag, Models.Tag>()
 				.ReverseMap();
@@ -132,7 +132,7 @@ namespace Fosol.Schedule.DAL.Maps
 				.ForPath(dest => dest.Attributes, opt => opt.MapFrom(src => src.Attributes.Select(a => a.Attribute)))
 				.ForPath(dest => dest.WorkPhone, opt => opt.MapFrom(src => src.WorkPhone))
 				.ReverseMap()
-				.ForMember(dest => dest.Key, opt => opt.MapFrom(src => (src.Id == 0 && src.Key != Guid.Empty) ? src.Key : Guid.NewGuid()));
+				.ForMember(dest => dest.Key, opt => opt.MapFrom(src => (src.Id.HasValue || src.Key != Guid.Empty) ? src.Key : Guid.NewGuid()));
 
 			// Events
 			CreateMap<Entities.Event, Models.Event>()
@@ -143,7 +143,7 @@ namespace Fosol.Schedule.DAL.Maps
 				})
 				.ForPath(dest => dest.Tags, opt => opt.MapFrom(src => src.Tags))
 				.ReverseMap()
-				.ForMember(dest => dest.Key, opt => opt.MapFrom(src => (src.Id == 0 && src.Key != Guid.Empty) ? src.Key : Guid.NewGuid()));
+				.ForMember(dest => dest.Key, opt => opt.MapFrom(src => (src.Id.HasValue || src.Key != Guid.Empty) ? src.Key : Guid.NewGuid()));
 
 			CreateMap<Entities.EventTag, Models.Tag>()
 				.ReverseMap();
@@ -157,7 +157,7 @@ namespace Fosol.Schedule.DAL.Maps
 				})
 				.ForPath(dest => dest.Tags, opt => opt.MapFrom(src => src.Tags))
 				.ReverseMap()
-				.ForMember(dest => dest.Key, opt => opt.MapFrom(src => (src.Id == 0 && src.Key != Guid.Empty) ? src.Key : Guid.NewGuid()));
+				.ForMember(dest => dest.Key, opt => opt.MapFrom(src => (src.Id.HasValue || src.Key != Guid.Empty) ? src.Key : Guid.NewGuid()));
 
 			CreateMap<Entities.ActivityTag, Models.Tag>()
 				.ReverseMap();
@@ -169,7 +169,7 @@ namespace Fosol.Schedule.DAL.Maps
 				.ForPath(dest => dest.Participants, opt => opt.MapFrom(src => src.Participants.Where(p => p.State == Entities.OpeningApplicationState.Accepted).Select(p => p.Participant)))
 				.ForPath(dest => dest.Tags, opt => opt.MapFrom(src => src.Tags))
 				.ReverseMap()
-				.ForMember(dest => dest.Key, opt => opt.MapFrom(src => (src.Id == 0 && src.Key != Guid.Empty) ? src.Key : Guid.NewGuid()));
+				.ForMember(dest => dest.Key, opt => opt.MapFrom(src => (src.Id.HasValue || src.Key != Guid.Empty) ? src.Key : Guid.NewGuid()));
 
 			CreateMap<Entities.OpeningParticipant, Models.OpeningApplication>()
 				.ForMember(dest => dest.OpeningId, opt => opt.MapFrom(src => src.OpeningId))
@@ -275,7 +275,7 @@ namespace Fosol.Schedule.DAL.Maps
 					var attribute = src.Id == 0 ? new Entities.Attribute(src.Key, src.Value, type)
 					{
 						AddedById = src.Id == 0 ? this.DataSource.Principal.GetUser().Value.ConvertTo<int>() : src.AddedById.Value,
-						AddedOn = src.Id == 0 ? DateTime.UtcNow : src.AddedOn,
+						AddedOn = src.Id == 0 ? DateTime.UtcNow : src.AddedOn.Value,
 						UpdatedById = src.Id == 0 ? (int?)null : this.DataSource.Principal.GetUser().Value.ConvertTo<int>(),
 						UpdatedOn = src.Id == 0 ? (DateTime?)null : DateTime.UtcNow,
 						RowVersion = Convert.FromBase64String(src.RowVersion)

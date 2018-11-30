@@ -12,7 +12,7 @@ namespace Fosol.Schedule.Models
 		/// <summary>
 		/// get/set - A unique id to identify this opening.
 		/// </summary>
-		public int Id { get; set; }
+		public int? Id { get; set; }
 
 		/// <summary>
 		/// get/set - The parent activity that owns this opening.
@@ -22,7 +22,7 @@ namespace Fosol.Schedule.Models
 		/// <summary>
 		/// get/set - A unique key to identify this opening.
 		/// </summary>
-		public Guid Key { get; set; }
+		public Guid? Key { get; set; }
 
 		/// <summary>
 		/// get/set - A name to identify this opening.

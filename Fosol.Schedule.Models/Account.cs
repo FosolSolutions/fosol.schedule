@@ -6,9 +6,9 @@ namespace Fosol.Schedule.Models
     public class Account : BaseModel
     {
         #region Properties
-        public int Id { get; set; }
+        public int? Id { get; set; }
 
-        public Guid Key { get; set; }
+        public Guid? Key { get; set; }
 
         public int OwnerId { get; set; }
 

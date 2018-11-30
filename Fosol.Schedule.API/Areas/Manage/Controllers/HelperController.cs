@@ -46,7 +46,7 @@ namespace Fosol.Schedule.API.Areas.Manage.Controllers
         [HttpPost("ecclesia")]
         public IActionResult AddEcclesialEvents([FromBody] Calendar calendar, [FromQuery] DateTime? startOn, [FromQuery] DateTime? endOn)
         {
-            var result = _dataSource.Helper.AddEcclesialEvents(calendar.Id, startOn, endOn);
+            var result = _dataSource.Helper.AddEcclesialEvents(calendar.Id.Value, startOn, endOn);
 
             return Ok(result);
         }
@@ -59,7 +59,7 @@ namespace Fosol.Schedule.API.Areas.Manage.Controllers
         [HttpPost("ecclesia/participants")]
         public IActionResult AddEcclesialParticipants([FromBody] Calendar calendar)
         {
-            var result = _dataSource.Helper.AddParticipants(calendar.Id);
+            var result = _dataSource.Helper.AddParticipants(calendar.Id.Value);
 
             return Ok(result);
         }

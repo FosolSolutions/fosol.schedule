@@ -6,9 +6,9 @@ namespace Fosol.Schedule.Models
     public class Calendar : BaseModel
     {
         #region Properties
-        public int Id { get; set; }
+        public int? Id { get; set; }
 
-        public Guid Key { get; set; }
+        public Guid? Key { get; set; }
 
         public int AccountId { get; set; }
 

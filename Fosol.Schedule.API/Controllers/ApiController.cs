@@ -1,4 +1,5 @@
-﻿using Fosol.Schedule.API.Helpers;
+﻿using Fosol.Core.Mvc.Filters;
+using Fosol.Schedule.API.Helpers;
 using Microsoft.AspNetCore.Mvc;
 using System.Reflection;
 

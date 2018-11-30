@@ -111,14 +111,14 @@ namespace Fosol.Schedule.DAL.Services
 			var sister = new CriteriaObject("Sister", true) { AddedById = userId };
 			var presider = new CriteriaObject(new CriteriaValue("Skill", "Preside"), (Criteria)brother, (Criteria)member) { AddedById = userId };
 			var pianist = new CriteriaObject(new CriteriaValue("Skill", "Pianist"), (Criteria)member) { AddedById = userId };
-			var exhorter = new CriteriaObject(new CriteriaValue("Skill", "Exhort"), (Criteria)brother, (Criteria)member) { AddedById = userId };
+			var exhorter = new CriteriaObject(new CriteriaValue("Skill", "Exhort"), (Criteria)brother) { AddedById = userId };
 			var reader = new CriteriaObject(new CriteriaValue("Skill", "Read"), (Criteria)brother, (Criteria)member) { AddedById = userId };
 			var server = new CriteriaObject(new CriteriaValue("Skill", "Serve"), (Criteria)brother, (Criteria)member) { AddedById = userId };
 			var prayer = new CriteriaObject(new CriteriaValue("Skill", "Pray"), (Criteria)brother, (Criteria)member) { AddedById = userId };
 			var door = new CriteriaObject(new CriteriaValue("Skill", "Doorman"), (Criteria)brother, (Criteria)member) { AddedById = userId };
 			var emblems = new CriteriaObject(new CriteriaValue("Skill", "Emblems"), (Criteria)member) { AddedById = userId };
-			var lecturer = new CriteriaObject(new CriteriaValue("Skill", "Lecturer"), (Criteria)brother, (Criteria)member) { AddedById = userId };
-			var study = new CriteriaObject(new CriteriaValue("Skill", "Bible Class"), (Criteria)brother, (Criteria)member) { AddedById = userId };
+			var lecturer = new CriteriaObject(new CriteriaValue("Skill", "Lecturer"), (Criteria)brother) { AddedById = userId };
+			var study = new CriteriaObject(new CriteriaValue("Skill", "Bible Class"), (Criteria)brother) { AddedById = userId };
 			var clean = new CriteriaObject(new CriteriaValue("Skill", "Clean"), (Criteria)member) { AddedById = userId };
 			var criteria = new List<CriteriaObject>() { member, brother, sister, pianist, presider, exhorter, reader, server, prayer, door, emblems, lecturer, clean };
 
@@ -383,7 +383,7 @@ namespace Fosol.Schedule.DAL.Services
 					participants.Add(CreateParticipant(calendar, user, "P Pearce", "Peggy", "Pearce", "", Gender.Female, "", "", "", "Member=true, Sister=true, Skill=Emblems, Skill=Clean"));
 					participants.Add(CreateParticipant(calendar, user, "L Pengelly", "Laura", "Pengelly", "l_pengelly@hotmail.com", Gender.Female, "", "", "", "Member=true, Sister=true, Skill=Emblems, Skill=Clean"));
 					participants.Add(CreateParticipant(calendar, user, "M Pilon", "Marianne", "Pilon", "mppilon@shaw.ca", Gender.Female, "", "", "", "Member=true, Sister=true, Skill=Emblems, Skill=Clean"));
-					participants.Add(CreateParticipant(calendar, user, "M Quindazzi", "Micah", "Quindazzi", "", Gender.Male, "", "", "", "Member=true, Brother=true, Skill=Serve, Skill=Read, Skill=Pray, Skill=Doorman, Skill=Bible Class, Skill=Emblems, Skill=Clean"));
+					participants.Add(CreateParticipant(calendar, user, "M Quindazzi", "Micah", "Quindazzi", "m.j.quindazzi@gmail.com", Gender.Male, "", "", "", "Member=true, Brother=true, Skill=Serve, Skill=Read, Skill=Pray, Skill=Doorman, Skill=Lecturer, Skill=Bible Class, Skill=Emblems, Skill=Clean"));
 					participants.Add(CreateParticipant(calendar, user, "P Quindazzi", "Philip", "Quindazzi", "", Gender.Male, "", "", "", "Member=true, Brother=true"));
 					participants.Add(CreateParticipant(calendar, user, "A Ralph", "Andrew", "Ralph", "drew.sherry@shaw.ca", Gender.Male, "", "", "", "Member=true, Brother=true, Skill=Serve, Skill=Read, Skill=Pray, Skill=Doorman, Skill=Bible Class, Skill=Emblems, Skill=Clean"));
 					participants.Add(CreateParticipant(calendar, user, "S Ralph", "Sherry", "Ralph", "drew.sherry@shaw.ca", Gender.Female, "", "", "", "Member=true, Sister=true, Skill=Emblems, Skill=Clean"));
@@ -423,6 +423,7 @@ namespace Fosol.Schedule.DAL.Services
 					participants.Add(CreateParticipant(calendar, user, "N Crawford", "Nathan", "Crawford", "nathanael.crawford@gmail.com", Gender.Male, "", "", "", "Member=true, Brother=true, Skill=Preside, Skill=Exhort, Skill=Serve, Skill=Read, Skill=Pray, Skill=Doorman, Skill=Lecturer, Skill=Bible Class, Skill=Emblems, Skill=Clean"));
 					participants.Add(CreateParticipant(calendar, user, "S Crawford", "Sarah", "Crawford", "crawfordsarahm@gmail.com", Gender.Female, "", "", "", "Member=true, Sister=true, Skill=Pianist, Skill=Emblems, Skill=Clean"));
 					participants.Add(CreateParticipant(calendar, user, "N Fernando", "Naleen", "Fernando", "naleenandjulie@gmail.com", Gender.Male, "", "", "", "Member=true, Brother=true, Skill=Exhort, Skill=Bible Class"));
+					participants.Add(CreateParticipant(calendar, user, "N Orsetti", "Gavin", "Orsetti", "jeremymichaelfoster@gmail.com", Gender.Male, "", "", "", "Member=false, Brother=true, Skill=Exhort, Skill=Lecturer, Skill=Bible Class"));
 					this.Context.SaveChanges();
 
 					transaction.Commit();
