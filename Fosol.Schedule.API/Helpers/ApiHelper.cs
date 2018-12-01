@@ -1,4 +1,5 @@
-﻿using Fosol.Core.Extensions.Types;
+﻿using Fosol.Core.Extensions.Enumerable;
+using Fosol.Core.Extensions.Types;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Routing;
 using System;
@@ -46,12 +47,13 @@ namespace Fosol.Schedule.API.Helpers
 		/// <summary>
 		/// Get the endpoint with the specified name.
 		/// </summary>
-		/// <param name="controller"></param>
 		/// <param name="name"></param>
+		/// <param name="controller"></param>
+		/// <param name="area"></param>
 		/// <returns></returns>
-		public static dynamic GetEndpoint(string controller, string name)
+		public static dynamic GetEndpoint(string name, string controller = null, string area = null)
 		{
-			var ctrl = GetEndpoints(controller);
+			var ctrl = _endpoints.Where(c => String.Compare(c.Name, name, true) == 0);
 
 			return ((IEnumerable<dynamic>)ctrl.FirstOrDefault()?.Endpoints).FirstOrDefault(e => String.Compare(e.Name, name) == 0);
 		}
@@ -181,22 +183,60 @@ namespace Fosol.Schedule.API.Helpers
 		/// Get all the endpoints in the application and return their information (including documentation) as an object.
 		/// </summary>
 		/// <returns></returns>
-		private static IEnumerable<object> Initialize()
+		public static object ConvertToObject()
+		{
+			var result = new ExpandoObject();
+
+			foreach (var area_groups in _endpoints)
+			{
+				var controller = new ExpandoObject(); // Area has many controllers.
+				foreach (var ctrl in area_groups)
+				{
+					var endpoints = new ExpandoObject(); // Controller has many endpoints.
+					foreach (var ep in ctrl.Controller.Endpoints)
+					{
+						var endpoint = new ExpandoObject();
+						endpoint.TryAdd("Summary", (string)ep.Summary);
+						foreach (var r in ep.Routes)
+						{
+							endpoint.TryAdd((string)r.Method, (IEnumerable<dynamic>)r.Routes);
+						}
+						endpoint.TryAdd("Route", (object)((IEnumerable<dynamic>)((IEnumerable<dynamic>)ep.Routes).First().Routes).First());
+						endpoint.TryAdd("Parameters", (IEnumerable<dynamic>)ep.Parameters);
+						endpoints.TryAdd((string)ep.Name, endpoint);
+					}
+					controller.TryAdd((string)ctrl.Controller.Name, (object)endpoints);
+				}
+				result.TryAdd((string)area_groups.Key ?? "_", controller);
+			}
+
+			return result;
+		}
+
+		/// <summary>
+		/// Get all the endpoints in the application and return their information (including documentation) as an object.
+		/// </summary>
+		/// <returns></returns>
+		private static IEnumerable<dynamic> Initialize()
 		{
 			var xml = new XPathDocument($@"{AppDomain.CurrentDomain.BaseDirectory}/{typeof(Program).Assembly.GetName().Name}.xml");
 			var nav = xml.CreateNavigator();
 
-			return Assembly.GetExecutingAssembly().GetExportedTypes().Where(t => t.IsSubclassOf(typeof(Controller))).Select(t => new
+			var results = Assembly.GetExecutingAssembly().GetExportedTypes().Where(t => t.IsSubclassOf(typeof(Controller))).Select(t => new
 			{
-				Name = GetControllerName(t),
-				Endpoints = t.GetMethods(BindingFlags.Instance | BindingFlags.Public | BindingFlags.DeclaredOnly).Select(mi => new
-				{
-					mi.Name,
-					Summary = GetValue(nav, $"{GetMemberPath(t, mi)}/summary"),
-					Routes = GetRoutes(t, mi),
-					Parameters = GetParameters(t, mi, nav)
-				})
-			});
+				Name = t.GetCustomAttribute<AreaAttribute>()?.RouteValue,
+				Controller = new {
+					Name = GetControllerName(t),
+					Endpoints = t.GetMethods(BindingFlags.Instance | BindingFlags.Public | BindingFlags.DeclaredOnly).Select(mi => new
+					{
+						mi.Name,
+						Summary = GetValue(nav, $"{GetMemberPath(t, mi)}/summary"),
+						Routes = GetRoutes(t, mi),
+						Parameters = GetParameters(t, mi, nav)
+					})
+				}
+			}).GroupBy(a => a.Name);
+			return results;
 		}
 
 		private static string GetValue(XPathNavigator nav, string xpath)
@@ -235,14 +275,33 @@ namespace Fosol.Schedule.API.Helpers
 			return type.GetCustomAttributes<RouteAttribute>().Select(ra => ra.Template.Replace("[area]", area).Replace("[controller]", controller).ToLower()).Distinct();
 		}
 
-		private static IEnumerable<string> GetRoutes(Type type, MethodInfo methodInfo)
+		private static IEnumerable<object> GetRoutes(Type type, MethodInfo methodInfo)
 		{
 			var controller = GetControllerName(type);
 			var area = type.GetCustomAttribute<AreaAttribute>()?.RouteValue;
 			var controller_routes = GetRoutes(type);
-			var endpoint_routes = methodInfo.GetCustomAttributes<RouteAttribute>().Select(ra => ra.Template.Replace("[area]", area).Replace("[controller]", controller).ToLower());
-			var http_methods = methodInfo.GetCustomAttributes<HttpMethodAttribute>().Select(hga => hga.Template?.Replace("[area]", area).Replace("[controller]", controller).ToLower() ?? methodInfo.Name.ToLower());
-			return endpoint_routes.Concat(http_methods).Distinct().Select(r => r.StartsWith("/") ? new[] { r } : controller_routes.Select(cr => $"/{cr}/{r}")).SelectMany(r => r);
+			var routes = methodInfo.GetCustomAttributes<RouteAttribute>();
+			var methods = methodInfo.GetCustomAttributes<HttpMethodAttribute>();
+
+			var results = new List<dynamic>();
+			routes.ForEach(r => {
+				var url = r.Template.Replace("[area]", area).Replace("[controller]", controller).ToLower();
+				results.Add(new
+				{
+					Method = "GET",
+					Routes = url.StartsWith("/") ? new[] { url } : controller_routes.Select(cr => $"/{cr}/{url}")
+				});
+			});
+			methods.ForEach(m =>
+			{
+				var url = m.Template?.Replace("[area]", area).Replace("[controller]", controller).ToLower() ?? methodInfo.Name.ToLower();
+				results.Add(new
+				{
+					Method = m is HttpGetAttribute ? "GET" : m is HttpPostAttribute ? "POST" : m is HttpPutAttribute ? "PUT" : m is HttpDeleteAttribute ? "DELETE" : m is HttpMethodAttribute ? "METHOD" : m is HttpOptionsAttribute ? "OPTIONS" : m is HttpHeadAttribute ? "HEAD" : "GET",
+					Routes = url.StartsWith("/") ? new[] { url } : controller_routes.Select(cr => $"/{cr}/{url}")
+				});
+			});
+			return results;
 		}
 
 		private static IEnumerable<object> GetParameters(Type type, MethodInfo methodInfo, XPathNavigator nav)
