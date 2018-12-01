@@ -136,14 +136,14 @@ namespace Fosol.Schedule.DAL.Services
 			if (!criteria.All(c => c.Validate(participant.Attributes.Select(a => a.Attribute).ToArray()))) throw new InvalidOperationException($"The participant '{participant.DisplayName}' does not have the required attributes to apply to this opening.");
 
 			// Validate questions
-			var answeredQuestionIds = answers.Select(a => a.QuestionId).ToArray();
+			var answeredQuestionIds = answers?.Select(a => a.QuestionId).ToArray() ?? new int[0];
 			var hasAnsweredQuestions = opening.Questions.All(q => q.Question.IsRequired && answeredQuestionIds.Contains(q.QuestionId));
 
 			if (!hasAnsweredQuestions) throw new InvalidOperationException($"The application is missing an answer to a question.");
 
 			var state = opening.ApplicationProcess == ApplicationProcess.Review ? OpeningApplicationState.Applied : OpeningApplicationState.Accepted;
 			var op = new OpeningParticipant(opening, participant, state) { AddedById = userId };
-			var eanswers = answers.Select(a => new OpeningAnswer() { OpeningId = opening.Id, QuestionId = a.QuestionId, ParticipantId = participant.Id, OpeningParticipant = op, Text = a.Text, AddedById = userId }).ToArray(); // TODO: Save answer options.
+			var eanswers = answers?.Select(a => new OpeningAnswer() { OpeningId = opening.Id, QuestionId = a.QuestionId, ParticipantId = participant.Id, OpeningParticipant = op, Text = a.Text, AddedById = userId }).ToArray() ?? new OpeningAnswer[0]; // TODO: Save answer options.
 			eanswers.ForEach(a => op.Answers.Add(a));
 			opening.Participants.Add(op);
 			this.Context.OpeningParticipants.Add(op);

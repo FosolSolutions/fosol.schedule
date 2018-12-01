@@ -74,7 +74,7 @@ namespace Fosol.Schedule.DAL.Services
 			var end = endOn.ToUniversalTime();
 
 			var calendar = Get(id);
-			var events = this.Context.Events.Where(e => e.CalendarId == id && e.StartOn >= start && e.EndOn <= end);
+			var events = this.Context.Events.Where(e => e.CalendarId == id && e.StartOn >= start && e.EndOn <= end).OrderBy(e => e.StartOn).ThenBy(e => e.Name);
 
 			calendar.Events = events.Select(e => this.Source.Mapper.Map<Models.Event>(e));
 

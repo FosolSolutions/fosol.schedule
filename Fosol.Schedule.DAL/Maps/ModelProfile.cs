@@ -136,11 +136,7 @@ namespace Fosol.Schedule.DAL.Maps
 
 			// Events
 			CreateMap<Entities.Event, Models.Event>()
-				.ForPath(dest => dest.Criteria, opt =>
-				{
-					opt.Condition(param => param.Source != null);
-					opt.MapFrom(src => src.Criteria.Select(c => c.Criteria));
-				})
+				.ForPath(dest => dest.Criteria, opt => opt.MapFrom(src => src.Criteria.Select(c => c.Criteria)))
 				.ForPath(dest => dest.Tags, opt => opt.MapFrom(src => src.Tags))
 				.ReverseMap()
 				.ForMember(dest => dest.Key, opt => opt.MapFrom(src => (src.Id.HasValue || src.Key != Guid.Empty) ? src.Key : Guid.NewGuid()));
@@ -150,11 +146,7 @@ namespace Fosol.Schedule.DAL.Maps
 
 			// Activities
 			CreateMap<Entities.Activity, Models.Activity>()
-				.ForPath(dest => dest.Criteria, opt =>
-				{
-					opt.Condition(param => param.Source.Criteria != null);
-					opt.MapFrom(src => src.Criteria.Select(c => c.Criteria));
-				})
+				.ForPath(dest => dest.Criteria, opt => opt.MapFrom(src => src.Criteria.Select(c => c.Criteria)))
 				.ForPath(dest => dest.Tags, opt => opt.MapFrom(src => src.Tags))
 				.ReverseMap()
 				.ForMember(dest => dest.Key, opt => opt.MapFrom(src => (src.Id.HasValue || src.Key != Guid.Empty) ? src.Key : Guid.NewGuid()));
