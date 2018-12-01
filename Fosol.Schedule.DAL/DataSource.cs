@@ -124,7 +124,7 @@ namespace Fosol.Schedule.DAL
 				mapProfile.BindDataSource(this);
 				config.AllowNullCollections = true;
 				config.AddProfile((Profile)mapProfile);
-			}).CreateMapper();
+			}).CreateMapper(); // TODO: Fix threading issue.
 
 			// TODO: reflection to auto initialize the services.
 			_helperService = new Lazy<IHelperService>(() => new HelperService(this));

@@ -21,19 +21,19 @@ namespace Fosol.Schedule.API.Controllers
 		[HttpGet("endpoints/{name?}")]
 		public IActionResult Endpoints(string name)
 		{
-			return Ok(ApiHelper.GetEndpoints(name));
+			var endpoints = ApiHelper.GetEndpoints(name);
+			return Ok(ApiHelper.ConvertToObject());
 		}
 
 		/// <summary>
 		/// Return only the endpoint with the specified name.
 		/// </summary>
-		/// <param name="path">The name of the controller.</param>
-		/// <param name="name">The name of the endpoint.</param>
+		/// <param name="name">The name and or path to the endpoint.  This uses dot-notation (i.e. area.controller.endpoint).</param>
 		/// <returns>An object containing the endpoint information.</returns>
-		[HttpGet("endpoint/{path}/{name}")]
-		public IActionResult Endpoint(string path, string name)
+		[HttpGet("endpoint/{name}")]
+		public IActionResult Endpoint(string name)
 		{
-			var result = ApiHelper.GetEndpoint(path, name);
+			var result = ApiHelper.GetEndpoint(name);
 			return result != null ? Ok(result) : BadRequest();
 		}
 
