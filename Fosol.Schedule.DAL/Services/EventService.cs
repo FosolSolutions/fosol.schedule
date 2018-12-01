@@ -59,11 +59,13 @@ namespace Fosol.Schedule.DAL.Services
 			var start = startOn.ToUniversalTime();
 			var end = endOn.ToUniversalTime();
 
-			var events = this.Context.Events
-				.Include(e => e.Criteria)
-				.Include(e => e.Tags)
-				.Where(e => e.CalendarId == calendarId && e.StartOn >= start && e.EndOn <= end)
-				.Select(e => this.Map(e)).ToArray();
+			var events = (
+				from e in this.Context.Events
+					.Include(e => e.Criteria)
+					.Include(e => e.Tags)
+				where e.CalendarId == calendarId && e.StartOn >= start && e.EndOn <= end
+				orderby e.StartOn, e.Name
+				select this.Map(e)).ToArray();
 			return events;
 		}
 

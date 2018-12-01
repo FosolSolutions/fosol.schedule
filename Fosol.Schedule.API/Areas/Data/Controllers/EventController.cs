@@ -1,5 +1,6 @@
 ﻿using Fosol.Core.Extensions.Strings;
 using Fosol.Core.Mvc;
+using Fosol.Core.Mvc.Filters;
 using Fosol.Schedule.DAL.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -15,6 +16,7 @@ namespace Fosol.Schedule.API.Areas.Data.Controllers
 	[Area("data")]
 	[Route("[area]/calendar/[controller]")]
 	[Authorize]
+	[ValidateModelFilter]
 	public sealed class EventController : ApiController
 	{
 		#region Variables

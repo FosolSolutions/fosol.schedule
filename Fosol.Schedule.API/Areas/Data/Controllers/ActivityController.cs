@@ -52,7 +52,7 @@ namespace Fosol.Schedule.API.Areas.Data.Controllers
 		/// <param name="endOn">The end date for the calendar to return.</param>
 		/// <returns>An array of activities.</returns>
 		[HttpGet("/[area]/calendar/{id}/activities")]
-		public IActionResult GetActiviesForCalendar(int id, DateTime? startOn = null, DateTime? endOn = null)
+		public IActionResult GetActivitiesForCalendar(int id, DateTime? startOn = null, DateTime? endOn = null)
 		{
 			var start = startOn ?? DateTime.UtcNow;
 			// Start at the beginning of the week.

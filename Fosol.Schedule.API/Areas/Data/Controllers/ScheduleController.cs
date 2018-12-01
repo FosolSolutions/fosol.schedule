@@ -1,4 +1,5 @@
 ﻿using Fosol.Core.Mvc;
+using Fosol.Core.Mvc.Filters;
 using Fosol.Schedule.DAL.Interfaces;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -14,7 +15,8 @@ namespace Fosol.Schedule.API.Areas.Data.Controllers
     [Area("data")]
     [Route("[area]/[controller]")]
     [Authorize]
-    public sealed class ScheduleController : ApiController
+	[ValidateModelFilter]
+	public sealed class ScheduleController : ApiController
     {
         #region Variables
         private readonly IDataSource _dataSource;
