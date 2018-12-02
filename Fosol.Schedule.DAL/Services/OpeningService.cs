@@ -77,7 +77,7 @@ namespace Fosol.Schedule.DAL.Services
 				where o.Activity.Event.CalendarId == calendarId
 					&& o.Activity.StartOn >= startOn
 					&& o.Activity.EndOn <= endOn
-				orderby o.Activity.StartOn, o.Activity.Sequence
+				orderby o.Activity.StartOn, o.Activity.Sequence, o.Name
 				select o
 				).ToArray()
 				.Select(o => this.Map(o));
@@ -100,7 +100,7 @@ namespace Fosol.Schedule.DAL.Services
 			var eparticipant = this.Find<Participant>((set) => set.Include(p => p.Attributes).ThenInclude(a => a.Attribute).SingleOrDefault(p => p.Id == participantId)) ?? throw new NotAuthorizedException();
 
 			var eopening = this.Find((set) => set
-				.Include(o => o.Participants)
+				.Include(o => o.Participants).ThenInclude(op => op.Participant)
 				.Include(o => o.Questions).ThenInclude(oq => oq.Question)
 				.Include(o => o.Criteria).ThenInclude(c => c.Criteria)
 				.Include(o => o.Activity).ThenInclude(a => a.Event)
