@@ -179,7 +179,7 @@ namespace Fosol.Schedule.DAL.Services
 			}
 
 			var eopening = this.Find((set) => set
-				.Include(o => o.Participants)
+				.Include(o => o.Participants).ThenInclude(op => op.Participant)
 				.Include(o => o.Questions).ThenInclude(oq => oq.Question)
 				.Include(o => o.Criteria).ThenInclude(c => c.Criteria)
 				.SingleOrDefault(o => o.Id == opening.Id));
