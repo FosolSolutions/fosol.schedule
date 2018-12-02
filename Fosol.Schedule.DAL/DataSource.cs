@@ -343,7 +343,7 @@ namespace Fosol.Schedule.DAL
 									if (condition.StartsWith("Tag.Key"))
 									{
 										var cval = condition.Substring(9, condition.Length - 10);
-										var tags = this.Context.OpeningTags.Where(ot => ot.Key == cval).ToArray();
+										var tags = this.Context.OpeningTags.Where(ot => ot.OpeningId == opening.Id && ot.Key == cval).ToArray();
 
 										tags.ForEach(t => {
 											opening.Tags.Remove(t);
