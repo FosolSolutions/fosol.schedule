@@ -114,17 +114,19 @@ namespace Fosol.Schedule.DAL
 		/// </summary>
 		/// <param name="principalAccessor"></param>
 		/// <param name="mapProfile"></param>
-		DataSource(IPrincipalAccessor principalAccessor, ModelProfile mapProfile)
+		DataSource(IPrincipalAccessor principalAccessor, IMapper mapper, ModelProfile profile)
 		{
 			if (principalAccessor == null) throw new ArgumentNullException(nameof(principalAccessor));
 
 			this.Principal = principalAccessor.Principal;
-			this.Mapper = new MapperConfiguration(config =>
-			{
-				mapProfile.BindDataSource(this);
-				config.AllowNullCollections = true;
-				config.AddProfile((Profile)mapProfile);
-			}).CreateMapper(); // TODO: Fix threading issue.
+			profile.BindDataSource(this);
+			this.Mapper = mapper;
+			//this.Mapper = new MapperConfiguration(config =>
+			//{
+			//	mapProfile.BindDataSource(this);
+			//	config.AllowNullCollections = true;
+			//	config.AddProfile((Profile)mapProfile);
+			//}).CreateMapper(); // TODO: Fix threading issue.
 
 			// TODO: reflection to auto initialize the services.
 			_helperService = new Lazy<IHelperService>(() => new HelperService(this));
@@ -145,7 +147,7 @@ namespace Fosol.Schedule.DAL
 		/// <param name="options"></param>
 		/// <param name="principalAccessor"></param>
 		/// <param name="mapProfile"></param>
-		internal DataSource(DbContextOptions<ScheduleContext> options, IPrincipalAccessor principalAccessor, ModelProfile mapProfile) : this(principalAccessor, mapProfile)
+		internal DataSource(DbContextOptions<ScheduleContext> options, IPrincipalAccessor principalAccessor, IMapper mapper, ModelProfile profile) : this(principalAccessor, mapper, profile)
 		{
 			this.Context = new ScheduleContext(options);
 		}
@@ -156,7 +158,7 @@ namespace Fosol.Schedule.DAL
 		/// <param name="options"></param>
 		/// <param name="principalAccessor"></param>
 		/// <param name="mapProfile"></param>
-		public DataSource(DbContextOptions options, IPrincipalAccessor principalAccessor, ModelProfile mapProfile) : this(principalAccessor, mapProfile)
+		public DataSource(DbContextOptions options, IPrincipalAccessor principalAccessor, IMapper mapper, ModelProfile profile) : this(principalAccessor, mapper, profile)
 		{
 			this.Context = new ScheduleContext(options);
 		}

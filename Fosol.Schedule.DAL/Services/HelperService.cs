@@ -138,12 +138,12 @@ namespace Fosol.Schedule.DAL.Services
 					RepetitionEndOn = end,
 					RepetitionSize = 1
 				};
-				var aPreside = new Activity(memorial, "Preside") { AddedById = userId, Sequence = 1 };
-				aPreside.Openings.Add(new Opening(aPreside, "Presider", 1, 1, OpeningType.Application, ApplicationProcess.AutoAccept, CriteriaRule.Visibility) { AddedById = userId });
+				var aPreside = new Activity(memorial, "Presider") { AddedById = userId, Sequence = 1 };
+				aPreside.Openings.Add(new Opening(aPreside, "Preside", 1, 1, OpeningType.Application, ApplicationProcess.AutoAccept, CriteriaRule.Visibility) { AddedById = userId });
 				aPreside.Criteria.Add(new ActivityCriteria(aPreside, presider));
 				memorial.Activities.Add(aPreside);
 
-				var aExhort = new Activity(memorial, "Exhortation") { AddedById = userId, Sequence = 2 };
+				var aExhort = new Activity(memorial, "Exhorter") { AddedById = userId, Sequence = 2 };
 				aExhort.Openings.Add(new Opening(aExhort, "Exhort", 1, 1, OpeningType.Application, ApplicationProcess.AutoAccept, CriteriaRule.Visibility) { AddedById = userId });
 				aExhort.Criteria.Add(new ActivityCriteria(aExhort, exhorter));
 				memorial.Activities.Add(aExhort);
@@ -184,13 +184,13 @@ namespace Fosol.Schedule.DAL.Services
 					Description = "Sunday night Bible talk.",
 					AddedById = userId
 				};
-				var aPreside2 = new Activity(lecture, "Preside") { AddedById = userId, Sequence = 1 };
+				var aPreside2 = new Activity(lecture, "Presider") { AddedById = userId, Sequence = 1 };
 				aPreside2.Openings.Add(new Opening(aPreside2, "Presider", 1, 1, OpeningType.Application, ApplicationProcess.AutoAccept, CriteriaRule.Visibility) { AddedById = userId });
 				aPreside2.Criteria.Add(new ActivityCriteria(aPreside2, presider));
 				lecture.Activities.Add(aPreside2);
 
 				var aLecture = new Activity(lecture, "Lecture") { AddedById = userId, Sequence = 2 };
-				var oLecture = new Opening(aLecture, "Speaker", 1, 1, OpeningType.Application, ApplicationProcess.AutoAccept, CriteriaRule.Visibility) { AddedById = userId };
+				var oLecture = new Opening(aLecture, "Speak", 1, 1, OpeningType.Application, ApplicationProcess.AutoAccept, CriteriaRule.Visibility) { AddedById = userId };
 				oLecture.Actions.Add(new Process(oLecture, ActionTrigger.Accept, "Add(Participant.Answers, Opening.Tags, Question.Caption=\"Title\");") { AddedById = userId });
 				oLecture.Actions.Add(new Process(oLecture, ActionTrigger.Unapply, "Delete(Opening.Tags, Tag.Key=\"Title\");") { AddedById = userId });
 				oLecture.Questions.Add(new OpeningQuestion(oLecture, qTitle));
