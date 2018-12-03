@@ -236,6 +236,11 @@ namespace Fosol.Schedule.DAL.Services
 				aSpeak.Criteria.Add(new ActivityCriteria(aSpeak, study));
 				bibleClass.Activities.Add(aSpeak);
 
+				var aPianist = new Activity(bibleClass, "Pianist") { AddedById = userId, Sequence = 3 };
+				aPianist.Openings.Add(new Opening(aPianist, "Pianist", 1, 1, OpeningType.Application, ApplicationProcess.AutoAccept, CriteriaRule.Visibility) { AddedById = userId });
+				aPianist.Criteria.Add(new ActivityCriteria(aPianist, pianist));
+				bibleClass.Activities.Add(aPianist);
+
 				calendar.Events.Add(bibleClass);
 
 				if (firstBibleClass == null)
