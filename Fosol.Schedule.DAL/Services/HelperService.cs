@@ -358,7 +358,7 @@ namespace Fosol.Schedule.DAL.Services
 					participants.Add(CreateParticipant(calendar, user, "W Hutchison", "William", "Hutchison", "whutchis@shaw.ca", Gender.Male, "", "", "", "Member=true, Brother=true, Skill=Serve, Skill=Read, Skill=Pray, Skill=Doorman, Skill=Bible Class, Skill=Emblems, Skill=Clean"));
 					participants.Add(CreateParticipant(calendar, user, "E Jennings", "Elaine", "Jennings", "institches56@gmail.com", Gender.Female, "", "", "", "Member=true, Sister=true, Skill=Pianist, Skill=Emblems, Skill=Clean"));
 					participants.Add(CreateParticipant(calendar, user, "R Johnston", "Rod", "Johnston", "rodrjohnston@outlook.com", Gender.Male, "", "", "", "Member=true, Brother=true, Skill=Preside, Skill=Exhort, Skill=Serve, Skill=Read, Skill=Pray, Skill=Doorman, Skill=Lecturer, Skill=Bible Class, Skill=Emblems, Skill=Clean"));
-					participants.Add(CreateParticipant(calendar, user, "E Johnston", "Elizabeth", "Johnston", "elizabeth.johnston@shaw.ca", Gender.Female, "", "", "", "Member=true, Sister=true, Skill=Emblems, Skill=Clean"));
+					participants.Add(CreateParticipant(calendar, user, "E Johnston", "Elizabeth", "Johnston", "elizabeth-johnston@outlook.com", Gender.Female, "", "", "", "Member=true, Sister=true, Skill=Emblems, Skill=Clean"));
 					participants.Add(CreateParticipant(calendar, user, "C Jones", "Carolyn", "Jones", "jonesbc@shaw.ca", Gender.Female, "", "", "", "Member=true, Sister=true, Skill=Emblems, Skill=Clean"));
 					participants.Add(CreateParticipant(calendar, user, "L Kemp", "Lorraine", "Kemp", "lorrainekemp@shaw.ca", Gender.Female, "", "", "", "Member=true, Sister=true, Skill=Emblems, Skill=Clean"));
 					participants.Add(CreateParticipant(calendar, user, "J Kirk", "Joanne", "Kirk", "tekjak@shaw.ca", Gender.Female, "", "", "", "Member=true, Sister=true, Skill=Emblems, Skill=Clean"));
@@ -388,7 +388,7 @@ namespace Fosol.Schedule.DAL.Services
 					participants.Add(CreateParticipant(calendar, user, "P Pearce", "Peggy", "Pearce", "", Gender.Female, "", "", "", "Member=true, Sister=true, Skill=Emblems, Skill=Clean"));
 					participants.Add(CreateParticipant(calendar, user, "L Pengelly", "Laura", "Pengelly", "l_pengelly@hotmail.com", Gender.Female, "", "", "", "Member=true, Sister=true, Skill=Emblems, Skill=Clean"));
 					participants.Add(CreateParticipant(calendar, user, "M Pilon", "Marianne", "Pilon", "mppilon@shaw.ca", Gender.Female, "", "", "", "Member=true, Sister=true, Skill=Emblems, Skill=Clean"));
-					participants.Add(CreateParticipant(calendar, user, "M Quindazzi", "Micah", "Quindazzi", "m.j.quindazzi@gmail.com", Gender.Male, "", "", "", "Member=true, Brother=true, Skill=Serve, Skill=Read, Skill=Pray, Skill=Doorman, Skill=Lecturer, Skill=Bible Class, Skill=Emblems, Skill=Clean"));
+					participants.Add(CreateParticipant(calendar, user, "M Quindazzi", "Micah", "Quindazzi", "m.j.quindazzi@gmail.com", Gender.Male, "", "", "", "Member=true, Brother=true, Skill=Serve, Skill=Read, Skill=Pray, Skill=Doorman, Skill=Exhort, Skill=Lecturer, Skill=Bible Class, Skill=Emblems, Skill=Clean"));
 					participants.Add(CreateParticipant(calendar, user, "P Quindazzi", "Philip", "Quindazzi", "", Gender.Male, "", "", "", "Member=true, Brother=true"));
 					participants.Add(CreateParticipant(calendar, user, "A Ralph", "Andrew", "Ralph", "drew.sherry@shaw.ca", Gender.Male, "", "", "", "Member=true, Brother=true, Skill=Serve, Skill=Read, Skill=Pray, Skill=Doorman, Skill=Bible Class, Skill=Emblems, Skill=Clean"));
 					participants.Add(CreateParticipant(calendar, user, "S Ralph", "Sherry", "Ralph", "drew.sherry@shaw.ca", Gender.Female, "", "", "", "Member=true, Sister=true, Skill=Emblems, Skill=Clean"));
@@ -429,7 +429,6 @@ namespace Fosol.Schedule.DAL.Services
 					participants.Add(CreateParticipant(calendar, user, "S Crawford", "Sarah", "Crawford", "crawfordsarahm@gmail.com", Gender.Female, "", "", "", "Member=true, Sister=true, Skill=Pianist, Skill=Emblems, Skill=Clean"));
 					participants.Add(CreateParticipant(calendar, user, "N Fernando", "Naleen", "Fernando", "naleenandjulie@gmail.com", Gender.Male, "", "", "", "Member=true, Brother=true, Skill=Exhort, Skill=Bible Class"));
 					participants.Add(CreateParticipant(calendar, user, "N Orsetti", "Gavin", "Orsetti", "jeremymichaelfoster@gmail.com", Gender.Male, "", "", "", "Member=false, Brother=true, Skill=Exhort, Skill=Lecturer, Skill=Bible Class"));
-					this.Context.SaveChanges();
 
 					transaction.Commit();
 				}
@@ -477,10 +476,21 @@ namespace Fosol.Schedule.DAL.Services
 				foreach (var part in parts)
 				{
 					var kv = part.Split('=');
-					var a = new Entities.Attribute(p, kv[0], kv[1], kv[1].Equals("true") ? typeof(bool) : typeof(string)) { AddedById = user.Id };
-					this.Context.Attributes.Add(a);
+					// See if the attribute already exists.
+					var attribute = this.Context.Attributes.FirstOrDefault(a => a.CalendarId == calendar.Id && a.Key == kv[0] && a.Value == kv[1]);
+
+					if (attribute == null)
+					{
+						var a = new Entities.Attribute(p, kv[0], kv[1], kv[1].Equals("true") ? typeof(bool) : typeof(string)) { AddedById = user.Id };
+						this.Context.Attributes.Add(a);
+					}
+					else
+					{
+						this.Context.ParticipantAttributes.Add(new ParticipantAttribute(p, attribute));
+					}
 				}
 			}
+			this.Context.SaveChanges();
 			return p;
 		}
 		#endregion

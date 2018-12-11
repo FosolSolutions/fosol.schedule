@@ -291,6 +291,8 @@ namespace Fosol.Schedule.DAL.Migrations
                         .HasColumnType("DATETIME2")
                         .HasDefaultValueSql("GETUTCDATE()");
 
+                    b.Property<int>("CalendarId");
+
                     b.Property<string>("Key")
                         .IsRequired()
                         .HasMaxLength(100);
@@ -317,7 +319,8 @@ namespace Fosol.Schedule.DAL.Migrations
 
                     b.HasIndex("UpdatedById");
 
-                    b.HasIndex("Key", "Value");
+                    b.HasIndex("CalendarId", "Key", "Value")
+                        .IsUnique();
 
                     b.ToTable("Attributes");
                 });
@@ -905,13 +908,9 @@ namespace Fosol.Schedule.DAL.Migrations
 
                     b.Property<int>("AttributeId");
 
-                    b.Property<int?>("AttributeId1");
-
                     b.HasKey("ParticipantId", "AttributeId");
 
                     b.HasIndex("AttributeId");
-
-                    b.HasIndex("AttributeId1");
 
                     b.ToTable("ParticipantAttributes");
                 });
@@ -1249,13 +1248,9 @@ namespace Fosol.Schedule.DAL.Migrations
 
                     b.Property<int>("AttributeId");
 
-                    b.Property<int?>("AttributeId1");
-
                     b.HasKey("UserId", "AttributeId");
 
                     b.HasIndex("AttributeId");
-
-                    b.HasIndex("AttributeId1");
 
                     b.ToTable("UserAttributes");
                 });
@@ -1487,6 +1482,10 @@ namespace Fosol.Schedule.DAL.Migrations
                     b.HasOne("Fosol.Schedule.Entities.User", "AddedBy")
                         .WithMany()
                         .HasForeignKey("AddedById");
+
+                    b.HasOne("Fosol.Schedule.Entities.Calendar", "Calendar")
+                        .WithMany("Attributes")
+                        .HasForeignKey("CalendarId");
 
                     b.HasOne("Fosol.Schedule.Entities.User", "UpdatedBy")
                         .WithMany()
@@ -1769,13 +1768,9 @@ namespace Fosol.Schedule.DAL.Migrations
             modelBuilder.Entity("Fosol.Schedule.Entities.ParticipantAttribute", b =>
                 {
                     b.HasOne("Fosol.Schedule.Entities.Attribute", "Attribute")
-                        .WithMany()
+                        .WithMany("Participants")
                         .HasForeignKey("AttributeId")
                         .OnDelete(DeleteBehavior.Cascade);
-
-                    b.HasOne("Fosol.Schedule.Entities.Attribute")
-                        .WithMany("Participants")
-                        .HasForeignKey("AttributeId1");
 
                     b.HasOne("Fosol.Schedule.Entities.Participant", "Participant")
                         .WithMany("Attributes")
@@ -1913,13 +1908,9 @@ namespace Fosol.Schedule.DAL.Migrations
             modelBuilder.Entity("Fosol.Schedule.Entities.UserAttribute", b =>
                 {
                     b.HasOne("Fosol.Schedule.Entities.Attribute", "Attribute")
-                        .WithMany()
+                        .WithMany("Users")
                         .HasForeignKey("AttributeId")
                         .OnDelete(DeleteBehavior.Cascade);
-
-                    b.HasOne("Fosol.Schedule.Entities.Attribute")
-                        .WithMany("Users")
-                        .HasForeignKey("AttributeId1");
 
                     b.HasOne("Fosol.Schedule.Entities.User", "User")
                         .WithMany("Attributes")

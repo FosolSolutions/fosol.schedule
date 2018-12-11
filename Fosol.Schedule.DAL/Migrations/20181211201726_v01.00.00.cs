@@ -227,6 +227,7 @@ namespace Fosol.Schedule.DAL.Migrations
 					RowVersion = table.Column<byte[]>(rowVersion: true, nullable: true),
 					Id = table.Column<int>(nullable: false)
 						.Annotation("SqlServer:ValueGenerationStrategy", SqlServerValueGenerationStrategy.IdentityColumn),
+					CalendarId = table.Column<int>(nullable: false),
 					Key = table.Column<string>(maxLength: 100, nullable: false),
 					Value = table.Column<string>(maxLength: 100, nullable: false),
 					ValueType = table.Column<string>(maxLength: 200, nullable: false)
@@ -238,6 +239,12 @@ namespace Fosol.Schedule.DAL.Migrations
 						name: "FK_Attributes_Users_AddedById",
 						column: x => x.AddedById,
 						principalTable: "Users",
+						principalColumn: "Id",
+						onDelete: ReferentialAction.Restrict);
+					table.ForeignKey(
+						name: "FK_Attributes_Calendars_CalendarId",
+						column: x => x.CalendarId,
+						principalTable: "Calendars",
 						principalColumn: "Id",
 						onDelete: ReferentialAction.Restrict);
 					table.ForeignKey(
@@ -642,8 +649,7 @@ namespace Fosol.Schedule.DAL.Migrations
 				columns: table => new
 				{
 					UserId = table.Column<int>(nullable: false),
-					AttributeId = table.Column<int>(nullable: false),
-					AttributeId1 = table.Column<int>(nullable: true)
+					AttributeId = table.Column<int>(nullable: false)
 				},
 				constraints: table =>
 				{
@@ -654,12 +660,6 @@ namespace Fosol.Schedule.DAL.Migrations
 						principalTable: "Attributes",
 						principalColumn: "Id",
 						onDelete: ReferentialAction.Cascade);
-					table.ForeignKey(
-						name: "FK_UserAttributes_Attributes_AttributeId1",
-						column: x => x.AttributeId1,
-						principalTable: "Attributes",
-						principalColumn: "Id",
-						onDelete: ReferentialAction.Restrict);
 					table.ForeignKey(
 						name: "FK_UserAttributes_Users_UserId",
 						column: x => x.UserId,
@@ -889,8 +889,7 @@ namespace Fosol.Schedule.DAL.Migrations
 				columns: table => new
 				{
 					ParticipantId = table.Column<int>(nullable: false),
-					AttributeId = table.Column<int>(nullable: false),
-					AttributeId1 = table.Column<int>(nullable: true)
+					AttributeId = table.Column<int>(nullable: false)
 				},
 				constraints: table =>
 				{
@@ -901,12 +900,6 @@ namespace Fosol.Schedule.DAL.Migrations
 						principalTable: "Attributes",
 						principalColumn: "Id",
 						onDelete: ReferentialAction.Cascade);
-					table.ForeignKey(
-						name: "FK_ParticipantAttributes_Attributes_AttributeId1",
-						column: x => x.AttributeId1,
-						principalTable: "Attributes",
-						principalColumn: "Id",
-						onDelete: ReferentialAction.Restrict);
 					table.ForeignKey(
 						name: "FK_ParticipantAttributes_Participants_ParticipantId",
 						column: x => x.ParticipantId,
@@ -1384,9 +1377,10 @@ namespace Fosol.Schedule.DAL.Migrations
 				column: "UpdatedById");
 
 			migrationBuilder.CreateIndex(
-				name: "IX_Attributes_Key_Value",
+				name: "IX_Attributes_CalendarId_Key_Value",
 				table: "Attributes",
-				columns: new[] { "Key", "Value" });
+				columns: new[] { "CalendarId", "Key", "Value" },
+				unique: true);
 
 			migrationBuilder.CreateIndex(
 				name: "IX_CalendarCriteria_CriteriaId",
@@ -1609,11 +1603,6 @@ namespace Fosol.Schedule.DAL.Migrations
 				column: "AttributeId");
 
 			migrationBuilder.CreateIndex(
-				name: "IX_ParticipantAttributes_AttributeId1",
-				table: "ParticipantAttributes",
-				column: "AttributeId1");
-
-			migrationBuilder.CreateIndex(
 				name: "IX_ParticipantContactInfo_ContactInfoId",
 				table: "ParticipantContactInfo",
 				column: "ContactInfoId");
@@ -1756,11 +1745,6 @@ namespace Fosol.Schedule.DAL.Migrations
 				name: "IX_UserAttributes_AttributeId",
 				table: "UserAttributes",
 				column: "AttributeId");
-
-			migrationBuilder.CreateIndex(
-				name: "IX_UserAttributes_AttributeId1",
-				table: "UserAttributes",
-				column: "AttributeId1");
 
 			migrationBuilder.CreateIndex(
 				name: "IX_UserContactInfo_ContactInfoId",

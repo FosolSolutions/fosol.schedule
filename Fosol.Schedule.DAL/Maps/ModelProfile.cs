@@ -263,8 +263,9 @@ namespace Fosol.Schedule.DAL.Maps
 				.ReverseMap()
 				.ConvertUsing(src =>
 				{
+					var calendar = new Entities.Calendar();
 					var type = String.IsNullOrWhiteSpace(src.ValueType) ? typeof(string) : Type.GetType(src.ValueType) ?? typeof(string);
-					var attribute = src.Id == 0 ? new Entities.Attribute(src.Key, src.Value, type)
+					var attribute = src.Id == 0 ? new Entities.Attribute(calendar, src.Key, src.Value, type)
 					{
 						AddedById = src.Id == 0 ? this.DataSource.Principal.GetUser().Value.ConvertTo<int>() : src.AddedById.Value,
 						AddedOn = src.Id == 0 ? DateTime.UtcNow : src.AddedOn.Value,

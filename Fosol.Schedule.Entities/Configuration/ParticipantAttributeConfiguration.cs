@@ -13,7 +13,7 @@ namespace Fosol.Schedule.Entities.Configuration
             builder.HasKey(m => new { m.ParticipantId, m.AttributeId });
 
             builder.HasOne(m => m.Participant).WithMany(m => m.Attributes).HasForeignKey(m => m.ParticipantId).OnDelete(DeleteBehavior.Cascade);
-            builder.HasOne(m => m.Attribute).WithMany().HasForeignKey(m => m.AttributeId).OnDelete(DeleteBehavior.Cascade);
+            builder.HasOne(m => m.Attribute).WithMany(m => m.Participants).HasForeignKey(m => m.AttributeId).OnDelete(DeleteBehavior.Cascade);
         }
         #endregion
     }
