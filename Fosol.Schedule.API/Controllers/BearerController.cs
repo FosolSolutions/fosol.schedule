@@ -2,11 +2,12 @@
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
-using System.Threading.Tasks;
-using AspNet.Security.OAuth.Validation;
+using Fosol.Core.Exceptions;
 using Fosol.Schedule.API.Helpers;
 using Fosol.Schedule.DAL.Interfaces;
+using Fosol.Schedule.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Logging;
 using Microsoft.IdentityModel.Tokens;
 
@@ -22,6 +23,7 @@ namespace Fosol.Schedule.API.Controllers
 		#region Variables
 		private readonly ILogger _logger;
 		private readonly IDataSource _dataSource;
+		private readonly IConfiguration _configuration;
 		#endregion
 
 		#region Constructors
@@ -29,10 +31,12 @@ namespace Fosol.Schedule.API.Controllers
 		/// Creates a new instance of an BearerController object, and initializes it with the specified arguments.
 		/// </summary>
 		/// <param name="dataSource"></param>
+		/// <param name="configuration"></param>
 		/// <param name="logger"></param>
-		public BearerController(IDataSource dataSource, ILogger<AuthController> logger)
+		public BearerController(IDataSource dataSource, IConfiguration configuration, ILogger<AuthController> logger)
 		{
 			_dataSource = dataSource;
+			_configuration = configuration;
 			_logger = logger;
 		}
 		#endregion
@@ -42,55 +46,74 @@ namespace Fosol.Schedule.API.Controllers
 		/// Jwt Bearer authentication endpoint.
 		/// This will return the user with a JWT token.
 		/// </summary>
-		/// <param name="userName"></param>
-		/// <param name="password"></param>
+		/// <param name="user"></param>
 		/// <returns></returns>
-		[HttpGet("authenticate"), HttpPost("authenticate")]
-		public IActionResult AuthenticateUser(string userName, string password)
+		[HttpPost("authenticate")]
+		public IActionResult AuthenticateUser([FromBody] User model)
 		{
-			var user = _dataSource.Users.Get(1);
-			if (user == null)
-				return BadRequest();
+			try
+			{
+				var userId = _dataSource.Users.Verify(model.Email);
+				var user = _dataSource.Users.Get(userId);
+				var identity = _dataSource.Users.CreateIdentity(user.Key.Value);
 
-			var identity = _dataSource.Users.CreateIdentity(user.Key.Value);
-			if (identity == null)
+				return Ok(new
+				{
+					user.Id,
+					user.Email,
+					Token = GenerateToken(identity)
+				});
+			}
+			catch (NoContentException)
+			{
 				return Unauthorized();
+			}
+		}
 
+		/// <summary>
+		/// Jwt Bearer authentication endpoint.
+		/// This will return the participant a JWT token.
+		/// </summary>
+		/// <param name="key"></param>
+		/// <returns></returns>
+		[HttpPost("authenticate/{key}")]
+		public IActionResult AuthenticateParticipant(Guid key)
+		{
+			try
+			{
+				var participant = _dataSource.Participants.Get(key);
+				var identity = _dataSource.Participants.CreateIdentity(participant.Key.Value);
+
+				return Ok(new
+				{
+					participant.Id,
+					participant.Email,
+					Token = GenerateToken(identity)
+				});
+			}
+			catch (NoContentException)
+			{
+				return Unauthorized();
+			}
+		}
+		#endregion
+
+		#region Methods
+		private string GenerateToken(ClaimsIdentity identity)
+		{
 			var tokenHandler = new JwtSecurityTokenHandler();
-			var key = Encoding.ASCII.GetBytes("this is my custom Secret key for authnetication");
+			var key = Encoding.ASCII.GetBytes(_configuration["Authentication:CoEvent:SecretKey"]);
 			var tokenDescriptor = new SecurityTokenDescriptor
 			{
-				Audience = "https://localhost:44321",
-				Issuer = "https://localhost:44375",
+				Audience = _configuration["Authentication:CoEvent:Audience"],
+				Issuer = _configuration["Authentication:CoEvent:ClaimsIssuer"],
 				Subject = identity,
 				Expires = DateTime.UtcNow.AddDays(7),
 				SigningCredentials = new SigningCredentials(new SymmetricSecurityKey(key), SecurityAlgorithms.HmacSha256Signature)
 			};
 			var token = tokenHandler.CreateToken(tokenDescriptor);
 
-			return Ok(new {
-				Id = user.Id,
-				Email = user.Email,
-				Token = tokenHandler.WriteToken(token)
-			});
-		}
-
-		//[HttpGet("/.well-known/openid-configuration")]
-		//public async Task<IActionResult> Configuration()
-		//{
-		//	return Ok();
-		//}
-
-		[HttpGet("token")]
-		public async Task<IActionResult> Token()
-		{
-			return Ok();
-		}
-
-		[HttpGet("user/information")]
-		public async Task<IActionResult> UserInformation()
-		{
-			return Ok();
+			return tokenHandler.WriteToken(token);
 		}
 		#endregion
 	}
