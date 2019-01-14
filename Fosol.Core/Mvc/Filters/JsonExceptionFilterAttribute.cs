@@ -22,9 +22,9 @@ namespace Fosol.Core.Mvc.Filters
         /// When an exception occurs it will create a JSON response with an appropriate status code.
         /// </summary>
         /// <param name="context"></param>
-        public override void OnException(ExceptionContext context)
+        public override async void OnException(ExceptionContext context)
         {
-            context.HttpContext.HandleExceptionResponse(context.Exception);
+            await context.HttpContext.HandleExceptionResponse(context.Exception);
             context.ExceptionHandled = true;
             base.OnException(context);
         }
