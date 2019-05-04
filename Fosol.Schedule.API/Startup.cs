@@ -5,7 +5,6 @@ using Fosol.Core.Mvc;
 using Fosol.Schedule.API.Helpers;
 using Fosol.Schedule.API.Helpers.Mail;
 using Fosol.Schedule.DAL;
-using Fosol.Schedule.Models.Validation;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -97,88 +96,88 @@ namespace Fosol.Schedule.API
 				options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
 				//options.DefaultSignInScheme = CookieAuthenticationDefaults.AuthenticationScheme;
 				options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-
 			})
-				.AddCookie(options =>
-				{
-					options.Cookie.Name = "CoEvent";
-					options.LoginPath = "/auth/signin";
-					options.LogoutPath = "/auth/signoff";
-					options.Cookie.SecurePolicy = CookieSecurePolicy.SameAsRequest;
-					options.Cookie.SameSite = SameSiteMode.None;
-					options.AccessDeniedPath = "/auth/access/denied";
-					options.ClaimsIssuer = "CoEvent";
-					options.Events.OnRedirectToLogin = AuthenticationHelper.HandleOnRedirectToLogin;
-				})
-				.AddJwtBearer(options =>
-				{
-					var key = Encoding.ASCII.GetBytes(this.Configuration["Authentication:CoEvent:SecretKey"]);
-					//options.Authority = this.Configuration["Authentication:CoEvent:Authority"];
-					options.ClaimsIssuer = this.Configuration["Authentication:CoEvent:ClaimsIssuer"];
-					options.Audience = this.Configuration["Authentication:CoEvent:Audience"];
-					options.RequireHttpsMetadata = false;
-					options.SaveToken = true;
-					options.TokenValidationParameters = new TokenValidationParameters
-					{
-						ValidateIssuerSigningKey = true,
-						IssuerSigningKey = new SymmetricSecurityKey(key),
-						ValidateIssuer = false,
-						ValidateAudience = false
-					};
-					options.Events = new JwtBearerEvents()
-					{
-						OnAuthenticationFailed = context =>
-						{
-							return Task.CompletedTask;
-						},
-						OnChallenge = context =>
-						{
-							//context.Response.WriteAsync(payload.ToString()).Wait();
-							return Task.CompletedTask;
-						},
-						OnMessageReceived = context =>
-						{
-							context.Token = $"{context.Request.Headers["Authorization"]}".Replace("Bearer ", "");
-							return Task.CompletedTask;
-						},
-						OnTokenValidated = context =>
-						{
-							return Task.CompletedTask;
-						}
-					};
-				})
-				.AddMicrosoftAccount(options =>
-				{
-					options.ClientId = this.Configuration["Authentication:Microsoft:ClientId"];
-					options.ClientSecret = this.Configuration["Authentication:Microsoft:ClientSecret"];
-					options.AuthorizationEndpoint = this.Configuration["Authentication:Microsoft:AuthorizationEndpoint"];
-					options.TokenEndpoint = this.Configuration["Authentication:Microsoft:TokenEndpoint"];
-					options.SaveTokens = true;
-					options.Scope.Add("offline_access");
-					options.Events = new OAuthEvents()
-					{
-						OnRemoteFailure = AuthenticationHelper.HandleOnRemoteFailure,
-						OnTicketReceived = AuthenticationHelper.HandleOnTicketReceived
-					};
-				})// You must first create an app with Google and add its ID and Secret to your user-secrets.
-				  // https://console.developers.google.com/project
-				  // https://developers.google.com/identity/protocols/OAuth2WebServer
-				  // https://developers.google.com/+/web/people/
-				.AddGoogle(options =>
-				{
-					options.ClientId = Configuration["Authentication:Google:ClientId"];
-					options.ClientSecret = Configuration["Authentication:Google:ClientSecret"];
-					options.AuthorizationEndpoint += "?prompt=consent"; // Hack so we always get a refresh token, it only comes on the first authorization response
-					options.AccessType = "offline";
-					options.SaveTokens = true;
-					options.Events = new OAuthEvents()
-					{
-						OnRemoteFailure = AuthenticationHelper.HandleOnRemoteFailure,
-						OnTicketReceived = AuthenticationHelper.HandleOnTicketReceived
-					};
-					options.ClaimActions.MapJsonSubKey("urn:google:image", "image", "url");
-					//options.ClaimActions.Remove(ClaimTypes.GivenName);
-				});
+			  .AddCookie(options =>
+			  {
+				  options.Cookie.Name = "CoEvent";
+				  options.LoginPath = "/auth/signin";
+				  options.LogoutPath = "/auth/signoff";
+				  options.Cookie.SecurePolicy = CookieSecurePolicy.SameAsRequest;
+				  options.Cookie.SameSite = SameSiteMode.None;
+				  options.AccessDeniedPath = "/auth/access/denied";
+				  options.ClaimsIssuer = "CoEvent";
+				  options.Events.OnRedirectToLogin = AuthenticationHelper.HandleOnRedirectToLogin;
+			  })
+			  .AddJwtBearer(options =>
+			  {
+				  var key = Encoding.ASCII.GetBytes(this.Configuration["Authentication:CoEvent:SecretKey"]);
+				  //options.Authority = this.Configuration["Authentication:CoEvent:Authority"];
+				  options.ClaimsIssuer = this.Configuration["Authentication:CoEvent:ClaimsIssuer"];
+				  options.Audience = this.Configuration["Authentication:CoEvent:Audience"];
+				  options.RequireHttpsMetadata = false;
+				  options.SaveToken = true;
+				  options.TokenValidationParameters = new TokenValidationParameters
+				  {
+					  ValidateIssuerSigningKey = true,
+					  IssuerSigningKey = new SymmetricSecurityKey(key),
+					  ValidateIssuer = false,
+					  ValidateAudience = false
+				  };
+				  options.Events = new JwtBearerEvents()
+				  {
+					  OnAuthenticationFailed = context =>
+					  {
+						  return Task.CompletedTask;
+					  },
+					  OnChallenge = context =>
+					  {
+						  //context.Response.WriteAsync(payload.ToString()).Wait();
+						  return Task.CompletedTask;
+					  },
+					  OnMessageReceived = context =>
+					  {
+						  context.Token = $"{context.Request.Headers["Authorization"]}".Replace("Bearer ", "");
+						  return Task.CompletedTask;
+					  },
+					  OnTokenValidated = context =>
+					  {
+						  return Task.CompletedTask;
+					  }
+				  };
+			  })
+			  .AddMicrosoftAccount(options =>
+			  {
+				  options.ClientId = this.Configuration["Authentication:Microsoft:ClientId"];
+				  options.ClientSecret = this.Configuration["Authentication:Microsoft:ClientSecret"];
+				  options.AuthorizationEndpoint = this.Configuration["Authentication:Microsoft:AuthorizationEndpoint"];
+				  options.TokenEndpoint = this.Configuration["Authentication:Microsoft:TokenEndpoint"];
+				  options.SaveTokens = true;
+				  options.Scope.Add("offline_access");
+				  options.Events = new OAuthEvents()
+				  {
+					  OnRemoteFailure = AuthenticationHelper.HandleOnRemoteFailure,
+					  OnTicketReceived = AuthenticationHelper.HandleOnTicketReceived
+				  };
+			  })
+			  // You must first create an app with Google and add its ID and Secret to your user-secrets.
+			  // https://console.developers.google.com/project
+			  // https://developers.google.com/identity/protocols/OAuth2WebServer
+			  // https://developers.google.com/+/web/people/
+			  .AddGoogle(options =>
+			  {
+				  options.ClientId = Configuration["Authentication:Google:ClientId"];
+				  options.ClientSecret = Configuration["Authentication:Google:ClientSecret"];
+				  options.AuthorizationEndpoint += "?prompt=consent"; // Hack so we always get a refresh token, it only comes on the first authorization response
+				  options.AccessType = "offline";
+				  options.SaveTokens = true;
+				  options.Events = new OAuthEvents()
+				  {
+					  OnRemoteFailure = AuthenticationHelper.HandleOnRemoteFailure,
+					  OnTicketReceived = AuthenticationHelper.HandleOnTicketReceived
+				  };
+				  options.ClaimActions.MapJsonSubKey("urn:google:image", "image", "url");
+				  //options.ClaimActions.Remove(ClaimTypes.GivenName);
+			  });
 
 			//services.ConfigureApplicationCookie(options =>
 			//{
@@ -194,15 +193,15 @@ namespace Fosol.Schedule.API
 			services.AddMvc(options =>
 			{
 			})
-				.SetCompatibilityVersion(CompatibilityVersion.Version_2_1)
-				.AddControllersAsServices()
-				.AddJsonOptions(options =>
-				{
-					options.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
-					options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
-					options.SerializerSettings.Converters.Add(new StringEnumConverter());
-					options.SerializerSettings.NullValueHandling = NullValueHandling.Ignore;
-				}).AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<AccountValidator>());
+			  .SetCompatibilityVersion(CompatibilityVersion.Version_2_1)
+			  .AddControllersAsServices()
+			  .AddJsonOptions(options =>
+			  {
+				  options.SerializerSettings.ContractResolver = new CamelCasePropertyNamesContractResolver();
+				  options.SerializerSettings.ReferenceLoopHandling = ReferenceLoopHandling.Ignore;
+				  options.SerializerSettings.Converters.Add(new StringEnumConverter());
+				  options.SerializerSettings.NullValueHandling = NullValueHandling.Ignore;
+			  }).AddFluentValidation(fv => fv.RegisterValidatorsFromAssemblyContaining<Fosol.Schedule.Models.Update.Validation.AccountValidator>());
 
 			services.AddResponseHeaders(options =>
 			{
@@ -240,7 +239,7 @@ namespace Fosol.Schedule.API
 				{
 					optionsBuilder.EnableSensitiveDataLogging();
 				}
-				var connectionString = this.Configuration.GetConnectionString("Schedule") ?? @"Server=(localdb)\mssqllocaldb;Database=EFProviders.InMemory;Trusted_Connection=True;ConnectRetryCount=0";
+				var connectionString = this.Configuration.GetConnectionString("coevent") ?? @"Server=(localdb)\mssqllocaldb;Database=EFProviders.InMemory;Trusted_Connection=True;ConnectRetryCount=0";
 				var builder = new SqlConnectionStringBuilder(connectionString);
 				var password = this.Configuration["Database:Schedule:Password"];
 				if (!String.IsNullOrWhiteSpace(password))
@@ -292,12 +291,12 @@ namespace Fosol.Schedule.API
 				//app.UseExceptionHandler("/Error");
 				app.UseHsts();
 			}
-			
+
 			app.UseDataSource();
 			/***
-			* Forwarded Headers were required for nginx at some point.
-			* https://docs.microsoft.com/en-us/aspnet/core/host-and-deploy/proxy-load-balancer?view=aspnetcore-2.1#nginx-configuration
-			***/
+				  * Forwarded Headers were required for nginx at some point.
+				  * https://docs.microsoft.com/en-us/aspnet/core/host-and-deploy/proxy-load-balancer?view=aspnetcore-2.1#nginx-configuration
+				  ***/
 			app.UseForwardedHeaders(new ForwardedHeadersOptions
 			{
 				RequireHeaderSymmetry = false,
@@ -318,10 +317,12 @@ namespace Fosol.Schedule.API
 					template: "{area:exists}/{controller}/{action}",
 					defaults: new { controller = "Calendar", action = "Index" }
 				);
+
 				config.MapRoute(
 					name: "default",
 					template: "{controller}/{action}",
-					defaults: new { controller = "Home", action = "Index" });
+					defaults: new { controller = "Home", action = "Index" }
+				);
 			});
 		}
 		#endregion

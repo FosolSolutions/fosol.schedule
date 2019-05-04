@@ -1,8 +1,10 @@
-﻿using AutoMapper;
-using Fosol.Core.Extensions.Enumerable;
+﻿using Fosol.Core.Extensions.Enumerable;
+using Fosol.Core.Extensions.Principals;
+using Fosol.Core.Reflection;
 using Fosol.Schedule.DAL.Interfaces;
-using Fosol.Schedule.DAL.Maps;
 using Fosol.Schedule.DAL.Services;
+using Fosol.Schedule.Entities;
+using Fosol.Schedule.Models;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -39,11 +41,6 @@ namespace Fosol.Schedule.DAL
 		/// get - The DbContext used to communicate with the datasource.
 		/// </summary>
 		internal ScheduleContext Context { get; }
-
-		/// <summary>
-		/// get - The AutoMapper used to cast objects that will be added to the datasource.
-		/// </summary>
-		public IMapper Mapper { get; }
 
 		/// <summary>
 		/// get - The current principal using the datasource.
@@ -113,20 +110,11 @@ namespace Fosol.Schedule.DAL
 		/// Creates a new instance of a DataSource object, and initializes it with the specified configuration options.
 		/// </summary>
 		/// <param name="principalAccessor"></param>
-		/// <param name="mapProfile"></param>
-		DataSource(IPrincipalAccessor principalAccessor, IMapper mapper, ModelProfile profile)
+		DataSource(IPrincipalAccessor principalAccessor)
 		{
 			if (principalAccessor == null) throw new ArgumentNullException(nameof(principalAccessor));
 
 			this.Principal = principalAccessor.Principal;
-			profile.BindDataSource(this);
-			this.Mapper = mapper;
-			//this.Mapper = new MapperConfiguration(config =>
-			//{
-			//	mapProfile.BindDataSource(this);
-			//	config.AllowNullCollections = true;
-			//	config.AddProfile((Profile)mapProfile);
-			//}).CreateMapper(); // TODO: Fix threading issue.
 
 			// TODO: reflection to auto initialize the services.
 			_helperService = new Lazy<IHelperService>(() => new HelperService(this));
@@ -146,8 +134,7 @@ namespace Fosol.Schedule.DAL
 		/// </summary>
 		/// <param name="options"></param>
 		/// <param name="principalAccessor"></param>
-		/// <param name="mapProfile"></param>
-		internal DataSource(DbContextOptions<ScheduleContext> options, IPrincipalAccessor principalAccessor, IMapper mapper, ModelProfile profile) : this(principalAccessor, mapper, profile)
+		internal DataSource(DbContextOptions<ScheduleContext> options, IPrincipalAccessor principalAccessor) : this(principalAccessor)
 		{
 			this.Context = new ScheduleContext(options);
 		}
@@ -157,14 +144,72 @@ namespace Fosol.Schedule.DAL
 		/// </summary>
 		/// <param name="options"></param>
 		/// <param name="principalAccessor"></param>
-		/// <param name="mapProfile"></param>
-		public DataSource(DbContextOptions options, IPrincipalAccessor principalAccessor, IMapper mapper, ModelProfile profile) : this(principalAccessor, mapper, profile)
+		public DataSource(DbContextOptions options, IPrincipalAccessor principalAccessor) : this(principalAccessor)
 		{
 			this.Context = new ScheduleContext(options);
 		}
 		#endregion
 
 		#region Methods
+		/// <summary>
+		/// Map the entity properties into the model.
+		/// </summary>
+		/// <param name="entity"></param>
+		/// <param name="action"></param>
+		/// <typeparam name="T"></typeparam>
+		/// <returns></returns>
+		public T Map<T>(IBaseEntity entity, Action<T> action = null)
+		  where T : class, IBaseModel
+		{
+			return Mapper.Map<T>(entity, m =>
+			{
+				action?.Invoke(m);
+			});
+		}
+
+		/// <summary>
+		/// Map the model properties into the entity.
+		/// </summary>
+		/// <param name="model"></param>
+		/// <param name="action"></param>
+		/// <typeparam name="T"></typeparam>
+		/// <returns></returns>
+		public T Map<T>(IBaseModel model, Action<T> action = null)
+		  where T : class, IBaseEntity
+		{
+			return Mapper.Map<T>(model, m =>
+			{
+				action?.Invoke(m);
+			});
+		}
+
+		/// <summary>
+		/// Map the entity properties into the model.
+		/// </summary>
+		/// <param name="entity"></param>
+		/// <param name="action"></param>
+		/// <typeparam name="T"></typeparam>
+		/// <returns></returns>
+		public T Map<T>(object entity, Action<T> action = null)
+		  where T : class
+		{
+			return Mapper.Map<T>(entity, action);
+		}
+
+		/// <summary>
+		/// Map the source properties into the destination.
+		/// </summary>
+		/// <param name="source"></param>
+		/// <param name="destination"></param>
+		/// <typeparam name="TS"></typeparam>
+		/// <typeparam name="TD"></typeparam>
+		/// <returns></returns>
+		public TD Map<TS, TD>(TS source, TD destination)
+		{
+			Mapper.Map<TS, TD>(source, destination);
+			return destination;
+		}
+
 		/// <summary>
 		/// Applies any pending migrations for the context to the database.  Will create the database if it does not already exist.
 		/// </summary>
@@ -313,15 +358,15 @@ namespace Fosol.Schedule.DAL
 									{
 										var cval = condition.Substring(18, condition.Length - 19);
 										var answers = (
-											from p in this.Context.Processes
-											join oq in this.Context.OpeningQuestions on p.OpeningId equals oq.OpeningId
-											join op in this.Context.OpeningParticipants on p.OpeningId equals op.OpeningId
-											join oan in this.Context.OpeningAnswers on new { p.OpeningId, op.ParticipantId, oq.QuestionId } equals new { oan.OpeningId, oan.ParticipantId, oan.QuestionId }
-											where p.Id == process.Id
-												&& op.ParticipantId == openingParticipant.ParticipantId
-												&& oq.Question.Caption == cval
-											select oan.Text);
-										
+										  from p in this.Context.Processes
+										  join oq in this.Context.OpeningQuestions on p.OpeningId equals oq.OpeningId
+										  join op in this.Context.OpeningParticipants on p.OpeningId equals op.OpeningId
+										  join oan in this.Context.OpeningAnswers on new { p.OpeningId, op.ParticipantId, oq.QuestionId } equals new { oan.OpeningId, oan.ParticipantId, oan.QuestionId }
+										  where p.Id == process.Id
+											&& op.ParticipantId == openingParticipant.ParticipantId
+											&& oq.Question.Caption == cval
+										  select oan.Text);
+
 										answers.ForEach(a =>
 										{
 											var tag = new Entities.OpeningTag(opening, cval, a);
@@ -347,7 +392,8 @@ namespace Fosol.Schedule.DAL
 										var cval = condition.Substring(9, condition.Length - 10);
 										var tags = this.Context.OpeningTags.Where(ot => ot.OpeningId == opening.Id && ot.Key == cval).ToArray();
 
-										tags.ForEach(t => {
+										tags.ForEach(t =>
+										{
 											opening.Tags.Remove(t);
 											this.Context.OpeningTags.Remove(t);
 										});
