@@ -1,12 +1,9 @@
-﻿using Fosol.Core.Extensions.Enumerable;
-using Fosol.Core.Mvc;
+﻿using Fosol.Core.Mvc;
 using Fosol.Core.Mvc.Filters;
 using Fosol.Schedule.DAL.Interfaces;
-using Fosol.Schedule.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using System;
-using System.Collections.Generic;
 using System.Linq;
 
 namespace Fosol.Schedule.API.Areas.Manage.Controllers
@@ -75,12 +72,12 @@ namespace Fosol.Schedule.API.Areas.Manage.Controllers
 		/// <param name="schedule"></param>
 		/// <returns></returns>
 		[HttpPost("/[area]/[controller]")]
-		public IActionResult AddSchedule([FromBody] Schedule.Models.Schedule schedule)
+		public IActionResult AddSchedule([FromBody] Models.Create.Schedule schedule)
 		{
-			_dataSource.Schedules.Add(schedule);
+			var result = _dataSource.Schedules.Add(schedule);
 			_dataSource.CommitTransaction();
 
-			return Created(Url.RouteUrl(nameof(GetSchedule), new { schedule.Id }), schedule);
+			return Created(Url.RouteUrl(nameof(GetSchedule), new { result.Id }), result);
 		}
 
 		/// <summary>
@@ -89,12 +86,12 @@ namespace Fosol.Schedule.API.Areas.Manage.Controllers
 		/// <param name="schedule"></param>
 		/// <returns></returns>
 		[HttpPut("/[area]/[controller]")]
-		public IActionResult UpdateSchedule([FromBody] Schedule.Models.Schedule schedule)
+		public IActionResult UpdateSchedule([FromBody] Models.Update.Schedule schedule)
 		{
-			_dataSource.Schedules.Update(schedule);
+			var result = _dataSource.Schedules.Update(schedule);
 			_dataSource.CommitTransaction();
 
-			return Ok(schedule);
+			return Ok(result);
 		}
 
 		/// <summary>
@@ -103,7 +100,7 @@ namespace Fosol.Schedule.API.Areas.Manage.Controllers
 		/// <param name="schedule"></param>
 		/// <returns></returns>
 		[HttpDelete("/[area]/[controller]")]
-		public IActionResult DeleteSchedule([FromBody] Schedule.Models.Schedule schedule)
+		public IActionResult DeleteSchedule([FromBody] Models.Delete.Schedule schedule)
 		{
 			_dataSource.Schedules.Remove(schedule);
 			_dataSource.CommitTransaction();
@@ -119,37 +116,15 @@ namespace Fosol.Schedule.API.Areas.Manage.Controllers
 		/// <param name="events"></param>
 		/// <returns></returns>
 		[HttpPost("/{scheduleId}/events")]
-		public IActionResult AddEventsToSchedule(int scheduleId, [FromBody] Event[] events)
+		public IActionResult AddEventsToSchedule(int scheduleId, [FromBody] Models.Read.Event[] events)
 		{
 			var schedule = _dataSource.Schedules.Get(scheduleId);
 
-			// Get all the event Ids in the schedule to ensure they are not added again.
-			var eventIds = _dataSource.Events.GetEventIdsForSchedule(scheduleId);
-
-			var errors = new List<string>();
-			events.ForEach(e => {
-				if (e.StartOn < schedule.StartOn)
-				{
-					errors.Add($"Event [{e.Id}] \"{e.Name}\" occurs before the schedule and therefore will not be included.");
-				}
-				else if (e.EndOn > schedule.EndOn)
-				{
-					errors.Add($"Event [{e.Id}] \"{e.Name}\" occurs after the schedule and therefore will not be included.");
-				}
-				else if (eventIds.Contains(e.Id.Value))
-				{
-					errors.Add($"Event [{e.Id}] \"{e.Name}\" has already been included in the schedule.");
-				}
-				else
-				{
-					schedule.Events.Add(e);
-				}
-			});
-
+			var errors = _dataSource.Schedules.AddEventsToSchedule(scheduleId, events);
 			_dataSource.Schedules.Update(schedule);
 			_dataSource.CommitTransaction();
 
-			if (errors.Count() > 0) return Ok(errors);
+			if (errors.Count() > 0) return Ok(errors.Select(e => e.ErrorMessage));
 
 			return Ok(new { EventsAdd = events.Count() });
 		}

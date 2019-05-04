@@ -1,10 +1,10 @@
 ﻿using Fosol.Core.Exceptions;
 using Fosol.Core.Extensions.Principals;
-using Fosol.Schedule.DAL.Helpers;
 using Fosol.Schedule.DAL.Interfaces;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Linq;
+using System.Linq.Expressions;
 
 namespace Fosol.Schedule.DAL.Services
 {
@@ -14,8 +14,8 @@ namespace Fosol.Schedule.DAL.Services
 	/// <typeparam name="EntityT"></typeparam>
 	/// <typeparam name="ModelT"></typeparam>
 	public abstract class ReadableService<EntityT, ModelT> : IReadableService<ModelT>
-		where EntityT : class
-		where ModelT : class
+	  where EntityT : class
+	  where ModelT : class
 	{
 		#region Variables
 		private readonly IDataSource _source;
@@ -139,37 +139,6 @@ namespace Fosol.Schedule.DAL.Services
 		}
 
 		/// <summary>
-		/// Creates a new instance of a <typeparamref name="EntityT"/> by mapping the specified <typeparamref name="ModelT"/>.
-		/// </summary>
-		/// <param name="source"></param>
-		/// <returns></returns>
-		protected EntityT Map(ModelT source)
-		{
-			return this.Source.Mapper.Map<EntityT>(source);
-		}
-
-		/// <summary>
-		/// Creates a new instance of a <typeparamref name="ModelT"/> by mapping the specified <typeparamref name="EntityT"/>.
-		/// </summary>
-		/// <param name="source"></param>
-		/// <returns></returns>
-		protected ModelT Map(EntityT source)
-		{
-			return this.Source.Mapper.Map<ModelT>(source);
-		}
-
-		/// <summary>
-		/// Creates a new instance of a <typeparamref name="ModelT"/> by mapping the specified <typeparamref name="EntityT"/>.
-		/// </summary>
-		/// <param name="source"></param>
-		/// <param name="destination"></param>
-		/// <returns></returns>
-		protected ModelT Map(EntityT source, ModelT destination)
-		{
-			return this.Source.Mapper.Map(source, destination);
-		}
-
-		/// <summary>
 		/// Find the entity for the specified model in the datasource.
 		/// </summary>
 		/// <exception cref="NoContentException">If the entity could not be found in the datasource.</exception>
@@ -189,7 +158,7 @@ namespace Fosol.Schedule.DAL.Services
 		protected virtual T Find<T>(ModelT model) where T : class
 		{
 			//var keys = ScheduleMapper.Map.GetMap<T>().GetPrimaryKeyValues(this.Source.UpdateMapper.Map<T>(model));
-			var entity = this.Source.Mapper.Map<T>(model);
+			var entity = this.Source.Map<T>(model);
 			var keys = this.Context.Model.FindEntityType(typeof(T)).FindPrimaryKey().Properties.Select(p => p.PropertyInfo.GetValue(entity)).ToArray();
 			return this.Find<T>(keys);
 		}
@@ -250,7 +219,17 @@ namespace Fosol.Schedule.DAL.Services
 		/// <returns></returns>
 		public virtual ModelT Find(params object[] keyValues)
 		{
-			return this.Map(this.Find<EntityT>(keyValues));
+			return this.Source.Map<ModelT>(this.Find<EntityT>(keyValues));
+		}
+
+		/// <summary>
+		/// Get the model for the specified expression.
+		/// </summary>
+		/// <param name="expression"></param>
+		/// <returns></returns>
+		protected ModelT GetNoTracking(Expression<Func<EntityT, bool>> expression)
+		{
+			return this.Source.Map<ModelT>(this.Find(set => set.AsNoTracking().SingleOrDefault(expression)));
 		}
 		#endregion
 	}
