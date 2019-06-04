@@ -78,8 +78,40 @@ namespace Fosol.Schedule.DAL.Services
         public override void Update(Models.Participant model)
         {
             // Strip out collections, they must be saved independently.
-            model.Attributes = null;
             model.ContactInfo = null;
+            
+            var participant = this.Context.Participants.Include(p => p.Attributes).ThenInclude(pa => pa.Attribute).FirstOrDefault(p => p.Id == model.Id) ?? throw new NoContentException(typeof(Entities.Participant));
+            if (model.Attributes != null)
+            {
+                var pas = participant.Attributes.ToArray();
+                if (model.Attributes.Count() == 0)
+                {
+                    this.Context.RemoveRange(pas.Select(a => a.Attribute).ToArray());
+                    this.Context.RemoveRange(pas);
+                }
+                else
+                {
+                    var updateAttributes = pas.Where(pa => 
+                    {
+                        var attr = model.Attributes.FirstOrDefault(a => a.Id == pa.Attribute.Id);
+
+                        if (attr == null) return false;
+                        var update = attr.Key != pa.Attribute.Key || attr.Value != pa.Attribute.Value || attr.ValueType != pa.Attribute.ValueType;
+                        if (!update) return false;
+                        pa.Attribute.Key = attr.Key;
+                        pa.Attribute.Value = attr.Value;
+                        pa.Attribute.ValueType = attr.ValueType;
+                        return true;
+                    }).ToArray();
+                    var removeAttributes = pas.Where(pa => !model.Attributes.Any(a => a.Id == pa.Attribute.Id)).ToArray();
+                    var addParticipantAttributes = model.Attributes.Where(a => a.Id == 0).Select(a => new Entities.ParticipantAttribute(participant, this.Source.Mapper.Map<Entities.Attribute>(a))).ToArray();
+
+                    this.Context.UpdateRange(updateAttributes);
+                    this.Context.RemoveRange(removeAttributes.Select(a => a.Attribute).ToArray());
+                    this.Context.RemoveRange(removeAttributes);
+                    this.Context.AddRange(addParticipantAttributes);
+                }
+            }
 
             base.Update(model);
         }

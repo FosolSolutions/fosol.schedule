@@ -240,7 +240,7 @@ namespace Fosol.Schedule.API
 				{
 					optionsBuilder.EnableSensitiveDataLogging();
 				}
-				var connectionString = this.Configuration.GetConnectionString("Schedule") ?? @"Server=(localdb)\mssqllocaldb;Database=EFProviders.InMemory;Trusted_Connection=True;ConnectRetryCount=0";
+				var connectionString = this.Configuration.GetConnectionString("coevent") ?? @"Server=(localdb)\mssqllocaldb;Database=EFProviders.InMemory;Trusted_Connection=True;ConnectRetryCount=0";
 				var builder = new SqlConnectionStringBuilder(connectionString);
 				var password = this.Configuration["Database:Schedule:Password"];
 				if (!String.IsNullOrWhiteSpace(password))

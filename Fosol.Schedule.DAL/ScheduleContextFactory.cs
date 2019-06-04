@@ -25,7 +25,7 @@ namespace Fosol.Schedule.DAL
 
             var builder = new DbContextOptionsBuilder<ScheduleContext>();
 
-            var connectionString = configuration.GetConnectionString("Schedule");
+            var connectionString = configuration.GetConnectionString("coevent");
 
             builder.UseSqlServer(connectionString);
 

@@ -270,7 +270,7 @@ namespace Fosol.Schedule.DAL.Maps
 						AddedOn = src.Id == 0 ? DateTime.UtcNow : src.AddedOn.Value,
 						UpdatedById = src.Id == 0 ? (int?)null : this.DataSource.Principal.GetUser().Value.ConvertTo<int>(),
 						UpdatedOn = src.Id == 0 ? (DateTime?)null : DateTime.UtcNow,
-						RowVersion = Convert.FromBase64String(src.RowVersion)
+						RowVersion = src.RowVersion == null ? null : Convert.FromBase64String(src.RowVersion)
 					} : null;
 					return new Entities.ParticipantAttribute() { AttributeId = src.Id, Attribute = attribute };
 				});
