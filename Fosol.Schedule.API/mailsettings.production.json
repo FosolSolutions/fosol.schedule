@@ -1,7 +1,7 @@
 ﻿{
   "Mail": {
     "AccountAddress": "jeremymfoster@hotmail.com",
-    "SmtpDNS": "smtp.live.com",
+    "SmtpDNS": "smtp.office365.com",
     "SmtpPort": "587",
     "EnableSsl": "true",
     "UseDefaultCredentials": "false",
